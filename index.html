@@ -6,44 +6,48 @@
   <title>Jefferson Cell - Meu Caixa PRO | Assistência Técnica</title>
 
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
     :root {
-      --bg-main: #0f172a;
-      --bg-card: #1e293b;
-      --bg-input: #0f172a;
-      --border-color: #334155;
-      --border-focus: #3b82f6;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
+      --bg-main: #02040a;
+      --bg-card: rgba(10, 15, 30, 0.8);
+      --bg-input: #060914;
+      --border-color: rgba(255, 255, 255, 0.05);
+      --border-focus: #00f2fe;
+      --text-main: #ffffff;
+      --text-muted: #64748b;
       
-      --accent-blue: #3b82f6;
-      --accent-purple: #8b5cf6;
-      --accent-green: #10b981;
-      --accent-orange: #f97316;
-      --accent-red: #ef4444;
+      --accent-blue: #00f2fe;
+      --accent-purple: #bf5af2;
+      --accent-green: #30d5c8;
+      --accent-orange: #ff9f0a;
+      --accent-red: #ff453a;
+      
+      --box-shadow-premium: 0 10px 40px -10px rgba(0, 0, 0, 0.7);
     }
 
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     }
 
     body {
       background-color: var(--bg-main);
       background-image: 
-        radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.08) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, rgba(0, 242, 254, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(191, 90, 242, 0.1) 0px, transparent 50%);
       background-attachment: fixed;
       min-height: 100vh;
       color: var(--text-main);
-      padding-bottom: 90px;
+      padding-bottom: 120px;
       -webkit-font-smoothing: antialiased;
     }
 
     .overlay {
       min-height: 100vh;
-      padding: 20px 15px;
+      padding: 20px 14px;
     }
 
     .container {
@@ -53,31 +57,34 @@
 
     .header {
       text-align: center;
-      margin-bottom: 25px;
-      padding: 24px;
-      background: rgba(30, 41, 59, 0.5);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-radius: 24px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      margin-bottom: 24px;
+      padding: 32px 20px;
+      background: linear-gradient(135deg, rgba(10, 15, 30, 0.7), rgba(4, 6, 14, 0.9));
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      box-shadow: var(--box-shadow-premium);
     }
 
     .header h1 {
-      font-size: 32px;
+      font-size: 38px;
       font-weight: 800;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      letter-spacing: -1.5px;
+      background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
     .header p {
-      color: var(--text-muted);
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 1px;
+      color: var(--accent-blue);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      opacity: 0.9;
     }
 
     .quad-cards {
@@ -89,23 +96,27 @@
 
     .kpi-card {
       background: var(--bg-card);
-      border-radius: 20px;
-      padding: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.03);
-      position: relative;
-      overflow: hidden;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 24px;
+      padding: 18px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--box-shadow-premium);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .kpi-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; width: 4px; height: 100%;
+    .kpi-card:hover {
+      transform: translateY(-3px);
+      background: rgba(15, 23, 42, 0.9);
     }
 
-    .kpi-card.capital::before { background: var(--accent-orange); }
-    .kpi-card.lucro::before { background: var(--accent-green); }
-    .kpi-card.vendas::before { background: var(--accent-blue); }
-    .kpi-card.consertos::before { background: var(--accent-purple); }
+    .kpi-card.capital { border-top: 3px solid var(--accent-orange); }
+    .kpi-card.lucro { border-top: 3px solid #34c759; }
+    .kpi-card.vendas { border-top: 3px solid var(--accent-blue); }
+    .kpi-card.consertos { border-top: 3px solid var(--accent-purple); }
 
     .kpi-card h3 {
       font-size: 11px;
@@ -116,50 +127,57 @@
     }
 
     .kpi-card .valor {
-      font-size: 20px;
-      font-weight: 700;
+      font-size: 24px;
+      font-weight: 800;
       letter-spacing: -0.5px;
     }
+    
+    .capital .valor { color: #ffb340; }
+    .lucro .valor { color: #30d5c8; }
+    .vendas .valor { color: #00f2fe; }
+    .consertos .valor { color: #bf5af2; }
 
     .kpi-actions {
       display: flex;
       gap: 6px;
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
     .kpi-btn {
       flex: 1;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       color: var(--text-main);
-      padding: 6px;
+      padding: 8px;
       border-radius: 10px;
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: all 0.2s;
     }
 
     .kpi-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
     }
 
     .card {
       background: var(--bg-card);
-      border-radius: 24px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 28px;
       padding: 24px;
       margin-bottom: 24px;
-      border: 1px solid rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--box-shadow-premium);
     }
 
     .card h2 {
-      font-size: 18px;
-      font-weight: 700;
+      font-size: 22px;
+      font-weight: 800;
       margin-bottom: 20px;
       color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      letter-spacing: -0.5px;
     }
 
     .card-header-actions {
@@ -170,35 +188,39 @@
     }
 
     .btn-action-top {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      color: var(--text-main);
-      padding: 8px 14px;
+      background: rgba(0, 242, 254, 0.06);
+      border: 1px solid rgba(0, 242, 254, 0.15);
+      color: #00f2fe;
+      padding: 10px 14px;
       border-radius: 12px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-action-top:hover {
+      background: rgba(0, 242, 254, 0.12);
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
     }
 
     input, select, textarea {
       width: 100%;
-      padding: 12px 16px;
+      padding: 14px 16px;
       margin-bottom: 12px;
       background: var(--bg-input);
       border: 1px solid var(--border-color);
       border-radius: 14px;
       color: var(--text-main);
       font-size: 14px;
-      transition: all 0.2s;
+      font-weight: 500;
+      transition: all 0.2s ease;
     }
 
     input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: var(--border-focus);
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+      box-shadow: 0 0 0 3px rgba(0, 242, 254, 0.12);
     }
 
     .field-group {
@@ -208,9 +230,9 @@
 
     .field-group label {
       display: block;
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 6px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -218,55 +240,57 @@
 
     button.salvar {
       width: 100%;
-      padding: 14px;
+      padding: 16px;
       border-radius: 14px;
-      background: var(--accent-green);
+      background: linear-gradient(135deg, #30d5c8 0%, #20a59a 100%);
       font-weight: 700;
       border: none;
-      color: white;
+      color: #02040a;
       cursor: pointer;
-      font-size: 14px;
-      transition: opacity 0.2s;
-      margin-top: 10px;
+      font-size: 15px;
+      letter-spacing: 0.3px;
+      transition: all 0.3s;
+      box-shadow: 0 4px 20px rgba(48, 213, 200, 0.2);
     }
 
     button.salvar:hover {
-      opacity: 0.9;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(48, 213, 200, 0.35);
     }
 
     .item {
-      background: rgba(15, 23, 42, 0.4);
+      background: rgba(4, 6, 14, 0.5);
       border: 1px solid rgba(255, 255, 255, 0.03);
       border-left: 4px solid var(--accent-blue);
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 16px;
       margin-top: 12px;
     }
     
     .item-atrasado {
       border-left: 4px solid var(--accent-red) !important;
-      background: rgba(239, 68, 68, 0.05) !important;
+      background: rgba(255, 69, 58, 0.05) !important;
     }
 
     .atrasado-badge {
       background: var(--accent-red);
       color: white;
-      padding: 2px 8px;
+      padding: 3px 8px;
       border-radius: 8px;
       font-size: 10px;
-      font-weight: 700;
+      font-weight: 800;
       margin-left: 6px;
     }
 
     .item h3 {
       font-size: 15px;
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 4px;
     }
 
     .item p {
       font-size: 13px;
-      color: var(--text-muted);
+      color: #94a3b8;
       margin-bottom: 4px;
     }
 
@@ -278,81 +302,94 @@
     }
 
     .item-actions button {
-      padding: 6px 12px;
+      padding: 8px 12px;
       border-radius: 10px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
       border: none;
       color: white;
       cursor: pointer;
+      transition: all 0.2s;
     }
 
-    .ver-detalhes { background: #475569; }
-    .btn-editar { background: #d97706; }
-    .btn-finalizar { background: var(--accent-green); }
-    .btn-deletar { background: var(--accent-red); }
+    .ver-detalhes { background: #1e293b; }
+    .ver-detalhes:hover { background: #334155; }
+    .btn-editar { background: #c27803; }
+    .btn-editar:hover { background: #9a5f02; }
+    .btn-finalizar { background: linear-gradient(135deg, #30d5c8, #20a59a); color: #02040a !important; }
+    .btn-finalizar:hover { box-shadow: 0 0 12px rgba(48, 213, 200, 0.3); }
+    .btn-deletar { background: #ff453a; }
+    .btn-deletar:hover { background: #dd3327; }
 
     .bottom-nav {
       position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: rgba(15, 23, 42, 0.9);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      bottom: 20px; left: 20px; right: 20px;
+      background: rgba(10, 15, 30, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 24px;
       display: flex;
       justify-content: space-between;
-      padding: 10px 12px;
+      padding: 8px;
       z-index: 1100;
-      overflow-x: auto;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
     }
 
     .nav-item {
+      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 4px;
       background: none;
       border: none;
-      color: var(--text-muted);
+      color: #475569;
       cursor: pointer;
-      padding: 6px 10px;
-      border-radius: 12px;
-      transition: all 0.2s;
+      padding: 10px 4px;
+      border-radius: 18px;
+      transition: all 0.2s ease;
       font-size: 10px;
-      font-weight: 600;
-      min-width: 65px;
+      font-weight: 700;
     }
 
-    .nav-item span:first-child { font-size: 18px; }
-    .nav-item.active { color: var(--accent-blue); background: rgba(59, 130, 246, 0.1); }
+    .nav-item span:first-child { 
+      font-size: 18px; 
+    }
+
+    .nav-item.active { 
+      color: var(--accent-blue); 
+      background: rgba(0, 242, 254, 0.08); 
+    }
 
     .modal {
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.8);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      background: rgba(2, 4, 10, 0.8);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       z-index: 1200;
       justify-content: center;
       align-items: center;
-      padding: 15px;
+      padding: 14px;
     }
 
     .modal-content {
-      background: var(--bg-card);
+      background: #0a0f1e;
       padding: 24px;
       border-radius: 24px;
-      max-width: 480px;
+      max-width: 440px;
       width: 100%;
-      max-height: 85vh;
+      max-height: 80vh;
       overflow-y: auto;
       border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     }
 
     .modal h3 {
       font-size: 18px;
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 16px;
     }
 
@@ -366,50 +403,51 @@
       flex: 1;
       padding: 12px;
       border-radius: 12px;
-      font-weight: 600;
+      font-weight: 700;
       border: none;
       cursor: pointer;
+      transition: all 0.2s;
     }
 
-    .modal-footer-btns button:first-child { background: var(--accent-blue); color: white; }
+    .modal-footer-btns button:first-child { background: var(--accent-blue); color: #02040a; }
     .modal-footer-btns button:last-child { background: rgba(255,255,255,0.05); color: var(--text-main); }
 
     .close-modal {
       float: right;
-      font-size: 20px;
+      font-size: 22px;
       cursor: pointer;
       color: var(--text-muted);
     }
 
     .extrato-item-detalhado {
-      background: rgba(15, 23, 42, 0.4);
+      background: rgba(4, 6, 14, 0.4);
       margin-bottom: 8px;
-      padding: 12px 16px;
+      padding: 12px 14px;
       border-radius: 14px;
       border-left: 4px solid;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .credito { border-left-color: var(--accent-green); color: #34d399; }
-    .debito { border-left-color: var(--accent-red); color: #f87171; }
+    .credito { border-left-color: #30d5c8; color: #30d5c8; background: rgba(48, 213, 200, 0.02); }
+    .debito { border-left-color: var(--accent-red); color: #ff6b6b; background: rgba(255, 69, 58, 0.02); }
 
-    .status-pagamento { font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: 600; display: inline-block; margin-top: 4px;}
-    .status-pendente { background: rgba(249, 115, 22, 0.15); color: var(--accent-orange); }
-    .status-parcial { background: rgba(250, 204, 21, 0.15); color: #facc15; }
-    .status-pago { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+    .status-pagamento { font-size: 10px; padding: 3px 8px; border-radius: 6px; font-weight: 800; display: inline-block; margin-top: 4px; text-transform: uppercase;}
+    .status-pendente { background: rgba(255, 159, 10, 0.12); color: var(--accent-orange); }
+    .status-parcial { background: rgba(255, 214, 10, 0.12); color: #ffd60a; }
+    .status-pago { background: rgba(48, 213, 200, 0.12); color: #30d5c8; }
 
     .sub-section-title {
-      font-size: 14px;
-      font-weight: 700;
+      font-size: 12px;
+      font-weight: 800;
       margin: 24px 0 12px 0;
-      color: var(--text-muted);
+      color: var(--accent-purple);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
     .origem-custo {
-      background: var(--bg-main);
+      background: rgba(4, 6, 14, 0.4);
       padding: 14px;
       border-radius: 14px;
       margin-bottom: 12px;
@@ -417,10 +455,10 @@
     }
     .origem-custo span {
       display: block;
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
       margin-bottom: 8px;
-      font-weight: 600;
+      font-weight: 700;
     }
     .origem-custo div {
       display: flex;
@@ -441,74 +479,69 @@
       display: flex;
       gap: 10px;
     }
-    .small-input-group > div {
-      flex: 1;
-    }
 
     .recibo {
-      background: #f8fafc;
-      color: #0f172a;
+      background: #ffffff;
+      color: #000000;
       padding: 16px;
       border-radius: 12px;
-      font-family: monospace;
+      font-family: 'Courier New', monospace;
       font-size: 12px;
       line-height: 1.4;
     }
 
     .monthly-profit-item {
-      background: rgba(15, 23, 42, 0.3);
-      border-radius: 14px;
+      background: rgba(4, 6, 14, 0.4);
+      border-radius: 16px;
       padding: 14px;
       margin-bottom: 10px;
-      border: 1px solid rgba(255,255,255,0.02);
     }
     .monthly-profit-header {
-      font-weight: 700;
+      font-weight: 800;
       font-size: 14px;
       margin-bottom: 8px;
       color: var(--accent-blue);
     }
     .monthly-profit-details {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       flex-wrap: wrap;
     }
     .monthly-profit-details span {
       font-size: 11px;
       padding: 4px 8px;
       border-radius: 6px;
-      font-weight: 600;
+      font-weight: 700;
     }
-    .profit-consertos { background: rgba(59, 130, 246, 0.1); color: #60a5fa; }
-    .profit-vendas { background: rgba(16, 185, 129, 0.1); color: #34d399; }
-    .profit-total { background: rgba(245, 158, 11, 0.1); color: #fbbf24; }
+    .profit-consertos { background: rgba(191, 90, 242, 0.1); color: #dcb3ff; }
+    .profit-vendas { background: rgba(0, 242, 254, 0.1); color: #90f9ff; }
+    .profit-total { background: rgba(255, 159, 10, 0.1); color: #ffd18c; }
     
     .origem-badge {
-      background: rgba(59, 130, 246, 0.1);
-      color: #60a5fa;
+      background: rgba(0, 242, 254, 0.1);
+      color: var(--accent-blue);
       padding: 2px 6px;
       border-radius: 6px;
       font-size: 10px;
-      font-weight: 700;
-      margin-left: 6px;
+      font-weight: 800;
     }
 
     .peca-usada {
-      background: rgba(245, 158, 11, 0.05);
-      border: 1px dashed rgba(245, 158, 11, 0.2);
+      background: rgba(255, 159, 10, 0.03);
+      border: 1px dashed rgba(255, 159, 10, 0.2);
       border-radius: 10px;
       padding: 8px;
       margin-top: 8px;
       font-size: 12px;
+      color: var(--accent-orange);
     }
 
-    /* Estilo das Sub-Abas de Vendas */
     .sub-tabs-container {
       display: flex;
-      gap: 8px;
-      background: rgba(15, 23, 42, 0.6);
-      padding: 6px;
-      border-radius: 14px;
+      gap: 6px;
+      background: rgba(2, 4, 10, 0.6);
+      padding: 4px;
+      border-radius: 16px;
       margin-bottom: 16px;
       border: 1px solid var(--border-color);
     }
@@ -517,32 +550,18 @@
       flex: 1;
       padding: 10px;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       background: transparent;
       color: var(--text-muted);
-      font-size: 12px;
-      font-weight: 700;
+      font-size: 11px;
+      font-weight: 800;
       cursor: pointer;
-      transition: all 0.2s ease;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
     .sub-tab-btn.active {
-      background: var(--bg-card);
+      background: #141f36;
       color: var(--accent-blue);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-
-    ::-webkit-scrollbar {
-      width: 6px; height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: var(--bg-main);
-    }
-    ::-webkit-scrollbar-thumb {
-      background: var(--border-color);
-      border-radius: 3px;
     }
   </style>
 </head>
@@ -584,120 +603,133 @@
           <button class="btn-action-top" onclick="exportarDados()">💾 Salvar Backup</button>
           <button class="btn-action-top" onclick="importarDados()">📂 Restaurar Backup</button>
         </div>
-        <h2>🔧 Nova OS - Conserto</h2>
         
-        <input type="text" id="clienteConserto" placeholder="Cliente *">
-        <input type="text" id="modeloConserto" placeholder="Modelo *">
-        <textarea id="defeitoConserto" rows="2" placeholder="Defeito *"></textarea>
-        <input type="number" id="valorConserto" placeholder="Valor total conserto (R$) *">
-        
-        <div class="origem-custo">
-          <span>💰 Custo peça será debitado de:</span>
-          <div>
-            <label><input type="radio" name="origemCustoPeca" value="capital" checked> Capital</label>
-            <label><input type="radio" name="origemCustoPeca" value="fornecedor"> Fornecedor</label>
-          </div>
+        <div class="sub-tabs-container">
+          <button class="sub-tab-btn active" id="btnSubNovaOs" onclick="switchSubConsertoTab('nova')">🔧 Nova OS</button>
+          <button class="sub-tab-btn" id="btnSubAndamento" onclick="switchSubConsertoTab('andamento')">📋 Em Andamento</button>
+          <button class="sub-tab-btn" id="btnSubFinalizadosConserto" onclick="switchSubConsertoTab('finalizados')">✅ Finalizados</button>
         </div>
-        
-        <div id="fornecedorDiv" style="display:none;" class="fornecedor-field">
-          <input type="text" id="nomeFornecedor" placeholder="Nome do Fornecedor (ex: João Peças)">
+
+        <div id="subTabNovaOs">
+          <h2>🔧 Nova OS - Conserto</h2>
+          
+          <input type="text" id="clienteConserto" placeholder="Cliente *">
+          <input type="text" id="modeloConserto" placeholder="Modelo *">
+          <textarea id="defeitoConserto" rows="2" placeholder="Defeito *"></textarea>
+          <input type="number" id="valorConserto" placeholder="Valor total conserto (R$) *">
+          
+          <div class="origem-custo">
+            <span>💰 Custo peça será debitado de:</span>
+            <div>
+              <label><input type="radio" name="origemCustoPeca" value="capital" checked> Capital</label>
+              <label><input type="radio" name="origemCustoPeca" value="fornecedor"> Fornecedor</label>
+            </div>
+          </div>
+          
+          <div id="fornecedorDiv" style="display:none;" class="fornecedor-field">
+            <input type="text" id="nomeFornecedor" placeholder="Nome do Fornecedor (ex: João Peças)">
+          </div>
+          
+          <input type="number" id="valorPeca" placeholder="Valor peça (R$)">
+          <select id="tipoPeca">
+            <option value="">Tipo peça</option>
+            <option>Tela/LCD</option><option>Bateria</option><option>Conector/Flex</option><option>Placa Mãe</option>
+            <option>Botão Liga/Desliga</option><option>Botão Volume</option><option>Microfone</option>
+            <option>Câmera Traseira</option><option>Câmera Frontal</option><option>Conector de Carga</option><option>Antena</option>
+            <option>Vidro Traseiro</option><option>Sensor de Proximidade</option><option>Capa Bateria</option><option>Outros</option>
+          </select>
+          
+          <div class="small-input-group">
+            <div class="field-group">
+              <label for="dataEntrada">Data de Entrada</label>
+              <input type="date" id="dataEntrada">
+            </div>
+            <div class="field-group">
+              <label for="dataVencimento">Data de Vencimento</label>
+              <input type="date" id="dataVencimento">
+            </div>
+          </div>
+          
+          <div class="small-input-group">
+            <div>
+              <input type="number" id="valorEntrada" placeholder="Valor de entrada (R$)" step="0.01">
+            </div>
+            <div class="field-group">
+              <label for="dataEntradaPagamento">Data Pagamento Entrada</label>
+              <input type="date" id="dataEntradaPagamento">
+            </div>
+          </div>
+          
+          <div class="small-input-group">
+            <div>
+              <input type="number" id="valorParcela" placeholder="Parcela restante (R$)" step="0.01">
+            </div>
+            <div class="field-group">
+              <label for="dataRestantePagamento">Vencimento da Parcela</label>
+              <input type="date" id="dataRestantePagamento">
+            </div>
+          </div>
+          
+          <button class="salvar" onclick="salvarConserto()">📝 Criar Ordem</button>
         </div>
-        
-        <input type="number" id="valorPeca" placeholder="Valor peça (R$)">
-        <select id="tipoPeca">
-          <option value="">Tipo peça</option>
-          <option>Tela/LCD</option><option>Bateria</option><option>Conector/Flex</option><option>Placa Mãe</option>
-          <option>Botão Liga/Desliga</option><option>Botão Volume</option><option>Microfone</option>
-          <option>Câmera Traseira</option><option>Câmera Frontal</option><option>Conector de Carga</option><option>Antena</option>
-          <option>Vidro Traseiro</option><option>Sensor de Proximidade</option><option>Capa Bateria</option><option>Outros</option>
-        </select>
-        
-        <div class="small-input-group">
-          <div class="field-group">
-            <label for="dataEntrada">Data de Entrada</label>
-            <input type="date" id="dataEntrada">
-          </div>
-          <div class="field-group">
-            <label for="dataVencimento">Data de Vencimento</label>
-            <input type="date" id="dataVencimento">
-          </div>
+
+        <div id="subTabAndamento" style="display: none;">
+          <div class="sub-section-title" style="margin-top: 0;">📋 OS em Andamento</div>
+          <div id="consertosLista"></div>
         </div>
-        
-        <div class="small-input-group">
-          <div>
-            <input type="number" id="valorEntrada" placeholder="Valor de entrada (R$)" step="0.01">
-          </div>
-          <div class="field-group">
-            <label for="dataEntradaPagamento">Data Pagamento Entrada</label>
-            <input type="date" id="dataEntradaPagamento">
-          </div>
+
+        <div id="subTabFinalizadosConserto" style="display: none;">
+          <div class="sub-section-title" style="margin-top: 0;">✅ Finalizados</div>
+          <div id="consertosFinalizadosLista"></div>
         </div>
-        
-        <div class="small-input-group">
-          <div>
-            <input type="number" id="valorParcela" placeholder="Parcela restante (R$)" step="0.01">
-          </div>
-          <div class="field-group">
-            <label for="dataRestantePagamento">Vencimento da Parcela</label>
-            <input type="date" id="dataRestantePagamento">
-          </div>
-        </div>
-        
-        <button class="salvar" onclick="salvarConserto()">📝 Criar Ordem</button>
-        
-        <div class="sub-section-title">📋 OS em Andamento</div>
-        <div id="consertosLista"></div>
-        
-        <div class="sub-section-title">✅ Finalizados</div>
-        <div id="consertosFinalizadosLista"></div>
       </div>
 
       <!-- Seção Venda de Aparelhos -->
       <div id="vendaAparelhosSection" class="card" style="display:none;">
-        <h2>📱 Venda de Aparelhos</h2>
-        <div style="background: rgba(15, 23, 42, 0.3); border-radius:16px; padding:16px; margin-bottom:20px; border: 1px solid rgba(255,255,255,0.02);">
-          <h3 style="font-size:14px; margin-bottom:12px;">➕ Adicionar novo aparelho ao inventário</h3>
-          <input type="text" id="modelo" placeholder="Modelo (ex: iPhone 12) *">
-          <input type="number" id="valorCompra" placeholder="Valor de compra (R$) *">
-          <input type="number" id="valorVenda" placeholder="Valor de venda sugerido (R$) *">
-          <select id="condicaoAparelho">
-            <option value="Novo">Novo</option><option value="Usado - Ótimo">Usado - Ótimo</option>
-            <option value="Usado - Bom">Usado - Bom</option><option value="Com defeito leve">Com defeito leve</option>
-          </select>
-          <input type="text" id="acessoriosInclusos" placeholder="Acessórios inclusos">
-          
-          <div class="origem-custo">
-            <span>💰 Custo do aparelho será debitado de:</span>
-            <div>
-              <label><input type="radio" name="origemCustoVenda" value="capital" checked> Capital</label>
-              <label><input type="radio" name="origemCustoVenda" value="fornecedor"> Fornecedor</label>
-            </div>
-          </div>
-          
-          <div id="fornecedorVendaDiv" style="display:none;" class="fornecedor-field">
-            <input type="text" id="nomeFornecedorVenda" placeholder="Nome do Fornecedor">
-          </div>
-          
-          <div class="small-input-group">
-            <div><input type="text" id="pecaUtilizada" placeholder="🔧 Peça utilizada"></div>
-            <div><input type="number" id="valorPecaUtilizada" placeholder="Custo peça (R$)" step="0.01"></div>
-          </div>
-          <button class="salvar" onclick="salvarAparelhoDetalhado()">📦 Adicionar ao Estoque</button>
-        </div>
-        
-        <!-- Sub-abas Internas para Vendas -->
         <div class="sub-tabs-container">
-          <button class="sub-tab-btn active" id="btnSubDisponiveis" onclick="switchSubVendaTab('disponiveis')">📦 Disponíveis</button>
+          <button class="sub-tab-btn active" id="btnSubNovaVenda" onclick="switchSubVendaTab('nova')">📱 Nova Venda</button>
+          <button class="sub-tab-btn" id="btnSubDisponiveis" onclick="switchSubVendaTab('disponiveis')">📦 Disponíveis</button>
           <button class="sub-tab-btn" id="btnSubFinalizados" onclick="switchSubVendaTab('finalizados')">📊 Vendas Realizadas</button>
         </div>
 
-        <!-- Conteiner da Sub-aba Disponíveis -->
-        <div id="subTabDisponiveis">
-          <div class="sub-section-title" style="margin-top: 0;">📦 Aparelhos Disponíveis</div>
+        <div id="subTabNovaVenda">
+          <h2>📱 Cadastro de Aparelhos para Venda</h2>
+          <div style="background: rgba(4, 6, 14, 0.3); border-radius:16px; padding:16px; margin-bottom:20px; border: 1px solid var(--border-color);">
+            <h3 style="font-size:14px; margin-bottom:12px;">➕ Adicionar novo aparelho ao inventário</h3>
+            <input type="text" id="modelo" placeholder="Modelo (ex: iPhone 12) *">
+            <input type="number" id="valorCompra" placeholder="Valor de compra (R$) *">
+            <input type="number" id="valorVenda" placeholder="Valor de venda sugerido (R$) *">
+            <select id="condicaoAparelho">
+              <option value="Novo">Novo</option><option value="Usado - Ótimo">Usado - Ótimo</option>
+              <option value="Usado - Bom">Usado - Bom</option><option value="Com defeito leve">Com defeito leve</option>
+            </select>
+            <input type="text" id="acessoriosInclusos" placeholder="Acessórios inclusos">
+            
+            <div class="origem-custo">
+              <span>💰 Custo do aparelho será debitado de:</span>
+              <div>
+                <label><input type="radio" name="origemCustoVenda" value="capital" checked> Capital</label>
+                <label><input type="radio" name="origemCustoVenda" value="fornecedor"> Fornecedor</label>
+              </div>
+            </div>
+            
+            <div id="fornecedorVendaDiv" style="display:none;" class="fornecedor-field">
+              <input type="text" id="nomeFornecedorVenda" placeholder="Nome do Fornecedor">
+            </div>
+            
+            <div class="small-input-group">
+              <div><input type="text" id="pecaUtilizada" placeholder="🔧 Peça utilizada"></div>
+              <div><input type="number" id="valorPecaUtilizada" placeholder="Custo peça (R$)" step="0.01"></div>
+            </div>
+            <button class="salvar" onclick="salvarAparelhoDetalhado()">📦 Adicionar ao Estoque</button>
+          </div>
+        </div>
+
+        <div id="subTabDisponiveis" style="display: none;">
+          <div class="sub-section-title" style="margin-top: 0;">📦 Aparelhos Disponíveis (Estoque)</div>
           <div id="aparelhosLista"></div>
         </div>
 
-        <!-- Conteiner da Sub-aba Finalizados -->
         <div id="subTabFinalizados" style="display: none;">
           <div class="sub-section-title" style="margin-top: 0;">📊 Vendas Realizadas</div>
           <div id="vendasRealizadasLista"></div>
@@ -706,32 +738,44 @@
 
       <!-- Seção Peças -->
       <div id="comprasSection" class="card" style="display:none;">
-        <h2>🛒 Estoque de Peças & Compras</h2>
-        <div style="background: rgba(15, 23, 42, 0.3); border-radius:16px; padding:16px; margin-bottom:20px; border: 1px solid rgba(255,255,255,0.02);">
-          <h3 style="font-size:14px; margin-bottom:12px;">➕ Registrar nova compra de peças</h3>
-          <input type="text" id="nomePeca" placeholder="Nome da peça *">
-          <select id="categoriaPeca">
-            <option value="Tela">Tela/LCD</option><option value="Bateria">Bateria</option><option value="Conector">Conector/Flex</option><option value="Placa">Placa/Chip</option><option value="Câmera">Câmera</option><option value="Botões">Botões</option><option value="Áudio">Áudio</option><option value="Vidro">Vidro</option><option value="Sensores">Sensores</option><option value="Outros">Outros</option>
-          </select>
-          <div class="small-input-group">
-            <div><input type="number" id="quantidade" placeholder="Qtd *"></div>
-            <div><input type="number" id="precoUnitario" placeholder="Preço Unit. (R$) *"></div>
-          </div>
-          <input type="text" id="fornecedorPeca" placeholder="Fornecedor">
-          
-          <div class="field-group">
-            <label for="dataCompraPeca">Data da Compra da Peça</label>
-            <input type="date" id="dataCompraPeca">
-          </div>
-          
-          <button class="salvar" onclick="salvarCompraDetalhada()">💰 Registrar Compra</button>
+        <div class="sub-tabs-container">
+          <button class="sub-tab-btn active" id="btnSubNovaPeca" onclick="switchSubPecaTab('nova')">🛒 Registrar Compra</button>
+          <button class="sub-tab-btn" id="btnSubEstoquePecas" onclick="switchSubPecaTab('estoque')">🔧 Estoque Atual</button>
+          <button class="sub-tab-btn" id="btnSubHistoricoPecas" onclick="switchSubPecaTab('historico')">📜 Histórico</button>
         </div>
-        
-        <div class="sub-section-title">🔧 Estoque Atual</div>
-        <div id="estoqueLista"></div>
-        
-        <div class="sub-section-title">📜 Histórico de Compras</div>
-        <div id="historicoComprasLista"></div>
+
+        <div id="subTabNovaPeca">
+          <h2>🛒 Estoque de Peças & Compras</h2>
+          <div style="background: rgba(4, 6, 14, 0.3); border-radius:16px; padding:16px; margin-bottom:20px; border: 1px solid var(--border-color);">
+            <h3 style="font-size:14px; margin-bottom:12px;">➕ Registrar nova compra de peças</h3>
+            <input type="text" id="nomePeca" placeholder="Nome da peça *">
+            <select id="categoriaPeca">
+              <option value="Tela">Tela/LCD</option><option value="Bateria">Bateria</option><option value="Conector">Conector/Flex</option><option value="Placa">Placa/Chip</option><option value="Câmera">Câmera</option><option value="Botões">Botões</option><option value="Áudio">Áudio</option><option value="Vidro">Vidro</option><option value="Sensores">Sensores</option><option value="Outros">Outros</option>
+            </select>
+            <div class="small-input-group">
+              <div><input type="number" id="quantidade" placeholder="Qtd *"></div>
+              <div><input type="number" id="precoUnitario" placeholder="Preço Unit. (R$) *"></div>
+            </div>
+            <input type="text" id="fornecedorPeca" placeholder="Fornecedor">
+            
+            <div class="field-group">
+              <label for="dataCompraPeca">Data da Compra da Peça</label>
+              <input type="date" id="dataCompraPeca">
+            </div>
+            
+            <button class="salvar" onclick="salvarCompraDetalhada()">💰 Registrar Compra</button>
+          </div>
+        </div>
+
+        <div id="subTabEstoquePecas" style="display: none;">
+          <div class="sub-section-title" style="margin-top: 0;">🔧 Estoque Atual de Componentes</div>
+          <div id="estoqueLista"></div>
+        </div>
+
+        <div id="subTabHistoricoPecas" style="display: none;">
+          <div class="sub-section-title" style="margin-top: 0;">📜 Histórico de Compras de Peças</div>
+          <div id="historicoComprasLista"></div>
+        </div>
       </div>
 
       <!-- Seção Dashboard -->
@@ -748,17 +792,36 @@
         <div id="lucroMensalLista"></div>
       </div>
       
-      <!-- Seção Painel -->
+      <!-- Seção Painel (Controle de Fluxo) -->
       <div id="pendentesFinalizadosSection" class="card" style="display:none;">
         <h2>📋 Controle de Fluxo</h2>
-        <div class="sub-section-title">⏳ Consertos em Andamento</div>
-        <div id="pendentesConsertosLista"></div>
-        <div class="sub-section-title">✅ Consertos Finalizados</div>
-        <div id="finalizadosConsertosLista"></div>
-        <div class="sub-section-title">📱 Vendas Pendentes</div>
-        <div id="pendentesVendasLista"></div>
-        <div class="sub-section-title">💰 Vendas Finalizadas</div>
-        <div id="finalizadasVendasLista"></div>
+        
+        <div class="sub-tabs-container">
+          <button class="sub-tab-btn active" id="btnSubPainelAndamento" onclick="switchSubPainelTab('andamento')">⏳ Consertos</button>
+          <button class="sub-tab-btn" id="btnSubPainelFinalizados" onclick="switchSubPainelTab('finalizados')">✅ Concluídos</button>
+          <button class="sub-tab-btn" id="btnSubPainelVendasPend" onclick="switchSubPainelTab('vendas_pend')">📱 Estoque</button>
+          <button class="sub-tab-btn" id="btnSubPainelVendasFin" onclick="switchSubPainelTab('vendas_fin')">💰 Vendidos</button>
+        </div>
+
+        <div id="subTabPainelAndamento">
+          <div class="sub-section-title" style="margin-top: 0;">⏳ Consertos em Andamento</div>
+          <div id="pendentesConsertosLista"></div>
+        </div>
+
+        <div id="subTabPainelFinalizados" style="display: none;">
+          <div class="sub-section-title" style="margin-top: 0;">✅ Consertos Finalizados</div>
+          <div id="finalizadosConsertosLista"></div>
+        </div>
+
+        <div id="subTabPainelVendasPend" style="display: none;">
+          <div class="sub-section-title" style="margin-top: 0;">📱 Vendas Pendentes (Em Estoque)</div>
+          <div id="pendentesVendasLista"></div>
+        </div>
+
+        <div id="subTabPainelVendasFin" style="display: none;">
+          <div class="sub-section-title" style="margin-top: 0;">💰 Vendas Finalizadas</div>
+          <div id="finalizadasVendasLista"></div>
+        </div>
       </div>
       
       <!-- Seção Extrato -->
@@ -785,7 +848,7 @@
 <div id="capitalModal" class="modal"><div class="modal-content"><h3>➕ Adicionar Capital</h3><input type="number" id="valorCapital" placeholder="Valor R$"><input type="text" id="descricaoCapital" placeholder="Descrição"><div class="modal-footer-btns"><button onclick="confirmarAdicionarCapital()">Adicionar</button><button onclick="fecharModalCapital()">Cancelar</button></div></div></div>
 <div id="finalizarModal" class="modal"><div class="modal-content"><h3>✅ Finalizar Serviço</h3><input type="number" id="valorRecebido" placeholder="Valor recebido"><select id="formaPagamento"><option>Dinheiro</option><option>PIX</option><option>Cartão</option></select><div class="modal-footer-btns"><button onclick="confirmarFinalizar()">Finalizar</button><button onclick="fecharFinalizarModal()">Cancelar</button></div></div></div>
 <div id="detalheOsModal" class="modal"><div class="modal-content"><span class="close-modal" onclick="fecharDetalheModal()">&times;</span><h3 id="detalheTitulo">Detalhes</h3><div id="detalheConteudo" style="margin-top:15px; line-height: 1.6;"></div></div></div>
-<div id="reciboModal" class="modal"><div class="modal-content"><span class="close-modal" onclick="fecharReciboModal()">&times;</span><h2>🧾 RECIBO</h2><div id="reciboConteudo" class="recibo" style="margin:15px 0;"></div><button onclick="imprimirRecibo()" style="width:100%; background:var(--accent-blue); padding:12px; border:none; border-radius:12px; color:white; font-weight:600; cursor:pointer;">🖨️ Imprimir Recibo</button></div></div>
+<div id="reciboModal" class="modal"><div class="modal-content"><span class="close-modal" onclick="fecharReciboModal()">&times;</span><h2>🧾 RECIBO</h2><div id="reciboConteudo" class="recibo" style="margin:15px 0;"></div><button onclick="imprimirRecibo()" style="width:100%; background:var(--accent-blue); padding:12px; border:none; border-radius:12px; color:#02040a; font-weight:700; cursor:pointer;">🖨️ Imprimir Recibo</button></div></div>
 
 <div id="vendaOrigemModal" class="modal">
   <div class="modal-content">
@@ -816,7 +879,7 @@
       </div>
     </div>
     <div class="modal-footer-btns">
-      <button onclick="confirmarVendaComOrigem()" style="background:var(--accent-green);">Confirmar Venda</button>
+      <button onclick="confirmarVendaComOrigem()" style="background:#30d5c8; color: #02040a;">Confirmar Venda</button>
       <button onclick="fecharVendaOrigemModal()" style="background:var(--accent-red);">Cancelar</button>
     </div>
   </div>
@@ -918,23 +981,122 @@
     }
   });
 
-  // Função exclusiva para gerenciar a troca de sub-abas dentro do painel de vendas
+  function switchSubPainelTab(target) {
+    document.getElementById('subTabPainelAndamento').style.display = 'none';
+    document.getElementById('subTabPainelFinalizados').style.display = 'none';
+    document.getElementById('subTabPainelVendasPend').style.display = 'none';
+    document.getElementById('subTabPainelVendasFin').style.display = 'none';
+
+    document.getElementById('btnSubPainelAndamento').classList.remove('active');
+    document.getElementById('btnSubPainelFinalizados').classList.remove('active');
+    document.getElementById('btnSubPainelVendasPend').classList.remove('active');
+    document.getElementById('btnSubPainelVendasFin').classList.remove('active');
+
+    if (target === 'andamento') {
+      document.getElementById('subTabPainelAndamento').style.display = 'block';
+      document.getElementById('btnSubPainelAndamento').classList.add('active');
+    } else if (target === 'finalizados') {
+      document.getElementById('subTabPainelFinalizados').style.display = 'block';
+      document.getElementById('btnSubPainelFinalizados').classList.add('active');
+    } else if (target === 'vendas_pend') {
+      document.getElementById('subTabPainelVendasPend').style.display = 'block';
+      document.getElementById('btnSubPainelVendasPend').classList.add('active');
+    } else if (target === 'vendas_fin') {
+      document.getElementById('subTabPainelVendasFin').style.display = 'block';
+      document.getElementById('btnSubPainelVendasFin').classList.add('active');
+    }
+  }
+
+  function switchSubConsertoTab(target) {
+    const tabNovaOs = document.getElementById('subTabNovaOs');
+    const tabAndamento = document.getElementById('subTabAndamento');
+    const tabFinalizadosConserto = document.getElementById('subTabFinalizadosConserto');
+    
+    const btnNovaOs = document.getElementById('btnSubNovaOs');
+    const btnAndamento = document.getElementById('btnSubAndamento');
+    const btnFinalizadosConserto = document.getElementById('btnSubFinalizadosConserto');
+
+    tabNovaOs.style.display = 'none';
+    tabAndamento.style.display = 'none';
+    tabFinalizadosConserto.style.display = 'none';
+    
+    btnNovaOs.classList.remove('active');
+    btnAndamento.classList.remove('active');
+    btnFinalizadosConserto.classList.remove('active');
+
+    if(target === 'nova') {
+      tabNovaOs.style.display = 'block';
+      btnNovaOs.classList.add('active');
+    } else if (target === 'andamento') {
+      tabAndamento.style.display = 'block';
+      btnAndamento.classList.add('active');
+      atualizarConsertosLista();
+    } else {
+      tabFinalizadosConserto.style.display = 'block';
+      btnFinalizadosConserto.classList.add('active');
+      atualizarConsertosFinalizados();
+    }
+  }
+
   function switchSubVendaTab(target) {
+    const tabNovaVenda = document.getElementById('subTabNovaVenda');
     const tabDisponiveis = document.getElementById('subTabDisponiveis');
     const tabFinalizados = document.getElementById('subTabFinalizados');
+    
+    const btnNovaVenda = document.getElementById('btnSubNovaVenda');
     const btnDisponiveis = document.getElementById('btnSubDisponiveis');
     const btnFinalizados = document.getElementById('btnSubFinalizados');
 
-    if(target === 'disponiveis') {
+    tabNovaVenda.style.display = 'none';
+    tabDisponiveis.style.display = 'none';
+    tabFinalizados.style.display = 'none';
+    
+    btnNovaVenda.classList.remove('active');
+    btnDisponiveis.classList.remove('active');
+    btnFinalizados.classList.remove('active');
+
+    if(target === 'nova') {
+      tabNovaVenda.style.display = 'block';
+      btnNovaVenda.classList.add('active');
+    } else if(target === 'disponiveis') {
       tabDisponiveis.style.display = 'block';
-      tabFinalizados.style.display = 'none';
       btnDisponiveis.classList.add('active');
-      btnFinalizados.classList.remove('active');
+      atualizarAparelhosLista();
     } else {
-      tabDisponiveis.style.display = 'none';
       tabFinalizados.style.display = 'block';
-      btnDisponiveis.classList.remove('active');
       btnFinalizados.classList.add('active');
+      atualizarVendasRealizadas();
+    }
+  }
+
+  function switchSubPecaTab(target) {
+    const tabNovaPeca = document.getElementById('subTabNovaPeca');
+    const tabEstoque = document.getElementById('subTabEstoquePecas');
+    const tabHistorico = document.getElementById('subTabHistoricoPecas');
+    
+    const btnNovaPeca = document.getElementById('btnSubNovaPeca');
+    const btnEstoque = document.getElementById('btnSubEstoquePecas');
+    const btnHistorico = document.getElementById('btnSubHistoricoPecas');
+
+    tabNovaPeca.style.display = 'none';
+    tabEstoque.style.display = 'none';
+    tabHistorico.style.display = 'none';
+    
+    btnNovaPeca.classList.remove('active');
+    btnEstoque.classList.remove('active');
+    btnHistorico.classList.remove('active');
+
+    if(target === 'nova') {
+      tabNovaPeca.style.display = 'block';
+      btnNovaPeca.classList.add('active');
+    } else if(target === 'estoque') {
+      tabEstoque.style.display = 'block';
+      btnEstoque.classList.add('active');
+      atualizarEstoque();
+    } else {
+      tabHistorico.style.display = 'block';
+      btnHistorico.classList.add('active');
+      atualizarHistoricoCompras();
     }
   }
 
@@ -1035,6 +1197,7 @@
     consertos.push(novaOS); salvarDados(); atualizarTudo(); 
     document.getElementById('clienteConserto').value = ''; document.getElementById('modeloConserto').value = ''; document.getElementById('defeitoConserto').value = ''; document.getElementById('valorConserto').value = ''; document.getElementById('valorPeca').value = ''; document.getElementById('valorEntrada').value = ''; document.getElementById('valorParcela').value = ''; document.getElementById('nomeFornecedor').value = ''; document.getElementById('fornecedorDiv').style.display = 'none'; document.querySelector('input[name="origemCustoPeca"][value="capital"]').checked = true;
     alert('OS criada!');
+    switchSubConsertoTab('andamento');
   }
 
   function salvarAparelhoDetalhado() {
@@ -1051,6 +1214,7 @@
     salvarDados(); atualizarTudo(); 
     document.getElementById('modelo').value = ''; document.getElementById('valorCompra').value = ''; document.getElementById('valorVenda').value = ''; document.getElementById('pecaUtilizada').value = ''; document.getElementById('valorPecaUtilizada').value = ''; document.getElementById('nomeFornecedorVenda').value = ''; document.getElementById('fornecedorVendaDiv').style.display = 'none'; document.querySelector('input[name="origemCustoVenda"][value="capital"]').checked = true;
     alert('Estoque updated!');
+    switchSubVendaTab('disponiveis');
   }
 
   function finalizarConserto(id) { consertoFinalizandoId = id; document.getElementById('finalizarModal').style.display='flex'; }
@@ -1065,6 +1229,7 @@
     let finalizada = {...c, valorRecebido, formaPagamento: forma, lucro, dataFinalizacao: new Date().toISOString()};
     consertosFinalizados.unshift(finalizada); consertos.splice(idx,1);
     salvarDados(); fecharFinalizarModal(); atualizarTudo(); alert(`Finalizado! Lucro: R$ ${lucro.toFixed(2)}`); mostrarRecibo(finalizada);
+    switchSubConsertoTab('finalizados');
   }
 
   function abrirEditarOs(id, isFinalizada = false) { 
@@ -1086,6 +1251,7 @@
       if(idx !== -1) consertos[idx] = { ...consertos[idx], cliente, modelo, defeito, valorConserto, valorPeca, tipoPeca, valorEntrada, dataEntradaPagamento, valorParcelaRestante, dataRestantePagamento };
     }
     salvarDados(); atualizarTudo(); fecharEditarOsModal(); alert('OS editada!');
+    if(editandoFinalizada) { switchSubConsertoTab('finalizados'); } else { switchSubConsertoTab('andamento'); }
   }
 
   function fecharEditarOsModal() { document.getElementById('editarOsModal').style.display = 'none'; editandoOsId = null; editandoFinalizada = false; }
@@ -1093,14 +1259,15 @@
   function mostrarRecibo(os) { document.getElementById('reciboConteudo').innerHTML = `<pre>${gerarRecibo(os)}</pre>`; document.getElementById('reciboModal').style.display = 'flex'; }
   function imprimirRecibo() { let conteudo = document.getElementById('reciboConteudo').innerText; let win = window.open('', '_blank'); win.document.write('<html><head><title>Recibo</title></head><body><pre>'+conteudo+'</pre></body></html>'); win.document.close(); win.print(); }
   function fecharReciboModal() { document.getElementById('reciboModal').style.display = 'none'; }
-  function deletarConserto(id) { let idx = consertos.findIndex(c=>c.id===id); if(idx!==-1 && confirm('Excluir OS?')) { let c = consertos[idx]; if(c.valorPeca>0 && c.origemCustoPeca !== 'fornecedor') creditarCapital(c.valorPeca, `Estorno peça OS ${c.modelo}`); consertos.splice(idx,1); salvarDados(); atualizarTudo(); } }
-  function verDetalhesOS(os) { document.getElementById('detalheTitulo').innerHTML = `🔍 OS - ${os.modelo}`; document.getElementById('detalheConteudo').innerHTML = `<p><strong>Cliente:</strong> ${os.cliente}</p><p><strong>Defeito:</strong> ${os.defeito}</p><p><strong>Valor serviço:</strong> R$ ${os.valorConserto.toFixed(2)}</p><p><strong>Entrada:</strong> R$ ${(os.valorEntrada||0).toFixed(2)}</p><p><strong>Restante:</strong> R$ ${(os.valorParcelaRestante||0).toFixed(2)}</p><p><strong>Peça:</strong> ${os.tipoPeca||'Nenhuma'} | Custo: R$ ${os.valorPeca.toFixed(2)}</p><br><button onclick="mostrarRecibo(${JSON.stringify(os).replace(/"/g, '&quot;')})" style="background:var(--accent-green);color:white;padding:8px 14px;border-radius:10px;border:none;cursor:pointer;">🧾 Recibo</button>`; document.getElementById('detalheOsModal').style.display='flex'; }
+  function deletarConserto(id) { let idx = consertos.findIndex(c=>c.id===id); if(idx!==-1 && confirm('Excluir OS?')) { let c = consertos[idx]; if(c.valorPeca>0 && c.origemCustoPeca !== 'fornecedor') creditarCapital(c.valorPeca, `Estorno peça OS ${c.modelo}`); consertos.splice(idx,1); salvarDados(); atualizarTudo(); switchSubConsertoTab('andamento'); } }
+  function verDetalhesOS(os) { document.getElementById('detalheTitulo').innerHTML = `🔍 OS - ${os.modelo}`; document.getElementById('detalheConteudo').innerHTML = `<p><strong>Cliente:</strong> ${os.cliente}</p><p><strong>Defeito:</strong> ${os.defeito}</p><p><strong>Valor serviço:</strong> R$ ${os.valorConserto.toFixed(2)}</p><p><strong>Entrada:</strong> R$ ${(os.valorEntrada||0).toFixed(2)}</p><p><strong>Restante:</strong> R$ ${(os.valorParcelaRestante||0).toFixed(2)}</p><p><strong>Peça:</strong> ${os.tipoPeca||'Nenhuma'} | Custo: R$ ${os.valorPeca.toFixed(2)}</p><br><button onclick="mostrarRecibo(${JSON.stringify(os).replace(/"/g, '&quot;')})" style="background:#30d5c8;color:#02040a;padding:8px 14px;border-radius:10px;font-weight:700;border:none;cursor:pointer;">🧾 Recibo</button>`; document.getElementById('detalheOsModal').style.display='flex'; }
   function verDetailFinalizado(f) { verDetalhesOS(f); }
   function fecharDetalheModal() { document.getElementById('detalheOsModal').style.display='none'; }
   function fecharFinalizarModal() { document.getElementById('finalizarModal').style.display='none'; consertoFinalizandoId=null; }
   
   function atualizarConsertosLista() { 
     let div = document.getElementById('consertosLista'); 
+    if(!div) return;
     if(consertos.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">Nenhuma OS em andamento.</p>'; 
     else div.innerHTML=consertos.map(c=>{
       const temPendencia = (c.valorParcelaRestante || 0) > 0;
@@ -1113,7 +1280,8 @@
 
   function atualizarAparelhosLista() { 
     let div = document.getElementById('aparelhosLista'); 
-    if(aparelhos.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">📭 Nenhum aparelho em estoque.</p>'; 
+    if(!div) return;
+    if(aparelhos.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">📭 Nenhum aparelho em estoque disponível.</p>'; 
     else div.innerHTML=aparelhos.map(a=>{
       const temPendencia = (a.valorParcelaRestante || 0) > 0;
       const atrasado = temPendencia && verificarAtraso(a.dataRestantePagamento, a.valorParcelaRestante);
@@ -1125,31 +1293,59 @@
 
   function atualizarPendentesFinalizados() { 
     let pendentesConsertosDiv = document.getElementById('pendentesConsertosLista'); 
-    if(consertos.length === 0) pendentesConsertosDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhum conserto pendente</p>'; 
-    else pendentesConsertosDiv.innerHTML = consertos.map(c => {
-      const temPendencia = (c.valorParcelaRestante || 0) > 0; const atrasado = temPendencia && verificarAtraso(c.dataRestantePagamento, c.valorParcelaRestante);
-      return `<div class="item ${atrasado ? 'item-atrasado' : ''}"><h3>🔧 ${c.modelo} - ${c.cliente}</h3><p>R$ ${c.valorConserto.toFixed(2)}</p></div>`;
-    }).join(''); 
+    if(pendentesConsertosDiv) {
+      if(consertos.length === 0) {
+        pendentesConsertosDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhum conserto pendente</p>'; 
+      } else {
+        pendentesConsertosDiv.innerHTML = consertos.map(c => {
+          const temPendencia = (c.valorParcelaRestante || 0) > 0; 
+          const atrasado = temPendencia && verificarAtraso(c.dataRestantePagamento, c.valorParcelaRestante);
+          return `<div class="item ${atrasado ? 'item-atrasado' : ''}"><h3>🔧 ${c.modelo} - ${c.cliente}</h3><p>Total: R$ ${c.valorConserto.toFixed(2)} | Devedor: R$ ${(c.valorParcelaRestante||0).toFixed(2)}</p></div>`;
+        }).join(''); 
+      }
+    }
     
     let pendentesVendasDiv = document.getElementById('pendentesVendasLista'); 
-    if(aparelhos.length === 0) pendentesVendasDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhuma venda pendente</p>'; 
-    else pendentesVendasDiv.innerHTML = aparelhos.map(a => `<div class="item"><h3>📱 ${a.modelo}</h3><p>Sugerido: R$ ${a.valorVenda.toFixed(2)}</p></div>`).join(''); 
+    if(pendentesVendasDiv) {
+      if(aparelhos.length === 0) {
+        pendentesVendasDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhum aparelho em estoque</p>'; 
+      } else {
+        pendentesVendasDiv.innerHTML = aparelhos.map(a => `<div class="item"><h3>📱 ${a.modelo}</h3><p>Sugerido: R$ ${a.valorVenda.toFixed(2)} | Condição: ${a.condicao}</p></div>`).join(''); 
+      }
+    }
     
     let finalizadosConsertosDiv = document.getElementById('finalizadosConsertosLista'); 
-    if(consertosFinalizados.length === 0) finalizadosConsertosDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhum finalizado</p>'; 
-    else finalizadosConsertosDiv.innerHTML = consertosFinalizados.map(f => `<div class="item"><h3>✅ ${f.modelo}</h3><p>Lucro: R$ ${f.lucro?.toFixed(2)}</p></div>`).join(''); 
+    if(finalizadosConsertosDiv) {
+      if(consertosFinalizados.length === 0) {
+        finalizadosConsertosDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhum conserto finalizado</p>'; 
+      } else {
+        finalizadosConsertosDiv.innerHTML = consertosFinalizados.map(f => `<div class="item"><h3>✅ ${f.modelo}</h3><p>Lucro: R$ ${(f.lucro || 0).toFixed(2)}</p></div>`).join(''); 
+      }
+    }
     
     let finalizadasVendasDiv = document.getElementById('finalizadasVendasLista'); 
-    if(vendasRealizadas.length === 0) finalizadasVendasDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhuma finalizada</p>'; 
-    else finalizadasVendasDiv.innerHTML = vendasRealizadas.map(v => `<div class="item"><h3>✅ ${v.modelo} <span class="origem-badge">📍 ${v.origem||'N/I'}</span></h3><p>Lucro: R$ ${v.lucro.toFixed(2)}</p></div>`).join(''); 
+    if(finalizadasVendasDiv) {
+      if(vendasRealizadas.length === 0) {
+        finalizadasVendasDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhuma venda realizada</p>'; 
+      } else {
+        finalizadasVendasDiv.innerHTML = vendasRealizadas.map(v => `<div class="item"><h3>✅ ${v.modelo} <span class="origem-badge">📍 ${v.origem || 'N/I'}</span></h3><p>Lucro: R$ ${(v.lucro || 0).toFixed(2)}</p></div>`).join(''); 
+      }
+    }
   }
 
   function atualizarConsertosFinalizados() { 
     let div = document.getElementById('consertosFinalizadosLista'); 
+    if(!div) return;
     if(consertosFinalizados.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">Nenhum conserto finalizado recentemente.</p>'; 
     else div.innerHTML=consertosFinalizados.slice(0,5).map(f=>`<div class="item"><h3>✅ ${f.modelo} - ${f.cliente}</h3><p>Recebido: R$ ${f.valorRecebido.toFixed(2)} | Lucro: R$ ${f.lucro.toFixed(2)}</p><div class="item-actions"><button class="ver-detalhes" onclick='verDetalhesOS(${JSON.stringify(f).replace(/"/g, '&quot;')})'>🔍 Ver OS</button><button class="btn-editar" onclick="abrirEditarOs(${f.id}, true)">✏️ Editar</button></div></div>`).join(''); 
   }
-  function atualizarExtratoDetalhado() { let div = document.getElementById('extratoLista'); if(extrato.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">Sem movimentações registradas.</p>'; else div.innerHTML=extrato.slice(0,40).map(e=>`<div class="extrato-item-detalhado ${e.tipo}"><div><strong>📌 ${e.descricao}</strong><br><small style="color:var(--text-muted);font-size:11px;">${e.data}</small></div><div style="display:flex; gap:10px; align-items:center; font-weight:700;">R$ ${e.valor.toFixed(2)}<button class="btn-deletar" style="padding:4px 8px; border-radius:6px; font-size:11px;" onclick="excluirExtrato(${e.id})">🗑️</button></div></div>`).join(''); }
+  
+  function atualizarExtratoDetalhado() { 
+    let div = document.getElementById('extratoLista'); 
+    if(!div) return;
+    if(extrato.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">Sem movimentações registradas.</p>'; 
+    else div.innerHTML=extrato.slice(0,40).map(e=>`<div class="extrato-item-detalhado ${e.tipo}"><div><strong>📌 ${e.descricao}</strong><br><small style="color:var(--text-muted);font-size:11px;">${e.data}</small></div><div style="display:flex; gap:10px; align-items:center; font-weight:700;">R$ ${e.valor.toFixed(2)}<button class="btn-deletar" style="padding:4px 8px; border-radius:6px; font-size:11px;" onclick="excluirExtrato(${e.id})">🗑️</button></div></div>`).join(''); 
+  }
   
   function iniciarVendaAparelho(id) { 
     vendaPendenteId = id; let ap = aparelhos.find(a=>a.id===id); 
@@ -1177,6 +1373,7 @@
         ap.valorParcelaRestante -= valorRecebido; creditarCapital(valorRecebido, `Pagamento parcial: ${ap.modelo}`); alert(`Abatido! Faltam: R$ ${ap.valorParcelaRestante.toFixed(2)}`);
     }
     salvarDados(); atualizarTudo(); fecharFinalizarVendaModal();
+    switchSubVendaTab('finalizados');
   }
 
   function confirmarVendaComOrigem() { 
@@ -1196,28 +1393,31 @@
     if(isParcelada) {
       if(valorEntrada > 0) creditarCapital(valorEntrada, `Entrada venda ${ap.modelo}`);
       ap.valorEntrada = valorEntrada; ap.dataEntradaPagamento = dataEntradaPag; ap.valorParcelaRestante = valorParcelaRestante; ap.dataRestantePagamento = dataRestantePag; ap.status = 'parcelado';
-      salvarDados(); alert(`Venda em aberto criada!`); atualizarTudo(); fecharVendaOrigemModal(); return;
+      salvarDados(); alert(`Venda em aberto criada!`); atualizarTudo(); fecharVendaOrigemModal(); 
+      switchSubVendaTab('disponiveis');
+      return;
     }
     
     if(ap.origemCustoVenda !== 'fornecedor') { creditarCapital(ap.valorCompra, `Retorno estoque ${ap.modelo}`); if(ap.valorPecaUtilizada>0) creditarCapital(ap.valorPecaUtilizada, `Retorno peça ${ap.modelo}`); }
     if(lucroVenda>0) { lucroTotal += lucroVenda; adicionarExtrato('credito', `LUCRO Venda ${ap.modelo}`, lucroVenda); } 
     vendasRealizadas.unshift({ id:Date.now(), modelo:ap.modelo, valorVenda:valorRecebido, custoTotal, lucro:lucroVenda, data:new Date().toLocaleString(), condicao:ap.condicao, acessorios:ap.acessorios, pecaUtilizada:ap.pecaUtilizada, valorPecaUtilizada:ap.valorPecaUtilizada, origem, valorEntrada:0, valorParcelaRestante:0 }); 
     aparelhos = aparelhos.filter(a=>a.id!==vendaPendenteId); salvarDados(); atualizarTudo(); fecharVendaOrigemModal(); alert(`Vendido à vista!`); 
+    switchSubVendaTab('finalizados');
   }
 
-  function deletarAparelho(id) { let a = aparelhos.find(x=>x.id===id); if(a && confirm(`Excluir ${a.modelo}?`)) { let totalEstorno = a.valorCompra + (a.valorPecaUtilizada||0); if(a.origemCustoVenda !== 'fornecedor') creditarCapital(totalEstorno, `Estorno ${a.modelo}`); aparelhos = aparelhos.filter(x=>x.id!==id); salvarDados(); atualizarTudo(); } }
+  function deletarAparelho(id) { let a = aparelhos.find(x=>x.id===id); if(a && confirm(`Excluir ${a.modelo}?`)) { let totalEstorno = a.valorCompra + (a.valorPecaUtilizada||0); if(a.origemCustoVenda !== 'fornecedor') creditarCapital(totalEstorno, `Estorno ${a.modelo}`); aparelhos = aparelhos.filter(x=>x.id!==id); salvarDados(); atualizarTudo(); switchSubVendaTab('disponiveis'); } }
   function editarAparelho(id) { let ap = aparelhos.find(a=>a.id===id); if(!ap) return; editAparelhoId=id; document.getElementById('editModelo').value=ap.modelo; document.getElementById('editValorCompra').value=ap.valorCompra; document.getElementById('editValorVenda').value=ap.valorVenda; document.getElementById('editCondicao').value=ap.condicao; document.getElementById('editAcessorios').value=ap.acessorios||''; document.getElementById('editPecaUtilizada').value=ap.pecaUtilizada!=='Nenhuma'?ap.pecaUtilizada:''; document.getElementById('editValorPecaUtilizada').value=ap.valorPecaUtilizada||0; document.getElementById('editarAparelhoModal').style.display='flex'; }
-  function confirmarEditarAparelho() { let ap = aparelhos.find(a=>a.id===editAparelhoId); if(!ap) return; let novoCompra = Number(document.getElementById('editValorCompra').value); let novoValorPeca = Number(document.getElementById('editValorPecaUtilizada').value)||0; let oldCusto = ap.valorCompra + (ap.valorPecaUtilizada||0); let newCusto = novoCompra + novoValorPeca; let diff = newCusto - oldCusto; if(diff>0 && !debitarCapital(diff, `Ajuste custo ${ap.modelo}`)) return; else if(diff<0) creditarCapital(-diff, `Redução custo ${ap.modelo}`); ap.modelo = document.getElementById('editModelo').value; ap.valorCompra = novoCompra; ap.valorVenda = Number(document.getElementById('editValorVenda').value); ap.condicao = document.getElementById('editCondicao').value; ap.acessorios = document.getElementById('editAcessorios').value; ap.pecaUtilizada = document.getElementById('editPecaUtilizada').value.trim()||'Nenhuma'; ap.valorPecaUtilizada = novoValorPeca; salvarDados(); atualizarTudo(); fecharEditarAparelhoModal(); }
+  function confirmarEditarAparelho() { let ap = aparelhos.find(a=>a.id===editAparelhoId); if(!ap) return; let novoCompra = Number(document.getElementById('editValorCompra').value); let novoValorPeca = Number(document.getElementById('editValorPecaUtilizada').value)||0; let oldCusto = ap.valorCompra + (ap.valorPecaUtilizada||0); let newCusto = novoCompra + novoValorPeca; let diff = newCusto - oldCusto; if(diff>0 && !debitarCapital(diff, `Ajuste custo ${ap.modelo}`)) return; else if(diff<0) creditarCapital(-diff, `Redução custo ${ap.modelo}`); ap.modelo = document.getElementById('editModelo').value; ap.valorCompra = novoCompra; ap.valorVenda = Number(document.getElementById('editValorVenda').value); ap.condicao = document.getElementById('editCondicao').value; ap.acessorios = document.getElementById('editAcessorios').value; ap.pecaUtilizada = document.getElementById('editPecaUtilizada').value.trim()||'Nenhuma'; ap.valorPecaUtilizada = novoValorPeca; salvarDados(); atualizarTudo(); fecharEditarAparelhoModal(); switchSubVendaTab('disponiveis'); }
   function fecharEditarAparelhoModal() { document.getElementById('editarAparelhoModal').style.display='none'; editAparelhoId=null; }
   function fecharVendaOrigemModal() { document.getElementById('vendaOrigemModal').style.display='none'; vendaPendenteId=null; }
   function fecharFinalizarVendaModal() { document.getElementById('finalizarVendaModal').style.display='none'; vendaParcelaFinalizandoId=null; document.getElementById('vendaValorRecebido').value=''; }
   function editarVendaFinalizada(id) { let venda = vendasRealizadas.find(v => v.id === id); if(!venda) return; editVendaId = id; document.getElementById('editVendaModelo').value = venda.modelo; document.getElementById('editVendaValor').value = venda.valorVenda; document.getElementById('editVendaLucro').value = venda.lucro; document.getElementById('editVendaOrigem').value = venda.origem || 'Assistência'; document.getElementById('editarVendaFinalizadaModal').style.display = 'flex'; }
-  function confirmarEditarVendaFinalizada() { if(!editVendaId) return; let venda = vendasRealizadas.find(v => v.id === editVendaId); if(!venda) return; let oldLucro = venda.lucro; let newLucro = Number(document.getElementById('editVendaLucro').value); let diffLucro = newLucro - oldLucro; venda.modelo = document.getElementById('editVendaModelo').value; venda.valorVenda = Number(document.getElementById('editVendaValor').value); venda.lucro = newLucro; venda.origem = document.getElementById('editVendaOrigem').value; if(diffLucro !== 0) { lucroTotal += diffLucro; adicionarExtrato(diffLucro > 0 ? 'credito' : 'debito', `Ajuste lucro ${venda.modelo}`, Math.abs(diffLucro)); atualizarDisplays(); } salvarDados(); atualizarTudo(); fecharEditarVendaFinalizadaModal(); alert('Venda editada!'); }
+  function confirmarEditarVendaFinalizada() { if(!editVendaId) return; let venda = vendasRealizadas.find(v => v.id === editVendaId); if(!venda) return; let oldLucro = venda.lucro; let newLucro = Number(document.getElementById('editVendaLucro').value); let diffLucro = newLucro - oldLucro; venda.modelo = document.getElementById('editVendaModelo').value; venda.valorVenda = Number(document.getElementById('editVendaValor').value); venda.lucro = newLucro; venda.origem = document.getElementById('editVendaOrigem').value; if(diffLucro !== 0) { lucroTotal += diffLucro; adicionarExtrato(diffLucro > 0 ? 'credito' : 'debito', `Ajuste lucro ${venda.modelo}`, Math.abs(diffLucro)); atualizarDisplays(); } salvarDados(); atualizarTudo(); fecharEditarVendaFinalizadaModal(); alert('Venda editada!'); switchSubVendaTab('finalizados'); }
   function fecharEditarVendaFinalizadaModal() { document.getElementById('editarVendaFinalizadaModal').style.display = 'none'; editVendaId = null; }
   
-  function salvarCompraDetalhada() { let nome = document.getElementById('nomePeca').value.trim(); let qtd = Number(document.getElementById('quantidade').value); let preco = Number(document.getElementById('precoUnitario').value); if(!nome||!qtd||!preco) { alert('Preencha os campos obrigatórios'); return; } let total = qtd * preco; if(!debitarCapital(total, `Compra ${qtd}x ${nome}`)) return; comprasPecas.push({ id: Date.now(), nomePeca:nome, categoria:document.getElementById('categoriaPeca').value, quantidade:qtd, precoUnitario:preco, fornecedor:document.getElementById('fornecedorPeca').value, valorTotal:total, dataCompra:document.getElementById('dataCompraPeca').value||new Date().toISOString().split('T')[0], status:'pendente' }); let existente = estoquePecas.find(p=>p.nomePeca===nome); if(existente) { let custoAntigo = existente.quantidade * existente.precoUnitarioMedio; existente.quantidade += qtd; existente.precoUnitarioMedio = (custoAntigo + (qtd*preco)) / existente.quantidade; } else { estoquePecas.push({ id:Date.now(), nomePeca:nome, categoria:document.getElementById('categoriaPeca').value, quantidade:qtd, precoUnitarioMedio:preco, fornecedor:document.getElementById('fornecedorPeca').value, dataEntrada:new Date().toISOString().split('T')[0] }); } salvarDados(); atualizarTudo(); alert(`Compra registrada!`); }
-  function marcarCompraComoPaga(id) { let compra = comprasPecas.find(c=>c.id===id); if(!compra||compra.status==='pago') return; if(confirm(`Estornar R$ ${compra.valorTotal.toFixed(2)}?`)) { creditarCapital(compra.valorTotal, `Estorno: ${compra.nomePeca}`); compra.status='pago'; salvarDados(); atualizarTudo(); } }
-  function deletarCompraHistorico(id) { if(confirm('Remover do histórico?')) { comprasPecas = comprasPecas.filter(c=>c.id!==id); salvarDados(); atualizarTudo(); } }
+  function salvarCompraDetalhada() { let nome = document.getElementById('nomePeca').value.trim(); let qtd = Number(document.getElementById('quantidade').value); let preco = Number(document.getElementById('precoUnitario').value); if(!nome||!qtd||!preco) { alert('Preencha os campos obrigatórios'); return; } let total = qtd * preco; if(!debitarCapital(total, `Compra ${qtd}x ${nome}`)) return; comprasPecas.push({ id: Date.now(), nomePeca:nome, categoria:document.getElementById('categoriaPeca').value, quantidade:qtd, precoUnitario:preco, fornecedor:document.getElementById('fornecedorPeca').value, valorTotal:total, dataCompra:document.getElementById('dataCompraPeca').value||new Date().toISOString().split('T')[0], status:'pendente' }); let existente = estoquePecas.find(p=>p.nomePeca===nome); if(existente) { let custoAntigo = existente.quantidade * existente.precoUnitarioMedio; existente.quantidade += qtd; existente.precoUnitarioMedio = (custoAntigo + (qtd*preco)) / existente.quantidade; } else { estoquePecas.push({ id:Date.now(), nomePeca:nome, categoria:document.getElementById('categoriaPeca').value, quantidade:qtd, precoUnitarioMedio:preco, fornecedor:document.getElementById('fornecedorPeca').value, dataEntrada:new Date().toISOString().split('T')[0] }); } salvarDados(); atualizarTudo(); alert(`Compra registrada!`); document.getElementById('nomePeca').value = ''; document.getElementById('quantidade').value = ''; document.getElementById('precoUnitario').value = ''; document.getElementById('fornecedorPeca').value = ''; switchSubPecaTab('estoque'); }
+  function marcarCompraComoPaga(id) { let compra = comprasPecas.find(c=>c.id===id); if(!compra||compra.status==='pago') return; if(confirm(`Estornar R$ ${compra.valorTotal.toFixed(2)}?`)) { creditarCapital(compra.valorTotal, `Estorno: ${compra.nomePeca}`); compra.status='pago'; salvarDados(); atualizarTudo(); switchSubPecaTab('historico'); } }
+  function deletarCompraHistorico(id) { if(confirm('Remover do histórico?')) { comprasPecas = comprasPecas.filter(c=>c.id!==id); salvarDados(); atualizarTudo(); switchSubPecaTab('historico'); } }
   
   function darBaixaPeca(id) { 
     let item = estoquePecas.find(p=>p.id===id); 
@@ -1228,15 +1428,18 @@
       if(item.quantidade === 0) estoquePecas = estoquePecas.filter(p=>p.id!==id); 
       salvarDados(); 
       atualizarTudo(); 
+      switchSubPecaTab('estoque');
     } 
   }
   
-  function atualizarVendasRealizadas() { let div = document.getElementById('vendasRealizadasLista'); if(vendasRealizadas.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">Nenhuma venda finalizada.</p>'; else div.innerHTML=vendasRealizadas.map(v=>`<div class="item"><h3>✅ ${v.modelo} <span class="origem-badge">📍 ${v.origem||'N/I'}</span></h3><p>Vendido por: R$ ${v.valorVenda.toFixed(2)} | Lucro líquido: R$ ${v.lucro.toFixed(2)}</p><div class="item-actions"><button class="btn-editar" onclick="editarVendaFinalizada(${v.id})">✏️ Editar Venda</button></div></div>`).join(''); }
-  function atualizarEstoque() { let div = document.getElementById('estoqueLista'); if(estoquePecas.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">🔧 Sem componentes cadastrados.</p>'; else div.innerHTML=estoquePecas.map(p=>`<div class="item"><h3>🔧 ${p.nomePeca}</h3><p>Unidades em estoque: <strong>${p.quantidade}</strong> | Custo médio: R$ ${p.precoUnitarioMedio.toFixed(2)}</p><div class="item-actions"><button style="background:var(--accent-orange);" onclick="darBaixaPeca(${p.id})">⬇️ Dar Baixa</button></div></div>`).join(''); }
-  function atualizarHistoricoCompras() { let div = document.getElementById('historicoComprasLista'); if(comprasPecas.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">Sem registros de compra.</p>'; else div.innerHTML=comprasPecas.map(c=>`<div class="item"><h3>🛒 ${c.nomePeca} <span class="status-pagamento ${c.status==='pago'?'status-pago':'status-pendente'}">${c.status==='pago'?'Pago':'Pendente'}</span></h3><p>${c.quantidade}x totalizando R$ ${c.valorTotal.toFixed(2)}</p><div class="item-actions">${c.status!=='pago'?`<button onclick="marcarCompraComoPaga(${c.id})" style="background:var(--accent-green)">💰 Marcar Pago</button>`:''}<button class="btn-deletar" onclick="deletarCompraHistorico(${c.id})">🗑️</button></div></div>`).join(''); }
+  function atualizarVendasRealizadas() { let div = document.getElementById('vendasRealizadasLista'); if(!div) return; if(vendasRealizadas.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">Nenhuma venda finalizada.</p>'; else div.innerHTML=vendasRealizadas.map(v=>`<div class="item"><h3>✅ ${v.modelo} <span class="origem-badge">📍 ${v.origem||'N/I'}</span></h3><p>Vendido por: R$ ${v.valorVenda.toFixed(2)} | Lucro líquido: R$ ${v.lucro.toFixed(2)}</p><div class="item-actions"><button class="btn-editar" onclick="editarVendaFinalizada(${v.id})">✏️ Editar Venda</button></div></div>`).join(''); }
+  function atualizarEstoque() { let div = document.getElementById('estoqueLista'); if(!div) return; if(estoquePecas.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">🔧 Sem componentes cadastrados.</p>'; else div.innerHTML=estoquePecas.map(p=>`<div class="item"><h3>🔧 ${p.nomePeca}</h3><p>Unidades em estoque: <strong>${p.quantidade}</strong> | Custo médio: R$ ${p.precoUnitarioMedio.toFixed(2)}</p><div class="item-actions"><button style="background:var(--accent-orange); color:#02040a" onclick="darBaixaPeca(${p.id})">⬇️ Dar Baixa</button></div></div>`).join(''); }
+  function atualizarHistoricoCompras() { let div = document.getElementById('historicoComprasLista'); if(!div) return; if(comprasPecas.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">Sem registros de compra.</p>'; else div.innerHTML=comprasPecas.map(c=>`<div class="item"><h3>🛒 ${c.nomePeca} <span class="status-pagamento ${c.status==='pago'?'status-pago':'status-pendente'}">${c.status==='pago'?'Pago':'Pendente'}</span></h3><p>${c.quantidade}x totalizando R$ ${c.valorTotal.toFixed(2)}</p><div class="item-actions">${c.status!=='pago'?`<button onclick="marcarCompraComoPaga(${c.id})" style="background:#30d5c8; color: #02040a;">💰 Marcar Pago</button>`:''}<button class="btn-deletar" onclick="deletarCompraHistorico(${c.id})">🗑️</button></div></div>`).join(''); }
   
   function atualizarResumo() { 
-    document.getElementById('resumoFinanceiro').innerHTML = `
+    let div = document.getElementById('resumoFinanceiro');
+    if(!div) return;
+    div.innerHTML = `
       <div style="line-height:1.8; font-size:14px;">
         <p>📌 OS em andamento: <strong>${consertos.length}</strong></p>
         <p>✅ Consertos concluídos: <strong>${consertosFinalizados.length}</strong></p>
@@ -1308,9 +1511,11 @@
   }
 
   function atualizarRelatorios() { 
+    let div = document.getElementById('relatoriosLista');
+    if(!div) return;
     let lC = consertosFinalizados.reduce((s,c)=>s+(c.lucro||0),0); 
     let lV = vendasRealizadas.reduce((s,v)=>s+(v.lucro||0),0); 
-    document.getElementById('relatoriosLista').innerHTML = `
+    div.innerHTML = `
       <div class="item">
         <p>Ganhos em Consertos: R$ ${lC.toFixed(2)}</p>
         <p>Ganhos em Vendas: R$ ${lV.toFixed(2)}</p>
@@ -1319,13 +1524,18 @@
     atualizarLucroMensal(); 
   }
 
-  function atualizarTudo() { atualizarConsertosLista(); atualizarConsertosFinalizados(); atualizarAparelhosLista(); atualizarVendasRealizadas(); atualizarEstoque(); atualizarHistoricoCompras(); atualizarResumo(); atualizarRelatorios(); atualizarExtratoDetalhado(); atualizarPendentesFinalizados(); atualizarDisplays(); salvarDados(); }
+  function atualizarTudo() { 
+    // Atualiza apenas os caches e KPIs globais em plano de fundo sem reordenar/forçar render em lote das sub-abas ocultas
+    atualizarDisplays(); 
+    salvarDados(); 
+  }
+
   function adicionarCapital() { document.getElementById('capitalModal').style.display='flex'; }
   function fecharModalCapital() { document.getElementById('capitalModal').style.display='none'; }
-  function confirmarAdicionarCapital() { let v = parseFloat(document.getElementById('valorCapital').value); if(v>0) creditarCapital(v, document.getElementById('descricaoCapital').value || 'Aporte Manual'); fecharModalCapital(); atualizarTudo(); }
+  function confirmarAdicionarCapital() { let v = parseFloat(document.getElementById('valorCapital').value); if(v>0) creditarCapital(v, document.getElementById('descricaoCapital').value || 'Aporte Manual'); fecharModalCapital(); atualizarTudo(); if(document.getElementById('extratoSection').style.display === 'block') atualizarExtratoDetalhado(); }
   function editarCapital() { document.getElementById('editarCapitalModal').style.display='flex'; document.getElementById('novoCapital').value=capital; }
   function fecharEditarCapitalModal() { document.getElementById('editarCapitalModal').style.display='none'; }
-  function confirmarEditarCapital() { let novo = parseFloat(document.getElementById('novoCapital').value); let motivo = document.getElementById('motivoEdicao').value; if(!isNaN(novo)) { let dif = novo - capital; if(dif>0) creditarCapital(dif, motivo+' (Ajuste)'); else if(dif<0) debitarCapital(-dif, motivo+' (Ajuste)'); } fecharEditarCapitalModal(); atualizarTudo(); }
+  function confirmarEditarCapital() { let novo = parseFloat(document.getElementById('novoCapital').value); let motivo = document.getElementById('motivoEdicao').value; if(!isNaN(novo)) { let dif = novo - capital; if(dif>0) creditarCapital(dif, motivo+' (Ajuste)'); else if(dif<0) debitarCapital(-dif, motivo+' (Ajuste)'); } fecharEditarCapitalModal(); atualizarTudo(); if(document.getElementById('extratoSection').style.display === 'block') atualizarExtratoDetalhado(); }
   
   function showSection(section) { 
     ['consertos','vendaAparelhos','compras','dashboard','extrato','pendentesFinalizados'].forEach(s=>document.getElementById(s+'Section').style.display='none'); document.getElementById(section+'Section').style.display='block'; 
@@ -1337,10 +1547,14 @@
     
     if(section==='extrato') atualizarExtratoDetalhado(); 
     if(section==='dashboard') { atualizarResumo(); atualizarRelatorios(); } 
-    if(section==='pendentesFinalizados') atualizarPendentesFinalizados(); 
+    if(section==='pendentesFinalizados') {
+      atualizarPendentesFinalizados();
+      switchSubPainelTab('andamento');
+    }
     
-    // Sempre que abrir a aba de vendas principal, reinicia na sub-aba de aparelhos disponíveis
-    if(section==='vendaAparelhos') switchSubVendaTab('disponiveis');
+    if(section==='vendaAparelhos') switchSubVendaTab('nova');
+    if(section==='consertos') switchSubConsertoTab('nova');
+    if(section==='compras') switchSubPecaTab('nova');
   }
   
   window.onclick = e => { if(e.target.classList.contains('modal')) e.target.style.display='none'; };
@@ -1348,4 +1562,3 @@
 </script>
 </body>
 </html>
-
