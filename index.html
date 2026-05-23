@@ -850,6 +850,28 @@
 <div id="detalheOsModal" class="modal"><div class="modal-content"><span class="close-modal" onclick="fecharDetalheModal()">&times;</span><h3 id="detalheTitulo">Detalhes</h3><div id="detalheConteudo" style="margin-top:15px; line-height: 1.6;"></div></div></div>
 <div id="reciboModal" class="modal"><div class="modal-content"><span class="close-modal" onclick="fecharReciboModal()">&times;</span><h2>🧾 RECIBO</h2><div id="reciboConteudo" class="recibo" style="margin:15px 0;"></div><button onclick="imprimirRecibo()" style="width:100%; background:var(--accent-blue); padding:12px; border:none; border-radius:12px; color:#02040a; font-weight:700; cursor:pointer;">🖨️ Imprimir Recibo</button></div></div>
 
+<!-- MODAL DE SEGUROS E BACKUP COMPLETO -->
+<div id="backupCompletoModal" class="modal">
+  <div class="modal-content" style="max-width: 500px;">
+    <span class="close-modal" onclick="fecharBackupModal()">&times;</span>
+    <h3>💾 Central de Backup Inviolável</h3>
+    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Se o arquivo JSON não baixar ou falhar no celular, use a criptografia abaixo:</p>
+    
+    <button onclick="gerarBackupCopiaCola()" style="width:100%; background: var(--accent-purple); color: #fff; padding: 10px; border: none; border-radius:10px; font-weight:700; cursor:pointer; margin-bottom: 10px;">✨ 1. Gerar Código Texto (Copia e Cola)</button>
+    
+    <textarea id="txtCodigoBackup" rows="5" style="font-family: monospace; font-size: 11px; display:none;" readonly placeholder="O código aparecerá aqui..."></textarea>
+    
+    <button id="btnCopiarCodigo" onclick="copiarCodigoTexto()" style="width:100%; background: #242f47; color: #fff; padding: 8px; border: none; border-radius:10px; font-weight:700; cursor:pointer; margin-bottom: 20px; display:none;">📋 Copiar Código Gerado</button>
+    
+    <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 15px;">
+    
+    <h4>📂 Restaurar por Código</h4>
+    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Cole o código guardado para restaurar tudo instantaneamente:</p>
+    <textarea id="txtRestaurarCodigo" rows="3" placeholder="Cole o código criptografado aqui..."></textarea>
+    <button onclick="confirmarRestaurarTexto()" style="width:100%; background: var(--accent-green); color: #02040a; padding: 12px; border: none; border-radius:12px; font-weight:700; cursor:pointer;">⚡ Restaurar via Código</button>
+  </div>
+</div>
+
 <div id="vendaOrigemModal" class="modal">
   <div class="modal-content">
     <span class="close-modal" onclick="fecharVendaOrigemModal()">&times;</span>
@@ -1093,7 +1115,7 @@
       tabEstoque.style.display = 'block';
       btnEstoque.classList.add('active');
       atualizarEstoque();
-    } else {
+    } else if(target === 'historico') {
       tabHistorico.style.display = 'block';
       btnHistorico.classList.add('active');
       atualizarHistoricoCompras();
@@ -1105,25 +1127,79 @@
   function exportarDados() { 
     try {
       let dataStr = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas }, null, 2); 
-      let blob = new Blob([dataStr], {type: "application/json;charset=utf-8"}); 
       
+      let blob = new Blob([dataStr], {type: "application/json;charset=utf-8"}); 
       let dataAtual = new Date().toISOString().split('T')[0];
       let nomeArquivo = `jefferson_cell_backup_${dataAtual}.json`;
 
       let a = document.createElement('a'); 
       a.href = URL.createObjectURL(blob); 
       a.download = nomeArquivo; 
-      a.dataset.downloadurl = ['application/json', a.download, a.href].join(':');
       
       document.body.appendChild(a);
       a.click(); 
       document.body.removeChild(a);
       URL.revokeObjectURL(a.href); 
       
-      alert('✅ Backup gerado! Verifique a pasta de "Downloads" do seu celular.'); 
+      document.getElementById('backupCompletoModal').style.display = 'flex';
+      gerarBackupCopiaCola();
     } catch (err) {
-      alert('❌ Erro ao exportar: ' + err.message);
+      alert('⚠️ O download direto falhou. Abrindo central de segurança em texto...');
+      document.getElementById('backupCompletoModal').style.display = 'flex';
+      gerarBackupCopiaCola();
     }
+  }
+
+  function gerarBackupCopiaCola() {
+    let dataStr = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas });
+    let codificado = btoa(unescape(encodeURIComponent(dataStr)));
+    document.getElementById('txtCodigoBackup').value = codificado;
+    document.getElementById('txtCodigoBackup').style.display = 'block';
+    document.getElementById('btnCopiarCodigo').style.display = 'block';
+  }
+
+  function copiarCodigoTexto() {
+    let copyText = document.getElementById('txtCodigoBackup');
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(copyText.value);
+    alert('📋 Código de segurança copiado! Guarde-o em seu WhatsApp ou Bloco de Notas.');
+  }
+
+  function confirmarRestaurarTexto() {
+    let codigo = document.getElementById('txtRestaurarCodigo').value.trim();
+    if(!codigo) { alert('Cole o código primeiro!'); return; }
+    try {
+      let decodificado = decodeURIComponent(escape(atob(codigo)));
+      let data = JSON.parse(decodificado);
+      
+      restaurarBancoDadosIntegro(data);
+      fecharBackupModal();
+    } catch (err) {
+      alert('❌ Código inválido ou corrompido! Verifique se copiou o texto inteiro.');
+    }
+  }
+
+  function restaurarBancoDadosIntegro(data) {
+    consertos = data.consertos || []; 
+    consertosFinalizados = data.consertosFinalizados || []; 
+    aparelhos = data.aparelhos || []; 
+    vendasRealizadas = data.vendasRealizadas || []; 
+    comprasPecas = data.comprasPecas || []; 
+    capital = data.capital || 0; 
+    lucroTotal = data.lucroTotal || 0; 
+    extrato = data.extrato || []; 
+    estoquePecas = data.estoquePecas || []; 
+    salvarDados(); 
+    atualizarTudo(); 
+    alert('✅ Todos os dados da Jefferson Cell foram recuperados com sucesso!');
+  }
+
+  function fecharBackupModal() {
+    document.getElementById('backupCompletoModal').style.display = 'none';
+    document.getElementById('txtCodigoBackup').style.display = 'none';
+    document.getElementById('btnCopiarCodigo').style.display = 'none';
+    document.getElementById('txtRestaurarCodigo').value = '';
   }
 
   function importarDados() { 
@@ -1136,20 +1212,10 @@
       reader.onload = ev => { 
         try { 
           let data = JSON.parse(ev.target.result); 
-          consertos = data.consertos || []; 
-          consertosFinalizados = data.consertosFinalizados || []; 
-          aparelhos = data.aparelhos || []; 
-          vendasRealizadas = data.vendasRealizadas || []; 
-          comprasPecas = data.comprasPecas || []; 
-          capital = data.capital || 0; 
-          lucroTotal = data.lucroTotal || 0; 
-          extrato = data.extrato || []; 
-          estoquePecas = data.estoquePecas || []; 
-          salvarDados(); 
-          atualizarTudo(); 
-          alert('✅ Backup restaurado com sucesso!'); 
+          restaurarBancoDadosIntegro(data);
         } catch(e) { 
-          alert('❌ Arquivo inválido ou corrompido.'); 
+          alert('❌ Arquivo inválido. Tentando abrir restauração por texto...'); 
+          document.getElementById('backupCompletoModal').style.display = 'flex';
         } 
       }; 
       reader.readAsText(file); 
@@ -1525,7 +1591,6 @@
   }
 
   function atualizarTudo() { 
-    // Atualiza apenas os caches e KPIs globais em plano de fundo sem reordenar/forçar render em lote das sub-abas ocultas
     atualizarDisplays(); 
     salvarDados(); 
   }
