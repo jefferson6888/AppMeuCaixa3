@@ -143,6 +143,10 @@
       margin-top: 12px;
     }
 
+    .nav-item span:first-child { 
+      font-size: 18px; 
+    }
+
     .kpi-btn {
       flex: 1;
       background: rgba(255, 255, 255, 0.03);
@@ -351,10 +355,6 @@
       transition: all 0.2s ease;
       font-size: 10px;
       font-weight: 700;
-    }
-
-    .nav-item span:first-child { 
-      font-size: 18px; 
     }
 
     .nav-item.active { 
@@ -606,7 +606,7 @@
         
         <div class="sub-tabs-container">
           <button class="sub-tab-btn active" id="btnSubNovaOs" onclick="switchSubConsertoTab('nova')">🔧 Nova OS</button>
-          <button class="sub-tab-btn" id="btnSubAndamento" onclick="switchSubConsertoTab('andamento')">📋 Em Andamento</button>
+          <button class="sub-tab-btn" id="btnSubAndamento" onclick="switchSubConsertoTab('andamento')">📋 Pag. Pendentes</button>
           <button class="sub-tab-btn" id="btnSubFinalizadosConserto" onclick="switchSubConsertoTab('finalizados')">✅ Finalizados</button>
         </div>
 
@@ -674,7 +674,7 @@
         </div>
 
         <div id="subTabAndamento" style="display: none;">
-          <div class="sub-section-title" style="margin-top: 0;">📋 OS em Andamento</div>
+          <div class="sub-section-title" style="margin-top: 0;">📋 Pag. Pendentes</div>
           <div id="consertosLista"></div>
         </div>
 
@@ -689,6 +689,7 @@
         <div class="sub-tabs-container">
           <button class="sub-tab-btn active" id="btnSubNovaVenda" onclick="switchSubVendaTab('nova')">📱 Nova Venda</button>
           <button class="sub-tab-btn" id="btnSubDisponiveis" onclick="switchSubVendaTab('disponiveis')">📦 Disponíveis</button>
+          <button class="sub-tab-btn" id="btnSubVendasAndamento" onclick="switchSubVendaTab('vendas_andamento')">⏳ Pag. Pendentes</button>
           <button class="sub-tab-btn" id="btnSubFinalizados" onclick="switchSubVendaTab('finalizados')">📊 Vendas Realizadas</button>
         </div>
 
@@ -728,6 +729,11 @@
         <div id="subTabDisponiveis" style="display: none;">
           <div class="sub-section-title" style="margin-top: 0;">📦 Aparelhos Disponíveis (Estoque)</div>
           <div id="aparelhosLista"></div>
+        </div>
+
+        <div id="subTabVendasAndamento" style="display: none;">
+          <div class="sub-section-title" style="margin-top: 0;">⏳ Vendas Parceladas / Pagamentos Pendentes</div>
+          <div id="vendasAndamentoLista"></div>
         </div>
 
         <div id="subTabFinalizados" style="display: none;">
@@ -956,8 +962,6 @@
   let editandoOsId = null, editandoFinalizada = false;
   let editVendaId = null;
 
-  let vendaParcelamentoData = { valorEntrada: 0, dataEntrada: '', valorParcela: 0, dataRestante: '' };
-
   function verificarAtraso(dataVencimento, saldoRestante) {
     if (!dataVencimento || saldoRestante <= 0) return false;
     const hoje = new Date();
@@ -1030,94 +1034,76 @@
   }
 
   function switchSubConsertoTab(target) {
-    const tabNovaOs = document.getElementById('subTabNovaOs');
-    const tabAndamento = document.getElementById('subTabAndamento');
-    const tabFinalizadosConserto = document.getElementById('subTabFinalizadosConserto');
+    document.getElementById('subTabNovaOs').style.display = 'none';
+    document.getElementById('subTabAndamento').style.display = 'none';
+    document.getElementById('subTabFinalizadosConserto').style.display = 'none';
     
-    const btnNovaOs = document.getElementById('btnSubNovaOs');
-    const btnAndamento = document.getElementById('btnSubAndamento');
-    const btnFinalizadosConserto = document.getElementById('btnSubFinalizadosConserto');
-
-    tabNovaOs.style.display = 'none';
-    tabAndamento.style.display = 'none';
-    tabFinalizadosConserto.style.display = 'none';
-    
-    btnNovaOs.classList.remove('active');
-    btnAndamento.classList.remove('active');
-    btnFinalizadosConserto.classList.remove('active');
+    document.getElementById('btnSubNovaOs').classList.remove('active');
+    document.getElementById('btnSubAndamento').classList.remove('active');
+    document.getElementById('btnSubFinalizadosConserto').classList.remove('active');
 
     if(target === 'nova') {
-      tabNovaOs.style.display = 'block';
-      btnNovaOs.classList.add('active');
+      document.getElementById('subTabNovaOs').style.display = 'block';
+      document.getElementById('btnSubNovaOs').classList.add('active');
     } else if (target === 'andamento') {
-      tabAndamento.style.display = 'block';
-      btnAndamento.classList.add('active');
+      document.getElementById('subTabAndamento').style.display = 'block';
+      document.getElementById('btnSubAndamento').classList.add('active');
       atualizarConsertosLista();
     } else {
-      tabFinalizadosConserto.style.display = 'block';
-      btnFinalizadosConserto.classList.add('active');
+      document.getElementById('subTabFinalizadosConserto').style.display = 'block';
+      document.getElementById('btnSubFinalizadosConserto').classList.add('active');
       atualizarConsertosFinalizados();
     }
   }
 
   function switchSubVendaTab(target) {
-    const tabNovaVenda = document.getElementById('subTabNovaVenda');
-    const tabDisponiveis = document.getElementById('subTabDisponiveis');
-    const tabFinalizados = document.getElementById('subTabFinalizados');
+    document.getElementById('subTabNovaVenda').style.display = 'none';
+    document.getElementById('subTabDisponiveis').style.display = 'none';
+    document.getElementById('subTabVendasAndamento').style.display = 'none';
+    document.getElementById('subTabFinalizados').style.display = 'none';
     
-    const btnNovaVenda = document.getElementById('btnSubNovaVenda');
-    const btnDisponiveis = document.getElementById('btnSubDisponiveis');
-    const btnFinalizados = document.getElementById('btnSubFinalizados');
-
-    tabNovaVenda.style.display = 'none';
-    tabDisponiveis.style.display = 'none';
-    tabFinalizados.style.display = 'none';
-    
-    btnNovaVenda.classList.remove('active');
-    btnDisponiveis.classList.remove('active');
-    btnFinalizados.classList.remove('active');
+    document.getElementById('btnSubNovaVenda').classList.remove('active');
+    document.getElementById('btnSubDisponiveis').classList.remove('active');
+    document.getElementById('btnSubVendasAndamento').classList.remove('active');
+    document.getElementById('btnSubFinalizados').classList.remove('active');
 
     if(target === 'nova') {
-      tabNovaVenda.style.display = 'block';
-      btnNovaVenda.classList.add('active');
+      document.getElementById('subTabNovaVenda').style.display = 'block';
+      document.getElementById('btnSubNovaVenda').classList.add('active');
     } else if(target === 'disponiveis') {
-      tabDisponiveis.style.display = 'block';
-      btnDisponiveis.classList.add('active');
+      document.getElementById('subTabDisponiveis').style.display = 'block';
+      document.getElementById('btnSubDisponiveis').classList.add('active');
       atualizarAparelhosLista();
+    } else if(target === 'vendas_andamento') {
+      document.getElementById('subTabVendasAndamento').style.display = 'block';
+      document.getElementById('btnSubVendasAndamento').classList.add('active');
+      atualizarVendasAndamentoLista();
     } else {
-      tabFinalizados.style.display = 'block';
-      btnFinalizados.classList.add('active');
+      document.getElementById('subTabFinalizados').style.display = 'block';
+      document.getElementById('btnSubFinalizados').classList.add('active');
       atualizarVendasRealizadas();
     }
   }
 
   function switchSubPecaTab(target) {
-    const tabNovaPeca = document.getElementById('subTabNovaPeca');
-    const tabEstoque = document.getElementById('subTabEstoquePecas');
-    const tabHistorico = document.getElementById('subTabHistoricoPecas');
+    document.getElementById('subTabNovaPeca').style.display = 'none';
+    document.getElementById('subTabEstoquePecas').style.display = 'none';
+    document.getElementById('subTabHistoricoPecas').style.display = 'none';
     
-    const btnNovaPeca = document.getElementById('btnSubNovaPeca');
-    const btnEstoque = document.getElementById('btnSubEstoquePecas');
-    const btnHistorico = document.getElementById('btnSubHistoricoPecas');
-
-    tabNovaPeca.style.display = 'none';
-    tabEstoque.style.display = 'none';
-    tabHistorico.style.display = 'none';
-    
-    btnNovaPeca.classList.remove('active');
-    btnEstoque.classList.remove('active');
-    btnHistorico.classList.remove('active');
+    document.getElementById('btnSubNovaPeca').classList.remove('active');
+    document.getElementById('btnSubEstoquePecas').classList.remove('active');
+    document.getElementById('btnSubHistoricoPecas').classList.remove('active');
 
     if(target === 'nova') {
-      tabNovaPeca.style.display = 'block';
-      btnNovaPeca.classList.add('active');
+      document.getElementById('subTabNovaPeca').style.display = 'block';
+      document.getElementById('btnSubNovaPeca').classList.add('active');
     } else if(target === 'estoque') {
-      tabEstoque.style.display = 'block';
-      btnEstoque.classList.add('active');
+      document.getElementById('subTabEstoquePecas').style.display = 'block';
+      document.getElementById('btnSubEstoquePecas').classList.add('active');
       atualizarEstoque();
     } else if(target === 'historico') {
-      tabHistorico.style.display = 'block';
-      btnHistorico.classList.add('active');
+      document.getElementById('subTabHistoricoPecas').style.display = 'block';
+      document.getElementById('btnSubHistoricoPecas').classList.add('active');
       atualizarHistoricoCompras();
     }
   }
@@ -1127,7 +1113,6 @@
   function exportarDados() { 
     try {
       let dataStr = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas }, null, 2); 
-      
       let blob = new Blob([dataStr], {type: "application/json;charset=utf-8"}); 
       let dataAtual = new Date().toISOString().split('T')[0];
       let nomeArquivo = `jefferson_cell_backup_${dataAtual}.json`;
@@ -1172,7 +1157,6 @@
     try {
       let decodificado = decodeURIComponent(escape(atob(codigo)));
       let data = JSON.parse(decodificado);
-      
       restaurarBancoDadosIntegro(data);
       fecharBackupModal();
     } catch (err) {
@@ -1214,7 +1198,7 @@
           let data = JSON.parse(ev.target.result); 
           restaurarBancoDadosIntegro(data);
         } catch(e) { 
-          alert('❌ Arquivo inválido. Tentando abrir restauração por texto...'); 
+          alert('❌ Arquivo inválido. Tentando abrir recuperação por texto...'); 
           document.getElementById('backupCompletoModal').style.display = 'flex';
         } 
       }; 
@@ -1225,13 +1209,28 @@
   
   function carregarDados() {
     const data = localStorage.getItem('meuCaixaPRO');
-    if(data) { let p = JSON.parse(data); consertos = p.consertos || []; consertosFinalizados = p.consertosFinalizados || []; aparelhos = p.aparelhos || []; vendasRealizadas = p.vendasRealizadas || []; comprasPecas = p.comprasPecas || []; capital = p.capital || 0; lucroTotal = p.lucroTotal || 0; extrato = p.extrato || []; estoquePecas = p.estoquePecas || []; }
-    else { inicializarExemplo(); }
-    atualizarDisplays(); atualizarTudo();
+    if(data) { 
+      let p = JSON.parse(data); 
+      consertos = p.consertos || []; 
+      consertosFinalizados = p.consertosFinalizados || []; 
+      aparelhos = p.aparelhos || []; 
+      vendasRealizadas = p.vendasRealizadas || []; 
+      comprasPecas = p.comprasPecas || []; 
+      capital = p.capital || 0; 
+      lucroTotal = p.lucroTotal || 0; 
+      extrato = p.extrato || []; 
+      estoquePecas = p.estoquePecas || []; 
+    } else { 
+      inicializarExemplo(); 
+    }
+    atualizarDisplays(); 
+    atualizarTudo();
   }
+
   function inicializarExemplo() { extrato = []; capital = 3500; lucroTotal = 0; adicionarExtrato('credito', 'Capital inicial', 3500); salvarDados(); }
   function adicionarExtrato(tipo, desc, valor) { extrato.unshift({ id: Date.now(), tipo, descricao: desc, valor, data: new Date().toLocaleString() }); salvarDados(); }
   function excluirExtrato(id) { if(confirm('Remover este lançamento do extrato?')) { extrato = extrato.filter(e => e.id !== id); salvarDados(); atualizarExtratoDetalhado(); } }
+  
   function atualizarDisplays() { 
     document.getElementById('capitalDisponivel').innerHTML = `R$ ${capital.toFixed(2)}`; 
     document.getElementById('lucroAcumulado').innerHTML = `R$ ${lucroTotal.toFixed(2)}`;
@@ -1240,6 +1239,7 @@
     document.getElementById('lucroVendasValor').innerHTML = `R$ ${lucroVendas.toFixed(2)}`;
     document.getElementById('lucroConsertosValor').innerHTML = `R$ ${lucroConsertos.toFixed(2)}`;
   }
+
   function creditarCapital(val, desc) { capital += val; adicionarExtrato('credito', desc, val); atualizarDisplays(); }
   function debitarCapital(val, desc) { if(capital < val) { alert(`Saldo insuficiente: R$ ${capital.toFixed(2)}`); return false; } capital -= val; adicionarExtrato('debito', desc, val); atualizarDisplays(); return true; }
 
@@ -1279,7 +1279,7 @@
     aparelhos.push({ id:Date.now(), modelo, valorCompra:compra, valorVenda:venda, condicao:document.getElementById('condicaoAparelho').value, acessorios:document.getElementById('acessoriosInclusos').value, pecaUtilizada: pecaUtilizada||'Nenhuma', valorPecaUtilizada, dataEntrada:new Date().toISOString().split('T')[0], status:'disponivel', origemCustoVenda: origenCusto, fornecedorVenda: (origenCusto === 'fornecedor') ? fornecedorNome : null, valorEntrada: 0, dataEntradaPagamento: '', valorParcelaRestante: 0, dataRestantePagamento: '' }); 
     salvarDados(); atualizarTudo(); 
     document.getElementById('modelo').value = ''; document.getElementById('valorCompra').value = ''; document.getElementById('valorVenda').value = ''; document.getElementById('pecaUtilizada').value = ''; document.getElementById('valorPecaUtilizada').value = ''; document.getElementById('nomeFornecedorVenda').value = ''; document.getElementById('fornecedorVendaDiv').style.display = 'none'; document.querySelector('input[name="origemCustoVenda"][value="capital"]').checked = true;
-    alert('Estoque updated!');
+    alert('Estoque atualizado!');
     switchSubVendaTab('disponiveis');
   }
 
@@ -1327,14 +1327,13 @@
   function fecharReciboModal() { document.getElementById('reciboModal').style.display = 'none'; }
   function deletarConserto(id) { let idx = consertos.findIndex(c=>c.id===id); if(idx!==-1 && confirm('Excluir OS?')) { let c = consertos[idx]; if(c.valorPeca>0 && c.origemCustoPeca !== 'fornecedor') creditarCapital(c.valorPeca, `Estorno peça OS ${c.modelo}`); consertos.splice(idx,1); salvarDados(); atualizarTudo(); switchSubConsertoTab('andamento'); } }
   function verDetalhesOS(os) { document.getElementById('detalheTitulo').innerHTML = `🔍 OS - ${os.modelo}`; document.getElementById('detalheConteudo').innerHTML = `<p><strong>Cliente:</strong> ${os.cliente}</p><p><strong>Defeito:</strong> ${os.defeito}</p><p><strong>Valor serviço:</strong> R$ ${os.valorConserto.toFixed(2)}</p><p><strong>Entrada:</strong> R$ ${(os.valorEntrada||0).toFixed(2)}</p><p><strong>Restante:</strong> R$ ${(os.valorParcelaRestante||0).toFixed(2)}</p><p><strong>Peça:</strong> ${os.tipoPeca||'Nenhuma'} | Custo: R$ ${os.valorPeca.toFixed(2)}</p><br><button onclick="mostrarRecibo(${JSON.stringify(os).replace(/"/g, '&quot;')})" style="background:#30d5c8;color:#02040a;padding:8px 14px;border-radius:10px;font-weight:700;border:none;cursor:pointer;">🧾 Recibo</button>`; document.getElementById('detalheOsModal').style.display='flex'; }
-  function verDetailFinalizado(f) { verDetalhesOS(f); }
   function fecharDetalheModal() { document.getElementById('detalheOsModal').style.display='none'; }
   function fecharFinalizarModal() { document.getElementById('finalizarModal').style.display='none'; consertoFinalizandoId=null; }
   
   function atualizarConsertosLista() { 
     let div = document.getElementById('consertosLista'); 
     if(!div) return;
-    if(consertos.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">Nenhuma OS em andamento.</p>'; 
+    if(consertos.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">Nenhuma OS com pagamento pendente.</p>'; 
     else div.innerHTML=consertos.map(c=>{
       const temPendencia = (c.valorParcelaRestante || 0) > 0;
       const atrasado = temPendencia && verificarAtraso(c.dataRestantePagamento, c.valorParcelaRestante);
@@ -1347,14 +1346,24 @@
   function atualizarAparelhosLista() { 
     let div = document.getElementById('aparelhosLista'); 
     if(!div) return;
-    if(aparelhos.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">📭 Nenhum aparelho em estoque disponível.</p>'; 
-    else div.innerHTML=aparelhos.map(a=>{
-      const temPendencia = (a.valorParcelaRestante || 0) > 0;
-      const atrasado = temPendencia && verificarAtraso(a.dataRestantePagamento, a.valorParcelaRestante);
+    let disponiveis = aparelhos.filter(a => a.status === 'disponivel' || !a.status);
+    if(disponiveis.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">📭 Nenhum aparelho em estoque disponível.</p>'; 
+    else div.innerHTML=disponiveis.map(a=>{
+      return `<div class="item"><h3>📱 ${a.modelo}</h3><p>Venda sugerida: R$ ${a.valorVenda.toFixed(2)} | Condição: ${a.condicao}</p>${a.pecaUtilizada!=='Nenhuma'?`<div class="peca-usada">🔧 Reparo: ${a.pecaUtilizada} (-R$ ${a.valorPecaUtilizada.toFixed(2)})</div>`:''}<div class="item-actions"><button class="btn-editar" onclick="editarAparelho(${a.id})">✏️ Editar</button><button class="btn-finalizar" onclick="iniciarVendaAparelho(${a.id})">💰 Vender</button><button class="btn-deletar" onclick="deletarAparelho(${a.id})">🗑️</button></div></div>`; 
+    }).join(''); 
+  }
+
+  function atualizarVendasAndamentoLista() {
+    let div = document.getElementById('vendasAndamentoLista');
+    if(!div) return;
+    let emAndamento = aparelhos.filter(a => a.status === 'parcelado');
+    if(emAndamento.length === 0) div.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">⏳ Nenhuma venda parcelada em andamento.</p>';
+    else div.innerHTML = emAndamento.map(a => {
+      const atrasado = verificarAtraso(a.dataRestantePagamento, a.valorParcelaRestante);
       const classeAtraso = atrasado ? 'item-atrasado' : '';
       const badgeAtraso = atrasado ? '<span class="atrasado-badge">ATRASADO</span>' : '';
-      return `<div class="item ${classeAtraso}"><h3>📱 ${a.modelo} ${badgeAtraso}</h3><p>Venda sugerida: R$ ${a.valorVenda.toFixed(2)} | Condição: ${a.condicao}</p>${a.valorEntrada>0?`<p>💰 Entrada: R$ ${a.valorEntrada.toFixed(2)} | Resta: R$ ${a.valorParcelaRestante.toFixed(2)}</p>`:''}${a.pecaUtilizada!=='Nenhuma'?`<div class="peca-usada">🔧 Reparo: ${a.pecaUtilizada} (-R$ ${a.valorPecaUtilizada.toFixed(2)})</div>`:''}<div class="item-actions"><button class="btn-editar" onclick="editarAparelho(${a.id})">✏️ Editar</button><button class="btn-finalizar" onclick="iniciarVendaAparelho(${a.id})">💰 Vender</button><button class="btn-deletar" onclick="deletarAparelho(${a.id})">🗑️</button></div></div>`; 
-    }).join(''); 
+      return `<div class="item ${classeAtraso}"><h3>📱 ${a.modelo} ${badgeAtraso}</h3><p>Valor Total: R$ ${a.valorVenda.toFixed(2)} | Origem: ${a.origemVendaLocal || 'N/I'}</p><p>💰 Entrada Paga: R$ ${a.valorEntrada.toFixed(2)} | Resta Parcelado: <strong>R$ ${a.valorParcelaRestante.toFixed(2)}</strong></p><p><small style="color:var(--text-muted);">Vencimento Restante: ${a.dataRestantePagamento || 'N/I'}</small></p><div class="item-actions"><button class="btn-finalizar" onclick="iniciarVendaAparelho(${a.id})">💵 Receber Parcela</button><button class="btn-deletar" onclick="deletarAparelho(${a.id})">🗑️ Deletar</button></div></div>`;
+    }).join('');
   }
 
   function atualizarPendentesFinalizados() { 
@@ -1373,10 +1382,11 @@
     
     let pendentesVendasDiv = document.getElementById('pendentesVendasLista'); 
     if(pendentesVendasDiv) {
-      if(aparelhos.length === 0) {
+      let disponiveis = aparelhos.filter(a => a.status === 'disponivel' || !a.status);
+      if(disponiveis.length === 0) {
         pendentesVendasDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhum aparelho em estoque</p>'; 
       } else {
-        pendentesVendasDiv.innerHTML = aparelhos.map(a => `<div class="item"><h3>📱 ${a.modelo}</h3><p>Sugerido: R$ ${a.valorVenda.toFixed(2)} | Condição: ${a.condicao}</p></div>`).join(''); 
+        pendentesVendasDiv.innerHTML = disponiveis.map(a => `<div class="item"><h3>📱 ${a.modelo}</h3><p>Sugerido: R$ ${a.valorVenda.toFixed(2)} | Condição: ${a.condicao}</p></div>`).join(''); 
       }
     }
     
@@ -1432,14 +1442,17 @@
     if(valorRecebido >= ap.valorParcelaRestante) {
         let valorFinal = ap.valorVenda; let custoTotal = ap.valorCompra + (ap.valorPecaUtilizada||0); let lucroVenda = valorFinal - custoTotal;
         if(ap.origemCustoVenda !== 'fornecedor') { creditarCapital(ap.valorCompra, `Retorno estoque ${ap.modelo}`); if(ap.valorPecaUtilizada>0) creditarCapital(ap.valorPecaUtilizada, `Retorno peça ${ap.modelo}`); }
-        if(lucroVenda>0) { lucroTotal += lucroVenda; adicionarExtrato('credito', `LUCRO Venda ${ap.modelo}`, lucroVenda); }
-        vendasRealizadas.unshift({ id:Date.now(), modelo:ap.modelo, valorVenda:valorFinal, custoTotal, lucro:lucroVenda, data:new Date().toLocaleString(), condicao:ap.condicao, acessorios:ap.acessorios, pecaUtilizada:ap.pecaUtilizada, valorPecaUtilizada:ap.valorPecaUtilizada, origem: 'Loja (Quitado)', valorEntrada:ap.valorEntrada, valorParcelaRestante:0 });
+        if(lucroVenda>0) { lucroTotal += lucroVenda; adicionarExtrato('credito', `LUCRO Venda ${ap.modelo} (Quitação)`, lucroVenda); }
+        vendasRealizadas.unshift({ id:Date.now(), modelo:ap.modelo, valorVenda:valorFinal, custoTotal, lucro:lucroVenda, data:new Date().toLocaleString(), condicao:ap.condicao, acessorios:ap.acessorios, pecaUtilizada:ap.pecaUtilizada, valorPecaUtilizada:ap.valorPecaUtilizada, origem: ap.origemVendaLocal || 'Loja (Quitado)', valorEntrada:ap.valorEntrada, valorParcelaRestante:0 });
         aparelhos = aparelhos.filter(a=>a.id!==vendaParcelaFinalizandoId); alert(`Venda concluída com sucesso!`);
+        fecharFinalizarVendaModal();
+        switchSubVendaTab('finalizados');
     } else {
         ap.valorParcelaRestante -= valorRecebido; creditarCapital(valorRecebido, `Pagamento parcial: ${ap.modelo}`); alert(`Abatido! Faltam: R$ ${ap.valorParcelaRestante.toFixed(2)}`);
+        fecharFinalizarVendaModal();
+        switchSubVendaTab('vendas_andamento');
     }
-    salvarDados(); atualizarTudo(); fecharFinalizarVendaModal();
-    switchSubVendaTab('finalizados');
+    salvarDados(); atualizarTudo();
   }
 
   function confirmarVendaComOrigem() { 
@@ -1458,9 +1471,9 @@
     
     if(isParcelada) {
       if(valorEntrada > 0) creditarCapital(valorEntrada, `Entrada venda ${ap.modelo}`);
-      ap.valorEntrada = valorEntrada; ap.dataEntradaPagamento = dataEntradaPag; ap.valorParcelaRestante = valorParcelaRestante; ap.dataRestantePagamento = dataRestantePag; ap.status = 'parcelado';
-      salvarDados(); alert(`Venda em aberto criada!`); atualizarTudo(); fecharVendaOrigemModal(); 
-      switchSubVendaTab('disponiveis');
+      ap.valorEntrada = valorEntrada; ap.dataEntradaPagamento = dataEntradaPag; ap.valorParcelaRestante = valorParcelaRestante; ap.dataRestantePagamento = dataRestantePag; ap.status = 'parcelado'; ap.origemVendaLocal = origem;
+      salvarDados(); alert(`Venda parcelada adicionada a 'Em Andamento'!`); atualizarTudo(); fecharVendaOrigemModal(); 
+      switchSubVendaTab('vendas_andamento');
       return;
     }
     
@@ -1471,18 +1484,54 @@
     switchSubVendaTab('finalizados');
   }
 
-  function deletarAparelho(id) { let a = aparelhos.find(x=>x.id===id); if(a && confirm(`Excluir ${a.modelo}?`)) { let totalEstorno = a.valorCompra + (a.valorPecaUtilizada||0); if(a.origemCustoVenda !== 'fornecedor') creditarCapital(totalEstorno, `Estorno ${a.modelo}`); aparelhos = aparelhos.filter(x=>x.id!==id); salvarDados(); atualizarTudo(); switchSubVendaTab('disponiveis'); } }
+  function deletarAparelho(id) { let a = aparelhos.find(x=>x.id===id); if(a && confirm(`Excluir ${a.modelo}?`)) { let totalEstorno = a.valorCompra + (a.valorPecaUtilizada||0); if(a.origemCustoVenda !== 'fornecedor') creditarCapital(totalEstorno, `Estorno ${a.modelo}`); aparelhos = aparelhos.filter(x=>x.id!==id); salvarDados(); atualizarTudo(); if(a.status === 'parcelado') { switchSubVendaTab('vendas_andamento'); } else { switchSubVendaTab('disponiveis'); } } }
   function editarAparelho(id) { let ap = aparelhos.find(a=>a.id===id); if(!ap) return; editAparelhoId=id; document.getElementById('editModelo').value=ap.modelo; document.getElementById('editValorCompra').value=ap.valorCompra; document.getElementById('editValorVenda').value=ap.valorVenda; document.getElementById('editCondicao').value=ap.condicao; document.getElementById('editAcessorios').value=ap.acessorios||''; document.getElementById('editPecaUtilizada').value=ap.pecaUtilizada!=='Nenhuma'?ap.pecaUtilizada:''; document.getElementById('editValorPecaUtilizada').value=ap.valorPecaUtilizada||0; document.getElementById('editarAparelhoModal').style.display='flex'; }
   function confirmarEditarAparelho() { let ap = aparelhos.find(a=>a.id===editAparelhoId); if(!ap) return; let novoCompra = Number(document.getElementById('editValorCompra').value); let novoValorPeca = Number(document.getElementById('editValorPecaUtilizada').value)||0; let oldCusto = ap.valorCompra + (ap.valorPecaUtilizada||0); let newCusto = novoCompra + novoValorPeca; let diff = newCusto - oldCusto; if(diff>0 && !debitarCapital(diff, `Ajuste custo ${ap.modelo}`)) return; else if(diff<0) creditarCapital(-diff, `Redução custo ${ap.modelo}`); ap.modelo = document.getElementById('editModelo').value; ap.valorCompra = novoCompra; ap.valorVenda = Number(document.getElementById('editValorVenda').value); ap.condicao = document.getElementById('editCondicao').value; ap.acessorios = document.getElementById('editAcessorios').value; ap.pecaUtilizada = document.getElementById('editPecaUtilizada').value.trim()||'Nenhuma'; ap.valorPecaUtilizada = novoValorPeca; salvarDados(); atualizarTudo(); fecharEditarAparelhoModal(); switchSubVendaTab('disponiveis'); }
   function fecharEditarAparelhoModal() { document.getElementById('editarAparelhoModal').style.display='none'; editAparelhoId=null; }
   function fecharVendaOrigemModal() { document.getElementById('vendaOrigemModal').style.display='none'; vendaPendenteId=null; }
   function fecharFinalizarVendaModal() { document.getElementById('finalizarVendaModal').style.display='none'; vendaParcelaFinalizandoId=null; document.getElementById('vendaValorRecebido').value=''; }
   function editarVendaFinalizada(id) { let venda = vendasRealizadas.find(v => v.id === id); if(!venda) return; editVendaId = id; document.getElementById('editVendaModelo').value = venda.modelo; document.getElementById('editVendaValor').value = venda.valorVenda; document.getElementById('editVendaLucro').value = venda.lucro; document.getElementById('editVendaOrigem').value = venda.origem || 'Assistência'; document.getElementById('editarVendaFinalizadaModal').style.display = 'flex'; }
-  function confirmarEditarVendaFinalizada() { if(!editVendaId) return; let venda = vendasRealizadas.find(v => v.id === editVendaId); if(!venda) return; let oldLucro = venda.lucro; let newLucro = Number(document.getElementById('editVendaLucro').value); let diffLucro = newLucro - oldLucro; venda.modelo = document.getElementById('editVendaModelo').value; venda.valorVenda = Number(document.getElementById('editVendaValor').value); venda.lucro = newLucro; venda.origem = document.getElementById('editVendaOrigem').value; if(diffLucro !== 0) { lucroTotal += diffLucro; adicionarExtrato(diffLucro > 0 ? 'credito' : 'debito', `Ajuste lucro ${venda.modelo}`, Math.abs(diffLucro)); atualizarDisplays(); } salvarDados(); atualizarTudo(); fecharEditarVendaFinalizadaModal(); alert('Venda editada!'); switchSubVendaTab('finalizados'); }
+  function confirmarEditarVendaFinalizada() { if(!editVendaId) return; let venda = vendasRealizadas.find(v => v.id === editVendaId); if(!venda) return; let oldLucro = venda.lucro; let newLucro = Number(document.getElementById('editVendaLucro').value); let diffLucro = newLucro - oldLucro; venda.modelo = document.getElementById('editVendaModelo').value; venda.valorVenda = Number(document.getElementById('editVendaValor').value); venda.lucro = newLucro; venda.origem = document.getElementById('editVendaOrigem').value; if(diffLucro !== 0) { lucroTotal += diffLucro; adicionarExtrato(diffLucro > 0 ? 'credito' : 'debito', `Ajuste lucro ${venda.modelo}`, Math.abs(diffLucro)); atualizarDisplays(); } salvarDados(); atualizarTudo(); fecharEditarVendaFinalizadaModal(); switchSubVendaTab('finalizados'); }
   function fecharEditarVendaFinalizadaModal() { document.getElementById('editarVendaFinalizadaModal').style.display = 'none'; editVendaId = null; }
   
-  function salvarCompraDetalhada() { let nome = document.getElementById('nomePeca').value.trim(); let qtd = Number(document.getElementById('quantidade').value); let preco = Number(document.getElementById('precoUnitario').value); if(!nome||!qtd||!preco) { alert('Preencha os campos obrigatórios'); return; } let total = qtd * preco; if(!debitarCapital(total, `Compra ${qtd}x ${nome}`)) return; comprasPecas.push({ id: Date.now(), nomePeca:nome, categoria:document.getElementById('categoriaPeca').value, quantidade:qtd, precoUnitario:preco, fornecedor:document.getElementById('fornecedorPeca').value, valorTotal:total, dataCompra:document.getElementById('dataCompraPeca').value||new Date().toISOString().split('T')[0], status:'pendente' }); let existente = estoquePecas.find(p=>p.nomePeca===nome); if(existente) { let custoAntigo = existente.quantidade * existente.precoUnitarioMedio; existente.quantidade += qtd; existente.precoUnitarioMedio = (custoAntigo + (qtd*preco)) / existente.quantidade; } else { estoquePecas.push({ id:Date.now(), nomePeca:nome, categoria:document.getElementById('categoriaPeca').value, quantidade:qtd, precoUnitarioMedio:preco, fornecedor:document.getElementById('fornecedorPeca').value, dataEntrada:new Date().toISOString().split('T')[0] }); } salvarDados(); atualizarTudo(); alert(`Compra registrada!`); document.getElementById('nomePeca').value = ''; document.getElementById('quantidade').value = ''; document.getElementById('precoUnitario').value = ''; document.getElementById('fornecedorPeca').value = ''; switchSubPecaTab('estoque'); }
-  function marcarCompraComoPaga(id) { let compra = comprasPecas.find(c=>c.id===id); if(!compra||compra.status==='pago') return; if(confirm(`Estornar R$ ${compra.valorTotal.toFixed(2)}?`)) { creditarCapital(compra.valorTotal, `Estorno: ${compra.nomePeca}`); compra.status='pago'; salvarDados(); atualizarTudo(); switchSubPecaTab('historico'); } }
+  function salvarCompraDetalhada() { 
+    let nome = document.getElementById('nomePeca').value.trim(); 
+    let qtd = Number(document.getElementById('quantidade').value); 
+    let preco = Number(document.getElementById('precoUnitario').value); 
+    if(!nome||!qtd||!preco) { alert('Preencha os campos obrigatórios'); return; } 
+    let total = qtd * preco; 
+    if(!debitarCapital(total, `Compra ${qtd}x ${nome}`)) return; 
+    comprasPecas.push({ id: Date.now(), nomePeca:nome, category:document.getElementById('categoriaPeca').value, quantidade:qtd, precoUnitario:preco, fornecedor:document.getElementById('fornecedorPeca').value, valorTotal:total, dataCompra:document.getElementById('dataCompraPeca').value||new Date().toISOString().split('T')[0], status:'pendente' }); 
+    let existente = estoquePecas.find(p=>p.nomePeca===nome); 
+    if(existente) { 
+      let custoAntigo = existente.quantidade * existente.precoUnitarioMedio; 
+      existente.quantidade += qtd; 
+      existente.precoUnitarioMedio = (custoAntigo + (qtd*preco)) / existente.quantidade; 
+    } else { 
+      estoquePecas.push({ id:Date.now(), nomePeca:nome, categoria:document.getElementById('categoriaPeca').value, quantidade:qtd, precoUnitarioMedio:preco, fornecedor:document.getElementById('fornecedorPeca').value, dataEntrada:new Date().toISOString().split('T')[0] }); 
+    } 
+    salvarDados(); 
+    atualizarTudo(); 
+    alert(`Compra registrada!`); 
+    document.getElementById('nomePeca').value = ''; 
+    document.getElementById('quantidade').value = ''; 
+    document.getElementById('precoUnitario').value = ''; 
+    document.getElementById('fornecedorPeca').value = ''; 
+    switchSubPecaTab('estoque'); 
+  }
+
+  function marcarCompraComoPaga(id) { 
+    let compra = comprasPecas.find(c=>c.id===id); 
+    if(!compra||compra.status==='pago') return; 
+    if(confirm(`Estornar R$ ${compra.valorTotal.toFixed(2)}?`)) { 
+      creditarCapital(compra.valorTotal, `Estorno: ${compra.nomePeca}`); 
+      compra.status='pago'; 
+      salvarDados(); 
+      atualizarTudo(); 
+      switchSubPecaTab('historico'); 
+    } 
+  }
+
   function deletarCompraHistorico(id) { if(confirm('Remover do histórico?')) { comprasPecas = comprasPecas.filter(c=>c.id!==id); salvarDados(); atualizarTudo(); switchSubPecaTab('historico'); } }
   
   function darBaixaPeca(id) { 
@@ -1507,7 +1556,7 @@
     if(!div) return;
     div.innerHTML = `
       <div style="line-height:1.8; font-size:14px;">
-        <p>📌 OS em andamento: <strong>${consertos.length}</strong></p>
+        <p>📌 OS com pagamento pendente: <strong>${consertos.length}</strong></p>
         <p>✅ Consertos concluídos: <strong>${consertosFinalizados.length}</strong></p>
         <p>📱 Aparelhos vendidos: <strong>${vendasRealizadas.length}</strong></p>
         <p>💼 Saldo em Capital: <strong>R$ ${capital.toFixed(2)}</strong></p>
