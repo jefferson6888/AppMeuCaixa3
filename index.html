@@ -1245,20 +1245,19 @@
   function debitarCapital(val, desc) { if(capital < val) { alert(`❌ Saldo insuficiente no CAPITAL! Você tem R$ ${capital.toFixed(2)} para peças, mas precisa de R$ ${val.toFixed(2)}. Adicione capital ou troque a origem para "Fornecedor".`); return false; } capital -= val; adicionarExtrato('debito', desc, val); atualizarDisplays(); return true; }
 
   function salvarConserto() {
-    let cliente = document.getElementById('clienteConserto').value, modelo = document.getElementById('modeloConserto').value, defeito = document.getElementById('defeitoConserto').value, valorConserto = Number(document.getElementById('valorConserto').value);
-    let valorPeca = Number(document.getElementById('valorPeca').value) || 0;
+    let cliente = document.getElementById('clienteConserto').value, modelo = document.getElementById('modeloConserto').value, defeito = document.getElementById('defeitoConserto').value, valorConserto = document.getElementById('valorConserto').value;
+    let valorPeca = document.getElementById('valorPeca').value === "" ? 0 : Number(document.getElementById('valorPeca').value);
     let origenCusto = document.querySelector('input[name="origemCustoPeca"]:checked').value;
     let fornecedorNome = document.getElementById('nomeFornecedor').value.trim();
-    if(!cliente||!modelo||!defeito||!valorConserto) { alert('Preencha os campos obrigatórios'); return; }
+    if(!cliente||!modelo||!defeito||valorConserto==="") { alert('Preencha os campos obrigatórios'); return; }
+    valorConserto = Number(valorConserto);
     
-    // Só debita do CAPITAL o valor da peça (e somente se for capital)
     if(valorPeca > 0 && origenCusto === 'capital') { 
       if(!debitarCapital(valorPeca, `Peça p/ ${modelo}`)) return; 
     } else if(valorPeca > 0 && origenCusto === 'fornecedor') { 
       adicionarExtrato('debito', `Peça (${fornecedorNome || 'N/I'}) p/ ${modelo} - Fornecedor (dívida)`, 0); 
     }
     
-    // A entrada NÃO toca no Capital - é apenas controle de parcelamento
     let valorEntrada = Number(document.getElementById('valorEntrada').value) || 0;
     let dataEntradaPag = document.getElementById('dataEntradaPagamento').value;
     
@@ -1270,17 +1269,20 @@
   }
 
   function salvarAparelhoDetalhado() {
-    let modelo = document.getElementById('modelo').value.trim(); let compra = Number(document.getElementById('valorCompra').value); let venda = Number(document.getElementById('valorVenda').value); if(!modelo||!compra||!venda) { alert('Preencha modelo, compra e venda'); return; } 
+    let modelo = document.getElementById('modelo').value.trim(); let compra = document.getElementById('valorCompra').value; let venda = document.getElementById('valorVenda').value; if(!modelo||compra===""||venda==="") { alert('Preencha modelo, compra e venda'); return; } 
+    compra = Number(compra); venda = Number(venda);
     let pecaUtilizada = document.getElementById('pecaUtilizada').value.trim(); let valorPecaUtilizada = Number(document.getElementById('valorPecaUtilizada').value)||0; 
     let origenCusto = document.querySelector('input[name="origemCustoVenda"]:checked').value; let fornecedorNome = document.getElementById('nomeFornecedorVenda').value.trim();
     
     let custoTotal = compra + valorPecaUtilizada;
     
-    if(origenCusto === 'capital') { 
-      if(!debitarCapital(custoTotal, `Compra ${modelo} + peça`)) return; 
-    } else { 
-      adicionarExtrato('debito', `Compra ${modelo} (${fornecedorNome || 'N/I'}) - Fornecedor (dívida)`, 0); 
-      if(valorPecaUtilizada > 0) adicionarExtrato('debito', `Peça ${pecaUtilizada} p/ ${modelo} (${fornecedorNome || 'N/I'}) - Fornecedor (dívida)`, 0);
+    if(custoTotal > 0) {
+      if(origenCusto === 'capital') { 
+        if(!debitarCapital(custoTotal, `Compra ${modelo} + peça`)) return; 
+      } else { 
+        adicionarExtrato('debito', `Compra ${modelo} (${fornecedorNome || 'N/I'}) - Fornecedor (dívida)`, 0); 
+        if(valorPecaUtilizada > 0) adicionarExtrato('debito', `Peça ${pecaUtilizada} p/ ${modelo} (${fornecedorNome || 'N/I'}) - Fornecedor (dívida)`, 0);
+      }
     }
     
     aparelhos.push({ id:Date.now(), modelo, valorCompra:compra, valorVenda:venda, condicao:document.getElementById('condicaoAparelho').value, acessorios:document.getElementById('acessoriosInclusos').value, pecaUtilizada: pecaUtilizada||'Nenhuma', valorPecaUtilizada, dataEntrada:new Date().toISOString().split('T')[0], status:'disponivel', origemCustoVenda: origenCusto, fornecedorVenda: (origenCusto === 'fornecedor') ? fornecedorNome : null, valorEntrada: 0, dataEntradaPagamento: '', valorParcelaRestante: 0, dataRestantePagamento: '' }); 
@@ -1299,12 +1301,10 @@
     if(idx===-1) return;
     let c = consertos[idx]; 
     
-    // CREDITA de volta no CAPITAL apenas o valor da peça (reembolso)
     if(c.valorPeca > 0 && c.origemCustoPeca === 'capital') {
       creditarCapital(c.valorPeca, `Reembolso peça ${c.modelo}`);
     }
     
-    // O LUCRO é o valor recebido (não toca no capital)
     let lucro = valorRecebido - (c.origemCustoPeca === 'capital' ? c.valorPeca : 0);
     
     if(lucro != 0) { 
@@ -1333,8 +1333,9 @@
 
   function confirmarEditarOs() { 
     if(!editandoOsId) return;
-    let cliente = document.getElementById('editCliente').value; let modelo = document.getElementById('editModeloOs').value; let defeito = document.getElementById('editDefeito').value; let valorConserto = Number(document.getElementById('editValorTotal').value); let valorPeca = Number(document.getElementById('editValorPecaOs').value) || 0; let tipoPeca = document.getElementById('editTipoPecaOs').value; let valorEntrada = Number(document.getElementById('editValorEntradaOs').value) || 0; let dataEntradaPagamento = document.getElementById('editDataEntradaPag').value; let valorParcelaRestante = Number(document.getElementById('editValorParcelaRestante').value) || 0; let dataRestantePagamento = document.getElementById('editDataRestantePag').value;
-    if(!cliente || !modelo || !defeito || !valorConserto) { alert('Preencha os campos obrigatórios!'); return; }
+    let cliente = document.getElementById('editCliente').value; let modelo = document.getElementById('editModeloOs').value; let defeito = document.getElementById('editDefeito').value; let valorConserto = document.getElementById('editValorTotal').value; let valorPeca = document.getElementById('editValorPecaOs').value === "" ? 0 : Number(document.getElementById('editValorPecaOs').value); let tipoPeca = document.getElementById('editTipoPecaOs').value; let valorEntrada = Number(document.getElementById('editValorEntradaOs').value) || 0; let dataEntradaPagamento = document.getElementById('editDataEntradaPag').value; let valorParcelaRestante = Number(document.getElementById('editValorParcelaRestante').value) || 0; let dataRestantePagamento = document.getElementById('editDataRestantePag').value;
+    if(!cliente || !modelo || !defeito || valorConserto === "") { alert('Preencha os campos obrigatórios!'); return; }
+    valorConserto = Number(valorConserto);
     if(editandoFinalizada) {
       let idx = consertosFinalizados.findIndex(c => c.id === editandoOsId);
       if(idx !== -1) consertosFinalizados[idx] = { ...consertosFinalizados[idx], cliente, modelo, defeito, valorConserto, valorPeca, tipoPeca, valorEntrada, dataEntradaPagamento, valorParcelaRestante, dataRestantePagamento };
@@ -1533,8 +1534,7 @@
         let valorFinal = ap.valorVenda; let custoTotal = ap.valorCompra + (ap.valorPecaUtilizada||0); 
         let lucroReal = valorFinal - custoTotal;
         
-        // Reembolsa o custo no CAPITAL se veio do capital
-        if(ap.origemCustoVenda === 'capital') {
+        if(ap.origemCustoVenda === 'capital' && custoTotal > 0) {
           creditarCapital(custoTotal, `Reembolso venda ${ap.modelo}`);
         }
         
@@ -1575,7 +1575,6 @@
     let custoTotal = ap.valorCompra + (ap.valorPecaUtilizada||0);
     
     if(isParcelada) {
-      // Entrada NÃO toca no Capital, é apenas registro
       ap.valorEntrada = valorEntrada; 
       ap.dataEntradaPagamento = dataEntradaPag; 
       ap.valorParcelaRestante = valorParcelaRestante; 
@@ -1590,8 +1589,7 @@
       return;
     }
     
-    // Venda à vista - reembolsa o custo no CAPITAL
-    if(ap.origemCustoVenda === 'capital') {
+    if(ap.origemCustoVenda === 'capital' && custoTotal > 0) {
       creditarCapital(custoTotal, `Reembolso venda ${ap.modelo}`);
     }
     
@@ -1609,7 +1607,7 @@
     switchSubVendaTab('finalizados');
   }
 
-  function deletarAparelho(id) { let a = aparelhos.find(x=>x.id===id); if(a && confirm(`Excluir ${a.modelo}?`)) { let totalEstorno = a.valorCompra + (a.valorPecaUtilizada||0); if(a.origemCustoVenda !== 'fornecedor') creditarCapital(totalEstorno, `Estorno ${a.modelo}`); aparelhos = aparelhos.filter(x=>x.id!==id); salvarDados(); atualizarTudo(); if(a.status === 'parcelado') { switchSubVendaTab('vendas_andamento'); } else { switchSubVendaTab('disponiveis'); } } }
+  function deletarAparelho(id) { let a = aparelhos.find(x=>x.id===id); if(a && confirm(`Excluir ${a.modelo}?`)) { let totalEstorno = a.valorCompra + (a.valorPecaUtilizada||0); if(a.origemCustoVenda !== 'fornecedor' && totalEstorno > 0) creditarCapital(totalEstorno, `Estorno ${a.modelo}`); aparelhos = aparelhos.filter(x=>x.id!==id); salvarDados(); atualizarTudo(); if(a.status === 'parcelado') { switchSubVendaTab('vendas_andamento'); } else { switchSubVendaTab('disponiveis'); } } }
   function editarAparelho(id) { let ap = aparelhos.find(a=>a.id===id); if(!ap) return; editAparelhoId=id; document.getElementById('editModelo').value=ap.modelo; document.getElementById('editValorCompra').value=ap.valorCompra; document.getElementById('editValorVenda').value=ap.valorVenda; document.getElementById('editCondicao').value=ap.condicao; document.getElementById('editAcessorios').value=ap.acessorios||''; document.getElementById('editPecaUtilizada').value=ap.pecaUtilizada!=='Nenhuma'?ap.pecaUtilizada:''; document.getElementById('editValorPecaUtilizada').value=ap.valorPecaUtilizada||0; document.getElementById('editarAparelhoModal').style.display='flex'; }
   function confirmarEditarAparelho() { let ap = aparelhos.find(a=>a.id===editAparelhoId); if(!ap) return; let novoCompra = Number(document.getElementById('editValorCompra').value); let novoValorPeca = Number(document.getElementById('editValorPecaUtilizada').value)||0; let oldCusto = ap.valorCompra + (ap.valorPecaUtilizada||0); let newCusto = novoCompra + novoValorPeca; let diff = newCusto - oldCusto; if(diff>0 && !debitarCapital(diff, `Ajuste custo ${ap.modelo}`)) return; else if(diff<0) creditarCapital(-diff, `Redução custo ${ap.modelo}`); ap.modelo = document.getElementById('editModelo').value; ap.valorCompra = novoCompra; ap.valorVenda = Number(document.getElementById('editValorVenda').value); ap.condicao = document.getElementById('editCondicao').value; ap.acessorios = document.getElementById('editAcessorios').value; ap.pecaUtilizada = document.getElementById('editPecaUtilizada').value.trim()||'Nenhuma'; ap.valorPecaUtilizada = novoValorPeca; salvarDados(); atualizarTudo(); fecharEditarAparelhoModal(); switchSubVendaTab('disponiveis'); }
   function fecharEditarAparelhoModal() { document.getElementById('editarAparelhoModal').style.display='none'; editAparelhoId=null; }
@@ -1621,17 +1619,20 @@
   
   function salvarCompraDetalhada() { 
     let nome = document.getElementById('nomePeca').value.trim(); 
-    let qtd = Number(document.getElementById('quantidade').value); 
-    let preco = Number(document.getElementById('precoUnitario').value); 
-    if(!nome||!qtd||!preco) { alert('Preencha os campos obrigatórios'); return; } 
+    let qtd = document.getElementById('quantidade').value; 
+    let preco = document.getElementById('precoUnitario').value; 
+    if(!nome||qtd===""||preco==="") { alert('Preencha os campos obrigatórios'); return; } 
+    qtd = Number(qtd); preco = Number(preco);
     let total = qtd * preco; 
-    if(!debitarCapital(total, `Compra ${qtd}x ${nome}`)) return; 
+    if(total > 0) {
+      if(!debitarCapital(total, `Compra ${qtd}x ${nome}`)) return; 
+    }
     comprasPecas.push({ id: Date.now(), nomePeca:nome, category:document.getElementById('categoriaPeca').value, quantidade:qtd, precoUnitario:preco, fornecedor:document.getElementById('fornecedorPeca').value, valorTotal:total, dataCompra:document.getElementById('dataCompraPeca').value||new Date().toISOString().split('T')[0], status:'pendente' }); 
     let existente = estoquePecas.find(p=>p.nomePeca===nome); 
     if(existente) { 
       let custoAntigo = existente.quantidade * existente.precoUnitarioMedio; 
       existente.quantidade += qtd; 
-      existente.precoUnitarioMedio = (custoAntigo + (qtd*preco)) / existente.quantidade; 
+      existente.precoUnitarioMedio = existente.quantidade > 0 ? (custoAntigo + (qtd*preco)) / existente.quantidade : 0; 
     } else { 
       estoquePecas.push({ id:Date.now(), nomePeca:nome, categoria:document.getElementById('categoriaPeca').value, quantidade:qtd, precoUnitarioMedio:preco, fornecedor:document.getElementById('fornecedorPeca').value, dataEntrada:new Date().toISOString().split('T')[0] }); 
     } 
@@ -1806,4 +1807,4 @@
   carregarDados(); showSection('consertos');
 </script>
 </body>
-                                                                                                                                                                                                     </html>
+</html>
