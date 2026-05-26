@@ -22,6 +22,7 @@
       --accent-green: #30d5c8;
       --accent-orange: #ff9f0a;
       --accent-red: #ff453a;
+      --accent-yellow: #f5b042;
       
       --box-shadow-premium: 0 10px 40px -10px rgba(0, 0, 0, 0.7);
     }
@@ -563,6 +564,24 @@
       background: #141f36;
       color: var(--accent-blue);
     }
+    
+    .lucro-parcial-badge {
+      background: rgba(48, 213, 200, 0.15);
+      color: #30d5c8;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      display: inline-block;
+      margin-top: 4px;
+    }
+    
+    .lucro-pendente-info {
+      font-size: 11px;
+      color: var(--accent-yellow);
+      margin-top: 2px;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -592,10 +611,12 @@
       <div class="kpi-card vendas">
         <h3>📱 LUCRO VENDAS</h3>
         <div class="valor" id="lucroVendasValor">R$ 0,00</div>
+        <div id="lucroPendenteVendasInfo" class="lucro-pendente-info"></div>
       </div>
       <div class="kpi-card consertos">
         <h3>🔧 LUCRO CONSERTOS</h3>
         <div class="valor" id="lucroConsertosValor">R$ 0,00</div>
+        <div id="lucroPendenteConsertosInfo" class="lucro-pendente-info"></div>
       </div>
     </div>
 
@@ -621,15 +642,20 @@
           <input type="number" id="valorConserto" placeholder="Valor total conserto (R$) *">
           
           <div class="origem-custo">
-            <span>💰 Custo peça será debitado de:</span>
+            <span>💰 Origem do custo da peça:</span>
             <div>
-              <label><input type="radio" name="origemCustoPeca" value="capital" checked> Capital</label>
-              <label><input type="radio" name="origemCustoPeca" value="fornecedor"> Fornecedor</label>
+              <label><input type="radio" name="origemCustoPeca" value="capital" checked> 💰 Capital</label>
+              <label><input type="radio" name="origemCustoPeca" value="fornecedor"> 🏭 Fornecedor</label>
+              <label><input type="radio" name="origemCustoPeca" value="entrada"> 💳 Pagar com a entrada</label>
             </div>
           </div>
           
           <div id="fornecedorDiv" style="display:none;" class="fornecedor-field">
             <input type="text" id="nomeFornecedor" placeholder="Nome do Fornecedor (ex: João Peças)">
+          </div>
+          
+          <div id="avisoEntradaDiv" style="display:none; background: rgba(245, 176, 66, 0.1); border: 1px solid var(--accent-yellow); border-radius: 12px; padding: 10px; margin-bottom: 12px;">
+            <p style="color: var(--accent-yellow); font-size: 12px; margin: 0;">💡 A peça será paga COM O VALOR DA ENTRADA. O custo será descontado diretamente da entrada recebida.</p>
           </div>
           
           <input type="number" id="valorPeca" placeholder="Valor peça (R$)">
@@ -708,10 +734,10 @@
             <input type="text" id="acessoriosInclusos" placeholder="Acessórios inclusos">
             
             <div class="origem-custo">
-              <span>💰 Custo do aparelho será debitado de:</span>
+              <span>💰 Origem do custo do aparelho (compra + peça):</span>
               <div>
-                <label><input type="radio" name="origemCustoVenda" value="capital" checked> Capital</label>
-                <label><input type="radio" name="origemCustoVenda" value="fornecedor"> Fornecedor</label>
+                <label><input type="radio" name="origemCustoVenda" value="capital" checked> 💰 Capital</label>
+                <label><input type="radio" name="origemCustoVenda" value="fornecedor"> 🏭 Fornecedor</label>
               </div>
             </div>
             
@@ -720,7 +746,7 @@
             </div>
             
             <div class="small-input-group">
-              <div><input type="text" id="pecaUtilizada" placeholder="🔧 Peça utilizada"></div>
+              <div><input type="text" id="pecaUtilizada" placeholder="🔧 Peça utilizada (opcional)"></div>
               <div><input type="number" id="valorPecaUtilizada" placeholder="Custo peça (R$)" step="0.01"></div>
             </div>
             <button class="salvar" onclick="salvarAparelhoDetalhado()">📦 Adicionar ao Estoque</button>
@@ -847,7 +873,7 @@
 
 <div id="editarCapitalModal" class="modal"><div class="modal-content"><h3>✏️ Editar Capital</h3><input type="number" id="novoCapital" placeholder="Valor"><input type="text" id="motivoEdicao" placeholder="Motivo"><div class="modal-footer-btns"><button onclick="confirmarEditarCapital()">Salvar</button><button onclick="fecharEditarCapitalModal()">Cancelar</button></div></div></div>
 <div id="capitalModal" class="modal"><div class="modal-content"><h3>➕ Adicionar Capital</h3><input type="number" id="valorCapital" placeholder="Valor R$"><input type="text" id="descricaoCapital" placeholder="Descrição"><div class="modal-footer-btns"><button onclick="confirmarAdicionarCapital()">Adicionar</button><button onclick="fecharModalCapital()">Cancelar</button></div></div></div>
-<div id="finalizarModal" class="modal"><div class="modal-content"><h3>✅ Finalizar Serviço</h3><input type="number" id="valorRecebido" placeholder="Valor recebido"><select id="formaPagamento"><option>Dinheiro</option><option>PIX</option><option>Cartão</option></select><div class="modal-footer-btns"><button onclick="confirmarFinalizar()">Finalizar</button><button onclick="fecharFinalizarModal()">Cancelar</button></div></div></div>
+<div id="finalizarModal" class="modal"><div class="modal-content"><h3>✅ Finalizar Serviço</h3><p id="finalizarInfo" style="font-size:13px; color:var(--text-muted); margin-bottom:10px;"></p><input type="number" id="valorRecebido" placeholder="Valor recebido agora"><select id="formaPagamento"><option>Dinheiro</option><option>PIX</option><option>Cartão</option></select><div class="modal-footer-btns"><button onclick="confirmarFinalizar()">Finalizar</button><button onclick="fecharFinalizarModal()">Cancelar</button></div></div></div>
 <div id="detalheOsModal" class="modal"><div class="modal-content"><span class="close-modal" onclick="fecharDetalheModal()">&times;</span><h3 id="detalheTitulo">Detalhes</h3><div id="detalheConteudo" style="margin-top:15px; line-height: 1.6;"></div></div></div>
 <div id="reciboModal" class="modal"><div class="modal-content"><span class="close-modal" onclick="fecharReciboModal()">&times;</span><h2>🧾 RECIBO</h2><div id="reciboConteudo" class="recibo" style="margin:15px 0;"></div><button onclick="imprimirRecibo()" style="width:100%; background:var(--accent-blue); padding:12px; border:none; border-radius:12px; color:#02040a; font-weight:700; cursor:pointer;">🖨️ Imprimir Recibo</button></div></div>
 
@@ -899,8 +925,13 @@
           <input type="date" id="vendaDataRestantePagamento">
         </div>
       </div>
+      
+      <div style="background: rgba(245, 176, 66, 0.1); border: 1px solid var(--accent-yellow); border-radius: 12px; padding: 10px; margin-top: 12px;">
+        <p style="color: var(--accent-yellow); font-size: 12px; margin: 0;">💡 O aparelho será pago COM O VALOR DA ENTRADA. O custo será reembolsado e o lucro calculado automaticamente.</p>
+      </div>
     </div>
-    <div class="modal-footer-btns">
+    
+    <div class="modal-footer-btns" style="margin-top: 20px;">
       <button onclick="confirmarVendaComOrigem()" style="background:#30d5c8; color: #02040a;">Confirmar Venda</button>
       <button onclick="fecharVendaOrigemModal()" style="background:var(--accent-red);">Cancelar</button>
     </div>
@@ -970,17 +1001,23 @@
     radiosConserto.forEach(radio => {
       radio.addEventListener('change', function() {
         const fornecedorDiv = document.getElementById('fornecedorDiv');
+        const avisoEntradaDiv = document.getElementById('avisoEntradaDiv');
         if(this.value === 'fornecedor') {
           fornecedorDiv.style.display = 'block';
+          avisoEntradaDiv.style.display = 'none';
+        } else if(this.value === 'entrada') {
+          fornecedorDiv.style.display = 'none';
+          avisoEntradaDiv.style.display = 'block';
         } else {
           fornecedorDiv.style.display = 'none';
+          avisoEntradaDiv.style.display = 'none';
           document.getElementById('nomeFornecedor').value = '';
         }
       });
     });
     
-    const radiosVenda = document.querySelectorAll('input[name="origemCustoVenda"]');
-    radiosVenda.forEach(radio => {
+    const radiosVendaCadastro = document.querySelectorAll('input[name="origemCustoVenda"]');
+    radiosVendaCadastro.forEach(radio => {
       radio.addEventListener('change', function() {
         const fornecedorDiv = document.getElementById('fornecedorVendaDiv');
         if(this.value === 'fornecedor') {
@@ -994,6 +1031,7 @@
 
     const checkParcelado = document.getElementById('vendaParceladaCheckbox');
     const camposParcelamento = document.getElementById('camposParcelamentoVenda');
+    
     if(checkParcelado) {
       checkParcelado.addEventListener('change', function() {
         camposParcelamento.style.display = this.checked ? 'block' : 'none';
@@ -1110,16 +1148,13 @@
       let blob = new Blob([dataStr], {type: "application/json;charset=utf-8"}); 
       let dataAtual = new Date().toISOString().split('T')[0];
       let nomeArquivo = `jefferson_cell_backup_${dataAtual}.json`;
-
       let a = document.createElement('a'); 
       a.href = URL.createObjectURL(blob); 
       a.download = nomeArquivo; 
-      
       document.body.appendChild(a);
       a.click(); 
       document.body.removeChild(a);
       URL.revokeObjectURL(a.href); 
-      
       document.getElementById('backupCompletoModal').style.display = 'flex';
       gerarBackupCopiaCola();
     } catch (err) {
@@ -1167,7 +1202,7 @@
     capital = data.capital || 0; 
     lucroTotal = data.lucroTotal || 0; 
     extrato = data.extrato || []; 
-    estoquePecas = data.estoquePecas || []; 
+    estoquePecas = data.estoquePecas || [];
     salvarDados(); 
     atualizarTudo(); 
     alert('✅ Todos os dados da Jefferson Cell foram recuperados com sucesso!');
@@ -1213,7 +1248,7 @@
       capital = p.capital || 0; 
       lucroTotal = p.lucroTotal || 0; 
       extrato = p.extrato || []; 
-      estoquePecas = p.estoquePecas || []; 
+      estoquePecas = p.estoquePecas || [];
     } else { 
       inicializarExemplo(); 
     }
@@ -1232,98 +1267,393 @@
     let dividaVendas = aparelhos.reduce((s,a) => s + (a.origemCustoVenda === 'fornecedor' ? ((a.valorCompra || 0) + (a.valorPecaUtilizada || 0)) : 0), 0);
     let dividaPecasCompras = comprasPecas.reduce((s,c) => s + (c.status !== 'pago' ? (c.valorTotal || 0) : 0), 0);
     let totalPecasPendentes = dividaConsertos + dividaVendas + dividaPecasCompras;
-    
     document.getElementById('lucroAcumulado').innerHTML = `R$ ${totalPecasPendentes.toFixed(2)}`;
     
-    let lucroVendas = vendasRealizadas.reduce((s,v)=>s+(v.lucro||0),0);
     let lucroConsertos = consertosFinalizados.reduce((s,c)=>s+(c.lucro||0),0);
+    let lucroVendas = vendasRealizadas.reduce((s,v)=>s+(v.lucro||0),0);
+    
+    // Calcular lucro pendente (já contabilizado mas não finalizado)
+    let lucroPendenteConsertos = consertos.reduce((s,c) => s + (c.lucroImediato || 0), 0);
+    let lucroPendenteVendas = aparelhos.filter(a => a.status === 'parcelado').reduce((s,a) => s + (a.lucroImediato || 0), 0);
+    
     document.getElementById('lucroVendasValor').innerHTML = `R$ ${lucroVendas.toFixed(2)}`;
     document.getElementById('lucroConsertosValor').innerHTML = `R$ ${lucroConsertos.toFixed(2)}`;
+    
+    // Mostrar lucro já contabilizado nos cards
+    if(lucroPendenteVendas > 0) {
+      document.getElementById('lucroPendenteVendasInfo').innerHTML = `💰 Já contabilizado (pendente): R$ ${lucroPendenteVendas.toFixed(2)}`;
+    } else {
+      document.getElementById('lucroPendenteVendasInfo').innerHTML = '';
+    }
+    
+    if(lucroPendenteConsertos > 0) {
+      document.getElementById('lucroPendenteConsertosInfo').innerHTML = `💰 Já contabilizado (pendente): R$ ${lucroPendenteConsertos.toFixed(2)}`;
+    } else {
+      document.getElementById('lucroPendenteConsertosInfo').innerHTML = '';
+    }
   }
 
   function creditarCapital(val, desc) { capital += val; adicionarExtrato('credito', desc, val); atualizarDisplays(); }
-  function debitarCapital(val, desc) { if(capital < val) { alert(`❌ Saldo insuficiente no CAPITAL! Você tem R$ ${capital.toFixed(2)} para peças, mas precisa de R$ ${val.toFixed(2)}. Adicione capital ou troque a origem para "Fornecedor".`); return false; } capital -= val; adicionarExtrato('debito', desc, val); atualizarDisplays(); return true; }
+  function debitarCapital(val, desc) { if(capital < val) { alert(`❌ Saldo insuficiente no CAPITAL! Você tem R$ ${capital.toFixed(2)}`); return false; } capital -= val; adicionarExtrato('debito', desc, val); atualizarDisplays(); return true; }
 
+  // ==================== FUNÇÃO CONSERTOS ====================
   function salvarConserto() {
-    let cliente = document.getElementById('clienteConserto').value, modelo = document.getElementById('modeloConserto').value, defeito = document.getElementById('defeitoConserto').value, valorConserto = document.getElementById('valorConserto').value;
+    let cliente = document.getElementById('clienteConserto').value;
+    let modelo = document.getElementById('modeloConserto').value;
+    let defeito = document.getElementById('defeitoConserto').value;
+    let valorConserto = document.getElementById('valorConserto').value;
     let valorPeca = document.getElementById('valorPeca').value === "" ? 0 : Number(document.getElementById('valorPeca').value);
     let origenCusto = document.querySelector('input[name="origemCustoPeca"]:checked').value;
     let fornecedorNome = document.getElementById('nomeFornecedor').value.trim();
+    
     if(!cliente||!modelo||!defeito||valorConserto==="") { alert('Preencha os campos obrigatórios'); return; }
     valorConserto = Number(valorConserto);
     
-    if(valorPeca > 0 && origenCusto === 'capital') { 
-      if(!debitarCapital(valorPeca, `Peça p/ ${modelo}`)) return; 
-    } else if(valorPeca > 0 && origenCusto === 'fornecedor') { 
-      adicionarExtrato('debito', `Peça (${fornecedorNome || 'N/I'}) p/ ${modelo} - Fornecedor (dívida)`, 0); 
-    }
-    
     let valorEntrada = Number(document.getElementById('valorEntrada').value) || 0;
     let dataEntradaPag = document.getElementById('dataEntradaPagamento').value;
+    let parcelaRestante = Number(document.getElementById('valorParcela').value) || 0;
     
-    let novaOS = { id: Date.now(), cliente, modelo, defeito, valorConserto, valorPeca, tipoPeca: document.getElementById('tipoPeca').value, dataEntrada: document.getElementById('dataEntrada').value||new Date().toISOString().split('T')[0], dataVencimento: document.getElementById('dataVencimento').value, status:'em_andamento', valorEntrada, dataEntradaPagamento: dataEntradaPag, valorParcelaRestante: Number(document.getElementById('valorParcela').value) || 0, dataRestantePagamento: document.getElementById('dataRestantePagamento').value, origemCustoPeca: origenCusto, fornecedor: (origenCusto === 'fornecedor') ? fornecedorNome : null };
-    consertos.push(novaOS); salvarDados(); atualizarTudo(); 
-    document.getElementById('clienteConserto').value = ''; document.getElementById('modeloConserto').value = ''; document.getElementById('defeitoConserto').value = ''; document.getElementById('valorConserto').value = ''; document.getElementById('valorPeca').value = ''; document.getElementById('valorEntrada').value = ''; document.getElementById('valorParcela').value = ''; document.getElementById('nomeFornecedor').value = ''; document.getElementById('fornecedorDiv').style.display = 'none'; document.querySelector('input[name="origemCustoPeca"][value="capital"]').checked = true;
-    alert(`✅ OS criada! Valor do serviço: R$ ${valorConserto} | Custo da peça: R$ ${valorPeca} | Lucro estimado: R$ ${valorConserto - valorPeca}`);
-    switchSubConsertoTab('andamento');
-  }
-
-  function salvarAparelhoDetalhado() {
-    let modelo = document.getElementById('modelo').value.trim(); let compra = document.getElementById('valorCompra').value; let venda = document.getElementById('valorVenda').value; if(!modelo||compra===""||venda==="") { alert('Preencha modelo, compra e venda'); return; } 
-    compra = Number(compra); venda = Number(venda);
-    let pecaUtilizada = document.getElementById('pecaUtilizada').value.trim(); let valorPecaUtilizada = Number(document.getElementById('valorPecaUtilizada').value)||0; 
-    let origenCusto = document.querySelector('input[name="origemCustoVenda"]:checked').value; let fornecedorNome = document.getElementById('nomeFornecedorVenda').value.trim();
-    
-    let custoTotal = compra + valorPecaUtilizada;
-    
-    if(custoTotal > 0) {
-      if(origenCusto === 'capital') { 
-        if(!debitarCapital(custoTotal, `Compra ${modelo} + peça`)) return; 
-      } else { 
-        adicionarExtrato('debito', `Compra ${modelo} (${fornecedorNome || 'N/I'}) - Fornecedor (dívida)`, 0); 
-        if(valorPecaUtilizada > 0) adicionarExtrato('debito', `Peça ${pecaUtilizada} p/ ${modelo} (${fornecedorNome || 'N/I'}) - Fornecedor (dívida)`, 0);
-      }
+    // Se não preencheu entrada nem parcela, assume tudo pendente
+    if(valorEntrada === 0 && parcelaRestante === 0) {
+      parcelaRestante = valorConserto;
     }
     
-    aparelhos.push({ id:Date.now(), modelo, valorCompra:compra, valorVenda:venda, condicao:document.getElementById('condicaoAparelho').value, acessorios:document.getElementById('acessoriosInclusos').value, pecaUtilizada: pecaUtilizada||'Nenhuma', valorPecaUtilizada, dataEntrada:new Date().toISOString().split('T')[0], status:'disponivel', origemCustoVenda: origenCusto, fornecedorVenda: (origenCusto === 'fornecedor') ? fornecedorNome : null, valorEntrada: 0, dataEntradaPagamento: '', valorParcelaRestante: 0, dataRestantePagamento: '' }); 
+    // Verificar se é à vista (entrada = valor total e parcela = 0)
+    let isAVista = (valorEntrada === valorConserto && parcelaRestante === 0);
+    
+    // Validação da soma
+    if(valorEntrada + parcelaRestante !== valorConserto) {
+      alert(`A soma da entrada (R$ ${valorEntrada.toFixed(2)}) + parcela (R$ ${parcelaRestante.toFixed(2)}) deve ser igual ao valor total (R$ ${valorConserto.toFixed(2)})`);
+      return;
+    }
+    
+    let lucroImediato = 0;
+    let pecaPaga = false;
+    
+    if(isAVista) {
+      // À VISTA: recebeu tudo de uma vez
+      if(valorPeca > 0 && origenCusto === 'capital') {
+        if(!debitarCapital(valorPeca, `Peça p/ ${modelo} (OS à vista)`)) return;
+        creditarCapital(valorPeca, `🔁 Reembolso peça - OS ${modelo}`);
+        lucroImediato = valorConserto - valorPeca;
+        pecaPaga = true;
+      } else if(valorPeca > 0 && origenCusto === 'fornecedor') {
+        adicionarExtrato('debito', `Peça (${fornecedorNome || 'N/I'}) p/ ${modelo} - Fornecedor (dívida)`, 0);
+        lucroImediato = valorConserto;
+      } else if(valorPeca > 0 && origenCusto === 'entrada') {
+        lucroImediato = valorConserto - valorPeca;
+      } else {
+        lucroImediato = valorConserto;
+      }
+    } else if(valorEntrada > 0) {
+      // PARCELADO: tem entrada
+      if(valorPeca > 0 && origenCusto === 'capital') {
+        if(!debitarCapital(valorPeca, `Peça p/ ${modelo} (OS)`)) return;
+        creditarCapital(valorPeca, `🔁 Reembolso peça (entrada) - OS ${modelo}`);
+        lucroImediato = valorEntrada - valorPeca;
+        pecaPaga = true;
+      } else if(valorPeca > 0 && origenCusto === 'fornecedor') {
+        adicionarExtrato('debito', `Peça (${fornecedorNome || 'N/I'}) p/ ${modelo} - Fornecedor (dívida)`, 0);
+        lucroImediato = valorEntrada;
+      } else if(valorPeca > 0 && origenCusto === 'entrada') {
+        lucroImediato = valorEntrada - valorPeca;
+      } else {
+        lucroImediato = valorEntrada;
+      }
+    } else {
+      // SEM ENTRADA: tudo na parcela
+      if(valorPeca > 0 && origenCusto === 'capital') {
+        if(!debitarCapital(valorPeca, `Peça p/ ${modelo} (OS - sem entrada)`)) return;
+      } else if(valorPeca > 0 && origenCusto === 'fornecedor') {
+        adicionarExtrato('debito', `Peça (${fornecedorNome || 'N/I'}) p/ ${modelo} - Fornecedor (dívida)`, 0);
+      }
+      lucroImediato = 0;
+    }
+    
+    // Registrar lucro imediato
+    if(lucroImediato > 0) {
+      lucroTotal += lucroImediato;
+      adicionarExtrato('credito', `💰 LUCRO - Conserto ${modelo}`, lucroImediato);
+    } else if(lucroImediato < 0) {
+      lucroTotal += lucroImediato;
+      adicionarExtrato('debito', `⚠️ PREJUÍZO - Conserto ${modelo}`, Math.abs(lucroImediato));
+    }
+    atualizarDisplays();
+    
+    let novaOS = { 
+      id: Date.now(), cliente, modelo, defeito, valorConserto, valorPeca, tipoPeca: document.getElementById('tipoPeca').value, 
+      dataEntrada: document.getElementById('dataEntrada').value || new Date().toISOString().split('T')[0], 
+      dataVencimento: document.getElementById('dataVencimento').value, status: isAVista ? 'finalizado' : 'em_andamento', 
+      valorEntrada, dataEntradaPagamento: dataEntradaPag, valorParcelaRestante: isAVista ? 0 : parcelaRestante, 
+      dataRestantePagamento: document.getElementById('dataRestantePagamento').value, 
+      origemCustoPeca: origenCusto, fornecedor: (origenCusto === 'fornecedor') ? fornecedorNome : null,
+      lucroImediato: lucroImediato,
+      pecaPaga: pecaPaga
+    };
+    
+    if(isAVista) {
+      novaOS.lucro = lucroImediato;
+      novaOS.valorRecebido = valorConserto;
+      novaOS.formaPagamento = 'À vista';
+      novaOS.dataFinalizacao = new Date().toISOString();
+      consertosFinalizados.unshift(novaOS);
+    } else {
+      consertos.push(novaOS);
+    }
+    
     salvarDados(); atualizarTudo(); 
-    document.getElementById('modelo').value = ''; document.getElementById('valorCompra').value = ''; document.getElementById('valorVenda').value = ''; document.getElementById('pecaUtilizada').value = ''; document.getElementById('valorPecaUtilizada').value = ''; document.getElementById('nomeFornecedorVenda').value = ''; document.getElementById('fornecedorVendaDiv').style.display = 'none'; document.querySelector('input[name="origemCustoVenda"][value="capital"]').checked = true;
-    alert(`✅ Aparelho adicionado! Custo: R$ ${custoTotal} | Venda: R$ ${venda} | Lucro estimado: R$ ${venda - custoTotal}`);
-    switchSubVendaTab('disponiveis');
+    
+    document.getElementById('clienteConserto').value = ''; document.getElementById('modeloConserto').value = ''; 
+    document.getElementById('defeitoConserto').value = ''; document.getElementById('valorConserto').value = ''; 
+    document.getElementById('valorPeca').value = ''; document.getElementById('valorEntrada').value = ''; 
+    document.getElementById('valorParcela').value = ''; document.getElementById('nomeFornecedor').value = ''; 
+    document.getElementById('fornecedorDiv').style.display = 'none'; 
+    document.getElementById('avisoEntradaDiv').style.display = 'none';
+    document.querySelector('input[name="origemCustoPeca"][value="capital"]').checked = true;
+    
+    let msg = `✅ OS CRIADA!\n📱 ${modelo} - ${cliente}\n💰 Total: R$ ${valorConserto} | Peça: R$ ${valorPeca}\n💵 Entrada: R$ ${valorEntrada} | Restante: R$ ${isAVista ? 0 : parcelaRestante}`;
+    if(isAVista) msg += `\n🎉 À VISTA - Lucro: R$ ${lucroImediato.toFixed(2)}`;
+    else if(lucroImediato > 0) msg += `\n🎉 LUCRO IMEDIATO: R$ ${lucroImediato.toFixed(2)}`;
+    if(!isAVista && parcelaRestante > 0) msg += `\n📌 FALTA RECEBER: R$ ${parcelaRestante} (lucro pendente)`;
+    alert(msg);
+    
+    if(isAVista) {
+      switchSubConsertoTab('finalizados');
+    } else {
+      switchSubConsertoTab('andamento');
+    }
   }
 
-  function finalizarConserto(id) { consertoFinalizandoId = id; document.getElementById('finalizarModal').style.display='flex'; }
+  function finalizarConserto(id) { 
+    consertoFinalizandoId = id; 
+    let c = consertos.find(x => x.id === id);
+    if(c) {
+      document.getElementById('valorRecebido').value = c.valorParcelaRestante || 0;
+      document.getElementById('finalizarInfo').innerHTML = `Restante a receber: <strong>R$ ${c.valorParcelaRestante.toFixed(2)}</strong> | Lucro já contabilizado: <strong>R$ ${(c.lucroImediato || 0).toFixed(2)}</strong>`;
+    }
+    document.getElementById('finalizarModal').style.display='flex'; 
+  }
   
   function confirmarFinalizar() {
-    let valorRecebido = Number(document.getElementById('valorRecebido').value), forma = document.getElementById('formaPagamento').value; 
-    if(!valorRecebido) { alert('Valor obrigatório'); return; }
+    let valorRecebido = Number(document.getElementById('valorRecebido').value);
+    let forma = document.getElementById('formaPagamento').value; 
     let idx = consertos.findIndex(c=>c.id===consertoFinalizandoId); 
     if(idx===-1) return;
-    let c = consertos[idx]; 
+    let c = consertos[idx];
     
-    if(c.valorPeca > 0 && c.origemCustoPeca === 'capital') {
-      creditarCapital(c.valorPeca, `Reembolso peça ${c.modelo}`);
-    }
+    if(valorRecebido < 0) { alert('Valor inválido'); return; }
+    if(valorRecebido > c.valorParcelaRestante) { alert(`O valor máximo a receber é R$ ${c.valorParcelaRestante.toFixed(2)}`); return; }
     
-    let lucro = valorRecebido - (c.origemCustoPeca === 'capital' ? c.valorPeca : 0);
+    // CORRIGIDO: Lucro total = valorConserto - valorPeca (lucro real, sem contar a peça)
+    let lucroTotalOS = c.valorConserto - (c.valorPeca || 0);
     
-    if(lucro != 0) { 
-      lucroTotal += lucro; 
-      adicionarExtrato(lucro > 0 ? 'credito' : 'debito', `${lucro > 0 ? '📈 LUCRO' : '📉 PREJUÍZO'} Conserto ${c.modelo}`, Math.abs(lucro)); 
+    // O lucro adicional a ser contabilizado agora é o valorRecebido
+    // pois o lucroImediato já foi contabilizado na criação
+    if(valorRecebido > 0) { 
+      lucroTotal += valorRecebido; 
+      adicionarExtrato('credito', `💰 LUCRO (restante) - Conserto ${c.modelo}`, valorRecebido); 
       atualizarDisplays(); 
     }
     
-    let finalizada = {...c, valorRecebido, formaPagamento: forma, lucro, dataFinalizacao: new Date().toISOString()};
+    // Se a peça não foi paga ainda (sem entrada) e foi do capital, reembolsa agora
+    if(!c.pecaPaga && c.valorPeca > 0 && c.origemCustoPeca === 'capital') {
+      creditarCapital(c.valorPeca, `Reembolso peça ${c.modelo} (finalização)`);
+    }
+    
+    let finalizada = {
+      ...c, 
+      valorRecebido, 
+      formaPagamento: forma, 
+      lucro: lucroTotalOS, 
+      dataFinalizacao: new Date().toISOString()
+    };
+    
     consertosFinalizados.unshift(finalizada); 
     consertos.splice(idx,1);
     salvarDados(); 
     fecharFinalizarModal(); 
     atualizarTudo(); 
-    alert(`✅ Conserto finalizado! Recebido: R$ ${valorRecebido.toFixed(2)} | Custo peça: R$ ${c.valorPeca.toFixed(2)} | LUCRO: R$ ${lucro.toFixed(2)}`); 
+    
+    alert(`✅ Conserto finalizado!\n💰 Recebido: R$ ${valorRecebido.toFixed(2)}\n📈 Lucro total: R$ ${lucroTotalOS.toFixed(2)}`);
     mostrarRecibo(finalizada);
     switchSubConsertoTab('finalizados');
   }
 
+  // ==================== FUNÇÃO VENDAS ====================
+  function salvarAparelhoDetalhado() {
+    let modelo = document.getElementById('modelo').value.trim(); 
+    let compra = document.getElementById('valorCompra').value; 
+    let venda = document.getElementById('valorVenda').value; 
+    if(!modelo||compra===""||venda==="") { alert('Preencha modelo, compra e venda'); return; } 
+    compra = Number(compra); venda = Number(venda);
+    let pecaUtilizada = document.getElementById('pecaUtilizada').value.trim(); 
+    let valorPecaUtilizada = Number(document.getElementById('valorPecaUtilizada').value)||0; 
+    let origenCusto = document.querySelector('input[name="origemCustoVenda"]:checked').value;
+    let fornecedorNome = document.getElementById('nomeFornecedorVenda').value.trim();
+    
+    let custoTotal = compra + valorPecaUtilizada;
+    
+    if(custoTotal > 0 && origenCusto === 'capital') {
+      if(!debitarCapital(custoTotal, `Compra ${modelo}`)) return;
+    } else if(custoTotal > 0 && origenCusto === 'fornecedor') {
+      adicionarExtrato('debito', `Compra ${modelo} (${fornecedorNome || 'N/I'}) - Fornecedor (dívida)`, 0);
+    }
+    
+    aparelhos.push({ 
+      id: Date.now(), modelo, valorCompra:compra, valorVenda:venda, 
+      condicao: document.getElementById('condicaoAparelho').value, 
+      acessorios: document.getElementById('acessoriosInclusos').value, 
+      pecaUtilizada: pecaUtilizada||'Nenhuma', 
+      valorPecaUtilizada, 
+      dataEntrada: new Date().toISOString().split('T')[0], 
+      status: 'disponivel', 
+      origemCustoVenda: origenCusto, 
+      fornecedorVenda: (origenCusto === 'fornecedor') ? fornecedorNome : null,
+      custoTotal: custoTotal,
+      custoJaDebitado: true,
+      valorEntrada: 0, 
+      dataEntradaPagamento: '', 
+      valorParcelaRestante: 0, 
+      dataRestantePagamento: '',
+      lucroImediato: 0
+    }); 
+    salvarDados(); 
+    atualizarTudo(); 
+    
+    document.getElementById('modelo').value = ''; 
+    document.getElementById('valorCompra').value = ''; 
+    document.getElementById('valorVenda').value = ''; 
+    document.getElementById('pecaUtilizada').value = ''; 
+    document.getElementById('valorPecaUtilizada').value = '';
+    document.getElementById('nomeFornecedorVenda').value = '';
+    document.getElementById('fornecedorVendaDiv').style.display = 'none';
+    document.querySelector('input[name="origemCustoVenda"][value="capital"]').checked = true;
+    
+    alert(`✅ Aparelho adicionado! Custo: R$ ${custoTotal} | Venda: R$ ${venda} | Lucro estimado: R$ ${venda - custoTotal}`);
+    switchSubVendaTab('disponiveis');
+  }
+
+  function confirmarVendaComOrigem() { 
+    let origem = document.getElementById('origemVenda').value; 
+    if(!origem) { alert('Selecione a origem!'); return; } 
+    let ap = aparelhos.find(a=>a.id===vendaPendenteId); 
+    if(!ap) { fecharVendaOrigemModal(); return; } 
+    
+    const isParcelada = document.getElementById('vendaParceladaCheckbox').checked;
+    let valorEntrada = 0, dataEntradaPag = '', valorParcelaRestante = 0, dataRestantePag = '';
+    
+    if(isParcelada) {
+      valorEntrada = Number(document.getElementById('vendaValorEntrada').value) || 0; 
+      dataEntradaPag = document.getElementById('vendaDataEntradaPagamento').value; 
+      valorParcelaRestante = Number(document.getElementById('vendaValorParcela').value) || 0; 
+      dataRestantePag = document.getElementById('vendaDataRestantePagamento').value;
+      if(valorEntrada <= 0 || valorParcelaRestante <= 0) { alert('Informe os valores de parcelamento!'); return; }
+      if(valorEntrada + valorParcelaRestante !== ap.valorVenda) { alert(`A soma deve dar R$ ${ap.valorVenda.toFixed(2)}`); return; }
+      
+      let custoTotal = ap.custoTotal;
+      let lucroImediato = 0;
+      
+      if(ap.origemCustoVenda === 'capital' && custoTotal > 0) {
+        creditarCapital(custoTotal, `🔁 Reembolso custo (entrada) - Venda ${ap.modelo}`);
+        lucroImediato = valorEntrada - custoTotal;
+      } else if(ap.origemCustoVenda === 'fornecedor') {
+        lucroImediato = valorEntrada;
+      }
+      
+      if(lucroImediato > 0) {
+        lucroTotal += lucroImediato;
+        adicionarExtrato('credito', `💰 LUCRO IMEDIATO (entrada) - Venda ${ap.modelo}`, lucroImediato);
+      } else if(lucroImediato < 0) {
+        lucroTotal += lucroImediato;
+        adicionarExtrato('debito', `⚠️ PREJUÍZO PARCIAL (entrada) - Venda ${ap.modelo}`, Math.abs(lucroImediato));
+      }
+      atualizarDisplays();
+      
+      ap.valorEntrada = valorEntrada; 
+      ap.dataEntradaPagamento = dataEntradaPag; 
+      ap.valorParcelaRestante = valorParcelaRestante; 
+      ap.dataRestantePagamento = dataRestantePag; 
+      ap.status = 'parcelado'; 
+      ap.origemVendaLocal = origem;
+      ap.lucroImediato = lucroImediato;
+      salvarDados(); 
+      
+      let msg = `✅ Venda parcelada!\n📱 ${ap.modelo}\n💰 Entrada: R$ ${valorEntrada} | Restante: R$ ${valorParcelaRestante}`;
+      if(lucroImediato > 0) msg += `\n🎉 LUCRO IMEDIATO: R$ ${lucroImediato.toFixed(2)}`;
+      alert(msg);
+      
+      atualizarTudo(); 
+      fecharVendaOrigemModal(); 
+      switchSubVendaTab('vendas_andamento');
+      return;
+    }
+    
+    // Venda à vista
+    let custoTotal = ap.custoTotal;
+    
+    if(ap.origemCustoVenda === 'capital' && custoTotal > 0) {
+      creditarCapital(custoTotal, `🔁 Reembolso custo - Venda ${ap.modelo}`);
+    }
+    
+    let lucro = ap.valorVenda - custoTotal;
+    lucroTotal += lucro;
+    adicionarExtrato(lucro >= 0 ? 'credito' : 'debito', `${lucro >= 0 ? '📈 LUCRO' : '📉 PREJUÍZO'} Venda ${ap.modelo}`, Math.abs(lucro));
+    atualizarDisplays();
+    
+    vendasRealizadas.unshift({ 
+      id:Date.now(), modelo:ap.modelo, valorVenda:ap.valorVenda, custoTotal, lucro, 
+      data:new Date().toLocaleString(), condicao:ap.condicao, acessorios:ap.acessorios, 
+      pecaUtilizada:ap.pecaUtilizada, valorPecaUtilizada:ap.valorPecaUtilizada, origem, 
+      valorEntrada:0, valorParcelaRestante:0 
+    }); 
+    
+    aparelhos = aparelhos.filter(a=>a.id!==vendaPendenteId); 
+    salvarDados(); atualizarTudo(); fecharVendaOrigemModal(); 
+    alert(`✅ Vendido à vista!\n📱 ${ap.modelo} - R$ ${ap.valorVenda}\n📈 Lucro: R$ ${lucro.toFixed(2)}`); 
+    switchSubVendaTab('finalizados');
+  }
+
+  function confirmarFinalizarVendaParcela() { 
+    let valorRecebido = Number(document.getElementById('vendaValorRecebido').value); 
+    if(!valorRecebido && valorRecebido !== 0) { alert('Digite o valor recebido'); return; }
+    let ap = aparelhos.find(a=>a.id===vendaParcelaFinalizandoId); 
+    if(!ap) return;
+    
+    if(valorRecebido >= ap.valorParcelaRestante) {
+        let custoTotal = ap.custoTotal;
+        let lucroFinal = ap.valorVenda - custoTotal;
+        
+        if(valorRecebido > 0) {
+          lucroTotal += valorRecebido;
+          adicionarExtrato('credito', `💰 LUCRO (restante) - Venda ${ap.modelo}`, valorRecebido);
+        }
+        atualizarDisplays();
+        
+        vendasRealizadas.unshift({ 
+          id:Date.now(), modelo:ap.modelo, valorVenda:ap.valorVenda, custoTotal, lucro:lucroFinal, 
+          data:new Date().toLocaleString(), condicao:ap.condicao, acessorios:ap.acessorios, 
+          pecaUtilizada:ap.pecaUtilizada, valorPecaUtilizada:ap.valorPecaUtilizada, 
+          origem: ap.origemVendaLocal || 'Loja', valorEntrada:ap.valorEntrada, valorParcelaRestante:0 
+        });
+        
+        aparelhos = aparelhos.filter(a=>a.id!==vendaParcelaFinalizandoId); 
+        salvarDados(); atualizarTudo();
+        alert(`✅ Venda concluída!\n💰 Recebido: R$ ${valorRecebido}\n📈 Lucro total: R$ ${lucroFinal.toFixed(2)}`);
+        fecharFinalizarVendaModal();
+        switchSubVendaTab('finalizados');
+    } else {
+        ap.valorParcelaRestante -= valorRecebido;
+        lucroTotal += valorRecebido;
+        adicionarExtrato('credito', `💰 PARCELA - Venda ${ap.modelo}`, valorRecebido);
+        atualizarDisplays();
+        alert(`✅ Parcela registrada! Faltam: R$ ${ap.valorParcelaRestante.toFixed(2)}`);
+        fecharFinalizarVendaModal();
+        switchSubVendaTab('vendas_andamento');
+    }
+    salvarDados(); atualizarTudo();
+  }
+
+  // Demais funções auxiliares (mantidas sem alteração)
   function abrirEditarOs(id, isFinalizada = false) { 
     let os = isFinalizada ? consertosFinalizados.find(c => c.id === id) : consertos.find(c => c.id === id); if(!os) return;
     editandoOsId = id; editandoFinalizada = isFinalizada;
@@ -1348,30 +1678,35 @@
   }
 
   function fecharEditarOsModal() { document.getElementById('editarOsModal').style.display = 'none'; editandoOsId = null; editandoFinalizada = false; }
+  
   function gerarRecibo(os) { 
-    let lucroReal = (os.valorRecebido || 0) - ((os.origemCustoPeca === 'capital') ? (os.valorPeca || 0) : 0);
-    return `================================================\n       JEFFERSON CELL - ASSISTÊNCIA TÉCNICA\n================================================\n\nORDEM Nº: ${os.id}\nCLIENTE: ${os.cliente}\nMODELO: ${os.modelo}\nDEFEITO: ${os.defeito}\nVALOR TOTAL: R$ ${os.valorConserto.toFixed(2)}\nENTRADA: R$ ${(os.valorEntrada||0).toFixed(2)}\nRESTANTE: R$ ${(os.valorParcelaRestante||0).toFixed(2)}\nCUSTO PEÇA: R$ ${(os.valorPeca||0).toFixed(2)}\nRECEBIDO TOTAL: R$ ${(os.valorRecebido||0).toFixed(2)}\nLUCRO REAL: R$ ${lucroReal.toFixed(2)}\n================================================`; 
+    let lucroReal = os.lucro || 0;
+    return `================================================\n       JEFFERSON CELL - ASSISTÊNCIA TÉCNICA\n================================================\n\nORDEM Nº: ${os.id}\nCLIENTE: ${os.cliente}\nMODELO: ${os.modelo}\nDEFEITO: ${os.defeito}\nVALOR TOTAL: R$ ${os.valorConserto.toFixed(2)}\nENTRADA: R$ ${(os.valorEntrada||0).toFixed(2)}\nRESTANTE: R$ ${(os.valorParcelaRestante||0).toFixed(2)}\nCUSTO PEÇA: R$ ${(os.valorPeca||0).toFixed(2)}\nLUCRO REAL: R$ ${lucroReal.toFixed(2)}\n================================================`; 
   }
+  
   function mostrarRecibo(os) { document.getElementById('reciboConteudo').innerHTML = `<pre>${gerarRecibo(os)}</pre>`; document.getElementById('reciboModal').style.display = 'flex'; }
   function imprimirRecibo() { let conteudo = document.getElementById('reciboConteudo').innerText; let win = window.open('', '_blank'); win.document.write('<html><head><title>Recibo</title></head><body><pre>'+conteudo+'</pre></body></html>'); win.document.close(); win.print(); }
   function fecharReciboModal() { document.getElementById('reciboModal').style.display = 'none'; }
+  
   function deletarConserto(id) { 
     let idx = consertos.findIndex(c=>c.id===id); 
     if(idx!==-1 && confirm('Excluir OS?')) { 
       let c = consertos[idx]; 
-      if(c.valorPeca>0 && c.origemCustoPeca === 'capital') creditarCapital(c.valorPeca, `Estorno peça OS ${c.modelo}`); 
+      if(c.valorPeca>0 && c.origemCustoPeca === 'capital' && !c.pecaPaga) creditarCapital(c.valorPeca, `Estorno peça OS ${c.modelo}`); 
+      if(c.lucroImediato && c.lucroImediato > 0) { lucroTotal -= c.lucroImediato; }
       consertos.splice(idx,1); 
-      salvarDados(); 
-      atualizarTudo(); 
+      salvarDados(); atualizarTudo(); 
       switchSubConsertoTab('andamento'); 
     } 
   }
+  
   function verDetalhesOS(os) { 
-    let lucroReal = (os.valorRecebido || 0) - ((os.origemCustoPeca === 'capital') ? (os.valorPeca || 0) : 0);
+    let lucroReal = os.lucro || 0;
     document.getElementById('detalheTitulo').innerHTML = `🔍 OS - ${os.modelo}`; 
-    document.getElementById('detalheConteudo').innerHTML = `<p><strong>Cliente:</strong> ${os.cliente}</p><p><strong>Defeito:</strong> ${os.defeito}</p><p><strong>Valor serviço:</strong> R$ ${os.valorConserto.toFixed(2)}</p><p><strong>Entrada:</strong> R$ ${(os.valorEntrada||0).toFixed(2)}</p><p><strong>Restante:</strong> R$ ${(os.valorParcelaRestante||0).toFixed(2)}</p><p><strong>Peça:</strong> ${os.tipoPeca||'Nenhuma'} | Custo: R$ ${(os.valorPeca||0).toFixed(2)}</p><p><strong style="color: #30d5c8;">📈 LUCRO REAL: R$ ${lucroReal.toFixed(2)}</strong></p><br><button onclick="mostrarRecibo(${JSON.stringify(os).replace(/"/g, '&quot;')})" style="background:#30d5c8;color:#02040a;padding:8px 14px;border-radius:10px;font-weight:700;border:none;cursor:pointer;">🧾 Recibo</button>`; 
+    document.getElementById('detalheConteudo').innerHTML = `<p><strong>Cliente:</strong> ${os.cliente}</p><p><strong>Defeito:</strong> ${os.defeito}</p><p><strong>Valor serviço:</strong> R$ ${os.valorConserto.toFixed(2)}</p><p><strong>Entrada:</strong> R$ ${(os.valorEntrada||0).toFixed(2)}</p><p><strong>Restante:</strong> R$ ${(os.valorParcelaRestante||0).toFixed(2)}</p><p><strong>Peça:</strong> ${os.tipoPeca||'Nenhuma'} | Custo: R$ ${(os.valorPeca||0).toFixed(2)}</p><p><strong style="color: #30d5c8;">📈 LUCRO TOTAL: R$ ${lucroReal.toFixed(2)}</strong></p><br><button onclick="mostrarRecibo(${JSON.stringify(os).replace(/"/g, '&quot;')})" style="background:#30d5c8;color:#02040a;padding:8px 14px;border-radius:10px;font-weight:700;border:none;cursor:pointer;">🧾 Recibo</button>`; 
     document.getElementById('detalheOsModal').style.display='flex'; 
   }
+  
   function fecharDetalheModal() { document.getElementById('detalheOsModal').style.display='none'; }
   function fecharFinalizarModal() { document.getElementById('finalizarModal').style.display='none'; consertoFinalizandoId=null; }
   
@@ -1384,398 +1719,113 @@
       const atrasado = temPendencia && verificarAtraso(c.dataRestantePagamento, c.valorParcelaRestante);
       const classeAtraso = atrasado ? 'item-atrasado' : '';
       const badgeAtraso = atrasado ? '<span class="atrasado-badge">ATRASADO</span>' : '';
-      let lucroEstimado = c.valorConserto - (c.origemCustoPeca === 'capital' ? c.valorPeca : 0);
+      let lucroParcial = c.lucroImediato || 0;
       
-      let tagFornecedor = '';
-      if(c.origemCustoPeca === 'fornecedor' && c.valorPeca > 0) {
-        tagFornecedor = `<div style="color:var(--accent-red); font-size:12px; margin-top:4px; font-weight:700;">🔻 Dívida Peça (${c.fornecedor || 'Fornecedor'}): -R$ ${c.valorPeca.toFixed(2)}</div>`;
-      }
-
-      return `<div class="item ${classeAtraso}"><h3>🔧 ${c.modelo} - ${c.cliente} ${badgeAtraso}</h3><p>Valor total: R$ ${c.valorConserto.toFixed(2)} | Restante: R$ ${(c.valorParcelaRestante||0).toFixed(2)}</p><p>Custo peça: R$ ${(c.valorPeca||0).toFixed(2)} | Lucro estimado: R$ ${lucroEstimado.toFixed(2)}</p><p><span class="status-pagamento ${(c.valorParcelaRestante||0)<=0?'status-pago':(c.valorEntrada>0?'status-parcial':'status-pendente')}">${(c.valorParcelaRestante||0)<=0?'Pago':(c.valorEntrada>0?'Parcial':'Pendente')}</span></p>${tagFornecedor}<div class="item-actions"><button class="ver-detalhes" onclick='verDetalhesOS(${JSON.stringify(c).replace(/"/g, '&quot;')})'>📄 Detalhes</button><button class="btn-editar" onclick="abrirEditarOs(${c.id}, false)">✏️ Editar</button><button class="btn-finalizar" onclick="finalizarConserto(${c.id})">✅ Finalizar</button><button class="btn-deletar" onclick="deletarConserto(${c.id})">🗑️</button></div></div>`; 
+      return `<div class="item ${classeAtraso}"><h3>🔧 ${c.modelo} - ${c.cliente} ${badgeAtraso}</h3><p>Valor total: R$ ${c.valorConserto.toFixed(2)} | Restante: R$ ${(c.valorParcelaRestante||0).toFixed(2)}</p><p>Custo peça: R$ ${(c.valorPeca||0).toFixed(2)} | <span class="lucro-parcial-badge">💰 Lucro já contabilizado: R$ ${lucroParcial.toFixed(2)}</span></p><div class="item-actions"><button class="ver-detalhes" onclick='verDetalhesOS(${JSON.stringify(c).replace(/"/g, '&quot;')})'>📄 Detalhes</button><button class="btn-editar" onclick="abrirEditarOs(${c.id}, false)">✏️ Editar</button><button class="btn-finalizar" onclick="finalizarConserto(${c.id})">✅ Finalizar</button><button class="btn-deletar" onclick="deletarConserto(${c.id})">🗑️</button></div></div>`; 
     }).join(''); 
   }
 
   function atualizarAparelhosLista() { 
     let div = document.getElementById('aparelhosLista'); 
     if(!div) return;
-    let disponiveis = aparelhos.filter(a => a.status === 'disponivel' || !a.status);
+    let disponiveis = aparelhos.filter(a => a.status === 'disponivel');
     if(disponiveis.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">📭 Nenhum aparelho em estoque disponível.</p>'; 
     else div.innerHTML=disponiveis.map(a=>{
-      let custoTotal = a.valorCompra + (a.valorPecaUtilizada||0);
+      let custoTotal = a.custoTotal || (a.valorCompra + a.valorPecaUtilizada);
       let lucroEstimado = a.valorVenda - custoTotal;
-      
-      let tagFornecedorAparelho = '';
-      if(a.origemCustoVenda === 'fornecedor') {
-        let totalDevido = (a.valorCompra || 0) + (a.valorPecaUtilizada || 0);
-        tagFornecedorAparelho = `<div style="color:var(--accent-red); font-size:12px; margin-top:4px; font-weight:700;">🔻 Dívida (${a.fornecedorVenda || 'Fornecedor'}): -R$ ${totalDevido.toFixed(2)}</div>`;
-      }
-
-      return `<div class="item"><h3>📱 ${a.modelo}</h3><p>Venda: R$ ${a.valorVenda.toFixed(2)} | Custo: R$ ${custoTotal.toFixed(2)} | Lucro estimado: R$ ${lucroEstimado.toFixed(2)}</p><p>Condição: ${a.condicao}</p>${a.pecaUtilizada!=='Nenhuma'?`<div class="peca-usada">🔧 Reparo: ${a.pecaUtilizada} (-R$ ${a.valorPecaUtilizada.toFixed(2)})</div>`:''}${tagFornecedorAparelho}<div class="item-actions"><button class="btn-editar" onclick="editarAparelho(${a.id})">✏️ Editar</button><button class="btn-finalizar" onclick="iniciarVendaAparelho(${a.id})">💰 Vender</button><button class="btn-deletar" onclick="deletarAparelho(${a.id})">🗑️</button></div></div>`; 
+      let tagOrigem = a.origemCustoVenda === 'capital' ? '💰 Capital' : '🏭 Fornecedor';
+      return `<div class="item"><h3>📱 ${a.modelo}</h3><p>Venda: R$ ${a.valorVenda.toFixed(2)} | Custo: R$ ${custoTotal.toFixed(2)} | Lucro: R$ ${lucroEstimado.toFixed(2)}</p><p>Condição: ${a.condicao} | Origem: ${tagOrigem}</p>${a.pecaUtilizada!=='Nenhuma'?`<div class="peca-usada">🔧 Peça: ${a.pecaUtilizada} (R$ ${a.valorPecaUtilizada})</div>`:''}<div class="item-actions"><button class="btn-editar" onclick="editarAparelho(${a.id})">✏️ Editar</button><button class="btn-finalizar" onclick="iniciarVendaAparelho(${a.id})">💰 Vender</button><button class="btn-deletar" onclick="deletarAparelho(${a.id})">🗑️</button></div></div>`; 
     }).join(''); 
   }
 
-  function atualizarVendasAndamentoLista() {
-    let div = document.getElementById('vendasAndamentoLista');
-    if(!div) return;
-    let emAndamento = aparelhos.filter(a => a.status === 'parcelado');
-    if(emAndamento.length === 0) div.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">⏳ Nenhuma venda parcelada em andamento.</p>';
-    else div.innerHTML = emAndamento.map(a => {
-      const atrasado = verificarAtraso(a.dataRestantePagamento, a.valorParcelaRestante);
-      const classeAtraso = atrasado ? 'item-atrasado' : '';
-      const badgeAtraso = atrasado ? '<span class="atrasado-badge">ATRASADO</span>' : '';
-      let custoTotal = a.valorCompra + (a.valorPecaUtilizada||0);
-      let lucroParcial = (a.valorEntrada || 0) - custoTotal;
+  function atualizarVendasAndamentoLista() { 
+    let div = document.getElementById('vendasAndamentoLista'); 
+    if(!div) return; 
+    let emAndamento = aparelhos.filter(a => a.status === 'parcelado'); 
+    if(emAndamento.length === 0) div.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">⏳ Nenhuma venda parcelada em andamento.</p>'; 
+    else div.innerHTML = emAndamento.map(a => { 
+      const atrasado = verificarAtraso(a.dataRestantePagamento, a.valorParcelaRestante); 
+      const classeAtraso = atrasado ? 'item-atrasado' : ''; 
+      const badgeAtraso = atrasado ? '<span class="atrasado-badge">ATRASADO</span>' : ''; 
+      let custoTotal = a.custoTotal || (a.valorCompra + a.valorPecaUtilizada);
+      let lucroParcial = a.lucroImediato || 0;
       
-      let tagFornecedorAparelho = '';
-      if(a.origemCustoVenda === 'fornecedor') {
-        let totalDevido = (a.valorCompra || 0) + (a.valorPecaUtilizada || 0);
-        tagFornecedorAparelho = `<div style="color:var(--accent-red); font-size:12px; margin-top:4px; font-weight:700;">🔻 Dívida Fornecedor: -R$ ${totalDevido.toFixed(2)}</div>`;
-      }
-
-      return `<div class="item ${classeAtraso}"><h3>📱 ${a.modelo} ${badgeAtraso}</h3><p>Valor Total: R$ ${a.valorVenda.toFixed(2)} | Origem: ${a.origemVendaLocal || 'N/I'}</p><p>Custo total: R$ ${custoTotal.toFixed(2)}</p><p>💰 Entrada Paga: R$ ${a.valorEntrada.toFixed(2)} | Resta: R$ ${a.valorParcelaRestante.toFixed(2)}</p><p><small style="color:var(--text-muted);">Vencimento Restante: ${a.dataRestantePagamento || 'N/I'}</small></p>${tagFornecedorAparelho}<div class="item-actions"><button class="btn-finalizar" onclick="iniciarVendaAparelho(${a.id})">💵 Receber Parcela</button><button class="btn-deletar" onclick="deletarAparelho(${a.id})">🗑️ Deletar</button></div></div>`;
-    }).join('');
-  }
-
-  function atualizarPendentesFinalizados() { 
-    let pendentesConsertosDiv = document.getElementById('pendentesConsertosLista'); 
-    if(pendentesConsertosDiv) {
-      if(consertos.length === 0) {
-        pendentesConsertosDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhum conserto pendente</p>'; 
-      } else {
-        pendentesConsertosDiv.innerHTML = consertos.map(c => {
-          const temPendencia = (c.valorParcelaRestante || 0) > 0; 
-          const atrasado = temPendencia && verificarAtraso(c.dataRestantePagamento, c.valorParcelaRestante);
-          let lucroEstimado = c.valorConserto - (c.origemCustoPeca === 'capital' ? c.valorPeca : 0);
-          
-          let tagFornecedor = '';
-          if(c.origemCustoPeca === 'fornecedor' && c.valorPeca > 0) {
-            tagFornecedor = `<br><span style="color:var(--accent-red); font-weight:bold;">🔻 Dívida Fornecedor: -R$ ${c.valorPeca.toFixed(2)}</span>`;
-          }
-
-          return `<div class="item ${atrasado ? 'item-atrasado' : ''}"><h3>🔧 ${c.modelo} - ${c.cliente}</h3><p>Total: R$ ${c.valorConserto.toFixed(2)} | Custo peça: R$ ${(c.valorPeca||0).toFixed(2)} | Lucro esperado: R$ ${lucroEstimado.toFixed(2)} ${tagFornecedor}</p></div>`;
-        }).join(''); 
-      }
-    }
-    
-    let pendentesVendasDiv = document.getElementById('pendentesVendasLista'); 
-    if(pendentesVendasDiv) {
-      let disponiveis = aparelhos.filter(a => a.status === 'disponivel' || !a.status);
-      if(disponiveis.length === 0) {
-        pendentesVendasDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhum aparelho em estoque</p>'; 
-      } else {
-        pendentesVendasDiv.innerHTML = disponiveis.map(a => {
-          let custoTotal = a.valorCompra + (a.valorPecaUtilizada||0);
-          let lucroEstimado = a.valorVenda - custoTotal;
-          let tagFornecedor = '';
-          if(a.origemCustoVenda === 'fornecedor') {
-            let totalDevido = (a.valorCompra || 0) + (a.valorPecaUtilizada || 0);
-            tagFornecedor = `<br><span style="color:var(--accent-red); font-weight:bold;">🔻 Dívida Fornecedor: -R$ ${totalDevido.toFixed(2)}</span>`;
-          }
-          return `<div class="item"><h3>📱 ${a.modelo}</h3><p>Venda: R$ ${a.valorVenda.toFixed(2)} | Custo: R$ ${custoTotal.toFixed(2)} | Lucro estimado: R$ ${lucroEstimado.toFixed(2)} ${tagFornecedor}</p></div>`;
-        }).join(''); 
-      }
-    }
-    
-    let finalizadosConsertosDiv = document.getElementById('finalizadosConsertosLista'); 
-    if(finalizadosConsertosDiv) {
-      if(consertosFinalizados.length === 0) {
-        finalizadosConsertosDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhum conserto finalizado</p>'; 
-      } else {
-        finalizadosConsertosDiv.innerHTML = consertosFinalizados.map(f => `<div class="item"><h3>✅ ${f.modelo}</h3><p>Recebido: R$ ${(f.valorRecebido||0).toFixed(2)} | Lucro Real: R$ ${(f.lucro||0).toFixed(2)}</p></div>`).join(''); 
-      }
-    }
-    
-    let finalizadasVendasDiv = document.getElementById('finalizadasVendasLista'); 
-    if(finalizadasVendasDiv) {
-      if(vendasRealizadas.length === 0) {
-        finalizadasVendasDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhuma venda realizada</p>'; 
-      } else {
-        finalizadasVendasDiv.innerHTML = vendasRealizadas.map(v => `<div class="item"><h3>✅ ${v.modelo} <span class="origem-badge">📍 ${v.origem || 'N/I'}</span></h3><p>Valor venda: R$ ${v.valorVenda.toFixed(2)} | Custo: R$ ${(v.custoTotal||0).toFixed(2)} | Lucro Real: R$ ${(v.lucro||0).toFixed(2)}</p></div>`).join(''); 
-      }
-    }
-  }
-
-  function atualizarConsertosFinalizados() { 
-    let div = document.getElementById('consertosFinalizadosLista'); 
-    if(!div) return;
-    if(consertosFinalizados.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">Nenhum conserto finalizado recentemente.</p>'; 
-    else div.innerHTML=consertosFinalizados.slice(0,5).map(f=>{
-      let lucroReal = (f.valorRecebido || 0) - ((f.origemCustoPeca === 'capital') ? (f.valorPeca || 0) : 0);
-      return `<div class="item"><h3>✅ ${f.modelo} - ${f.cliente}</h3><p>Recebido: R$ ${f.valorRecebido.toFixed(2)} | Custo peça: R$ ${(f.valorPeca||0).toFixed(2)} | Lucro Real: R$ ${lucroReal.toFixed(2)}</p><div class="item-actions"><button class="ver-detalhes" onclick='verDetalhesOS(${JSON.stringify(f).replace(/"/g, '&quot;')})'>🔍 Ver OS</button><button class="btn-editar" onclick="abrirEditarOs(${f.id}, true)">✏️ Editar</button></div></div>`;
+      return `<div class="item ${classeAtraso}"><h3>📱 ${a.modelo} ${badgeAtraso}</h3><p>Valor Total: R$ ${a.valorVenda.toFixed(2)} | Origem: ${a.origemVendaLocal || 'N/I'}</p><p>Custo total: R$ ${custoTotal.toFixed(2)}</p><p>💰 Entrada: R$ ${a.valorEntrada.toFixed(2)} | Resta: R$ ${a.valorParcelaRestante.toFixed(2)}</p><p><span class="lucro-parcial-badge">💰 Lucro já contabilizado: R$ ${lucroParcial.toFixed(2)}</span></p><p><small style="color:var(--text-muted);">Vencimento: ${a.dataRestantePagamento || 'N/I'}</small></p><div class="item-actions"><button class="btn-finalizar" onclick="iniciarVendaAparelho(${a.id})">💵 Receber Parcela</button><button class="btn-deletar" onclick="deletarAparelho(${a.id})">🗑️ Deletar</button></div></div>`;
     }).join(''); 
-  }
-  
-  function atualizarExtratoDetalhado() { 
-    let div = document.getElementById('extratoLista'); 
-    if(!div) return;
-    if(extrato.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">Sem movimentações registradas.</p>'; 
-    else div.innerHTML=extrato.slice(0,40).map(e=>`<div class="extrato-item-detalhado ${e.tipo}"><div><strong>📌 ${e.descricao}</strong><br><small style="color:var(--text-muted);font-size:11px;">${e.data}</small></div><div style="display:flex; gap:10px; align-items:center; font-weight:700;">R$ ${e.valor.toFixed(2)}<button class="btn-deletar" style="padding:4px 8px; border-radius:6px; font-size:11px;" onclick="excluirExtrato(${e.id})">🗑️</button></div></div>`).join(''); 
   }
   
   function iniciarVendaAparelho(id) { 
-    vendaPendenteId = id; let ap = aparelhos.find(a=>a.id===id); 
+    vendaPendenteId = id; 
+    let ap = aparelhos.find(a=>a.id===id); 
     if(ap && ap.valorParcelaRestante > 0) { 
       vendaParcelaFinalizandoId = id; 
-      let custoTotal = ap.valorCompra + (ap.valorPecaUtilizada||0);
-      let lucroParcial = (ap.valorEntrada || 0) - custoTotal;
-      document.getElementById('vendaParcelaInfo').innerHTML = `Aparelho: <strong>${ap.modelo}</strong><br>Valor total: R$ ${ap.valorVenda.toFixed(2)}<br>Custo total: R$ ${custoTotal.toFixed(2)}<br>Entrada já paga: R$ ${ap.valorEntrada.toFixed(2)}<br>Saldo devedor restante: <strong>R$ ${ap.valorParcelaRestante.toFixed(2)}</strong><br>Lucro até agora: R$ ${lucroParcial.toFixed(2)}`; 
+      let custoTotal = ap.custoTotal || (ap.valorCompra + ap.valorPecaUtilizada);
+      document.getElementById('vendaParcelaInfo').innerHTML = `Aparelho: <strong>${ap.modelo}</strong><br>Valor total: R$ ${ap.valorVenda.toFixed(2)}<br>Custo total: R$ ${custoTotal.toFixed(2)}<br>Entrada já paga: R$ ${ap.valorEntrada.toFixed(2)}<br>Saldo devedor: <strong>R$ ${ap.valorParcelaRestante.toFixed(2)}</strong><br>Lucro já contabilizado: <strong>R$ ${(ap.lucroImediato || 0).toFixed(2)}</strong>`; 
       document.getElementById('finalizarVendaModal').style.display='flex'; 
     } else { 
-      document.getElementById('vendaParceladaCheckbox').checked = false; document.getElementById('camposParcelamentoVenda').style.display = 'none';
-      document.getElementById('vendaValorEntrada').value = ''; document.getElementById('vendaValorParcela').value = '';
+      document.getElementById('vendaParceladaCheckbox').checked = false; 
+      document.getElementById('camposParcelamentoVenda').style.display = 'none';
+      document.getElementById('vendaValorEntrada').value = ''; 
+      document.getElementById('vendaValorParcela').value = '';
       document.getElementById('vendaOrigemModal').style.display='flex'; 
     } 
   }
 
-  function confirmarFinalizarVendaParcela() { 
-    let valorRecebido = Number(document.getElementById('vendaValorRecebido').value); if(!valorRecebido) { alert('Digite o valor recebido'); return; }
-    let ap = aparelhos.find(a=>a.id===vendaParcelaFinalizandoId); if(!ap) return;
-    if(valorRecebido >= ap.valorParcelaRestante) {
-        let valorFinal = ap.valorVenda; let custoTotal = ap.valorCompra + (ap.valorPecaUtilizada||0); 
-        let lucroReal = valorFinal - custoTotal;
-        
-        if(ap.origemCustoVenda === 'capital' && custoTotal > 0) {
-          creditarCapital(custoTotal, `Reembolso venda ${ap.modelo}`);
-        }
-        
-        if(lucroReal != 0) { 
-          lucroTotal += lucroReal; 
-          adicionarExtrato(lucroReal > 0 ? 'credito' : 'debito', `${lucroReal > 0 ? '📈 LUCRO' : '📉 PREJUÍZO'} Venda ${ap.modelo}`, Math.abs(lucroReal)); 
-        }
-        
-        vendasRealizadas.unshift({ id:Date.now(), modelo:ap.modelo, valorVenda:valorFinal, custoTotal, lucro:lucroReal, data:new Date().toLocaleString(), condicao:ap.condicao, acessorios:ap.acessorios, pecaUtilizada:ap.pecaUtilizada, valorPecaUtilizada:ap.valorPecaUtilizada, origem: ap.origemVendaLocal || 'Loja (Quitado)', valorEntrada:ap.valorEntrada, valorParcelaRestante:0 });
-        aparelhos = aparelhos.filter(a=>a.id!==vendaParcelaFinalizandoId); 
-        alert(`✅ Venda concluída! Lucro real: R$ ${lucroReal.toFixed(2)}`);
-        fecharFinalizarVendaModal();
-        switchSubVendaTab('finalizados');
-    } else {
-        ap.valorParcelaRestante -= valorRecebido; 
-        alert(`✅ Parcela registrada! Faltam: R$ ${ap.valorParcelaRestante.toFixed(2)}`);
-        fecharFinalizarVendaModal();
-        switchSubVendaTab('vendas_andamento');
-    }
-    salvarDados(); atualizarTudo();
-  }
-
-  function confirmarVendaComOrigem() { 
-    let origem = document.getElementById('origemVenda').value; if(!origem) { alert('Selecione a origem!'); return; } 
-    let ap = aparelhos.find(a=>a.id===vendaPendenteId); if(!ap) { fecharVendaOrigemModal(); return; } 
-    const isParcelada = document.getElementById('vendaParceladaCheckbox').checked;
-    let valorEntrada = 0, dataEntradaPag = '', valorParcelaRestante = 0, dataRestantePag = '';
-    
-    if(isParcelada) {
-      valorEntrada = Number(document.getElementById('vendaValorEntrada').value) || 0; 
-      dataEntradaPag = document.getElementById('vendaDataEntradaPagamento').value; 
-      valorParcelaRestante = Number(document.getElementById('vendaValorParcela').value) || 0; 
-      dataRestantePag = document.getElementById('vendaDataRestantePagamento').value;
-      if(valorEntrada <= 0 || valorParcelaRestante <= 0) { alert('Informe os valores de parcelamento!'); return; }
-      if(valorEntrada + valorParcelaRestante !== ap.valorVenda) { alert(`A soma deve dar R$ ${ap.valorVenda.toFixed(2)}`); return; }
-    }
-    
-    let custoTotal = ap.valorCompra + (ap.valorPecaUtilizada||0);
-    
-    if(isParcelada) {
-      ap.valorEntrada = valorEntrada; 
-      ap.dataEntradaPagamento = dataEntradaPag; 
-      ap.valorParcelaRestante = valorParcelaRestante; 
-      ap.dataRestantePagamento = dataRestantePag; 
-      ap.status = 'parcelado'; 
-      ap.origemVendaLocal = origem;
-      salvarDados(); 
-      alert(`✅ Venda parcelada registrada! Entrada: R$ ${valorEntrada.toFixed(2)} | Restante: R$ ${valorParcelaRestante.toFixed(2)}`); 
-      atualizarTudo(); 
-      fecharVendaOrigemModal(); 
-      switchSubVendaTab('vendas_andamento');
-      return;
-    }
-    
-    if(ap.origemCustoVenda === 'capital' && custoTotal > 0) {
-      creditarCapital(custoTotal, `Reembolso venda ${ap.modelo}`);
-    }
-    
-    let lucroReal = ap.valorVenda - custoTotal;
-    if(lucroReal != 0) { 
-      lucroTotal += lucroReal; 
-      adicionarExtrato(lucroReal > 0 ? 'credito' : 'debito', `${lucroReal > 0 ? '📈 LUCRO' : '📉 PREJUÍZO'} Venda ${ap.modelo}`, Math.abs(lucroReal)); 
+  function deletarAparelho(id) { 
+    let a = aparelhos.find(x=>x.id===id); 
+    if(a && confirm(`Excluir ${a.modelo}?`)) { 
+      let totalEstorno = a.custoTotal || (a.valorCompra + a.valorPecaUtilizada); 
+      if(a.origemCustoVenda === 'capital' && a.custoJaDebitado && totalEstorno > 0 && a.status === 'disponivel') creditarCapital(totalEstorno, `Estorno ${a.modelo}`); 
+      if(a.lucroImediato && a.lucroImediato > 0) lucroTotal -= a.lucroImediato;
+      aparelhos = aparelhos.filter(x=>x.id!==id); 
+      salvarDados(); atualizarTudo(); 
+      if(a.status === 'parcelado') { switchSubVendaTab('vendas_andamento'); } 
+      else { switchSubVendaTab('disponiveis'); } 
     } 
-    vendasRealizadas.unshift({ id:Date.now(), modelo:ap.modelo, valorVenda:ap.valorVenda, custoTotal, lucro:lucroReal, data:new Date().toLocaleString(), condicao:ap.condicao, acessorios:ap.acessorios, pecaUtilizada:ap.pecaUtilizada, valorPecaUtilizada:ap.valorPecaUtilizada, origem, valorEntrada:0, valorParcelaRestante:0 }); 
-    aparelhos = aparelhos.filter(a=>a.id!==vendaPendenteId); 
-    salvarDados(); 
-    atualizarTudo(); 
-    fecharVendaOrigemModal(); 
-    alert(`✅ Vendido à vista! Lucro real: R$ ${lucroReal.toFixed(2)}`); 
-    switchSubVendaTab('finalizados');
   }
-
-  function deletarAparelho(id) { let a = aparelhos.find(x=>x.id===id); if(a && confirm(`Excluir ${a.modelo}?`)) { let totalEstorno = a.valorCompra + (a.valorPecaUtilizada||0); if(a.origemCustoVenda !== 'fornecedor' && totalEstorno > 0) creditarCapital(totalEstorno, `Estorno ${a.modelo}`); aparelhos = aparelhos.filter(x=>x.id!==id); salvarDados(); atualizarTudo(); if(a.status === 'parcelado') { switchSubVendaTab('vendas_andamento'); } else { switchSubVendaTab('disponiveis'); } } }
+  
   function editarAparelho(id) { let ap = aparelhos.find(a=>a.id===id); if(!ap) return; editAparelhoId=id; document.getElementById('editModelo').value=ap.modelo; document.getElementById('editValorCompra').value=ap.valorCompra; document.getElementById('editValorVenda').value=ap.valorVenda; document.getElementById('editCondicao').value=ap.condicao; document.getElementById('editAcessorios').value=ap.acessorios||''; document.getElementById('editPecaUtilizada').value=ap.pecaUtilizada!=='Nenhuma'?ap.pecaUtilizada:''; document.getElementById('editValorPecaUtilizada').value=ap.valorPecaUtilizada||0; document.getElementById('editarAparelhoModal').style.display='flex'; }
-  function confirmarEditarAparelho() { let ap = aparelhos.find(a=>a.id===editAparelhoId); if(!ap) return; let novoCompra = Number(document.getElementById('editValorCompra').value); let novoValorPeca = Number(document.getElementById('editValorPecaUtilizada').value)||0; let oldCusto = ap.valorCompra + (ap.valorPecaUtilizada||0); let newCusto = novoCompra + novoValorPeca; let diff = newCusto - oldCusto; if(diff>0 && !debitarCapital(diff, `Ajuste custo ${ap.modelo}`)) return; else if(diff<0) creditarCapital(-diff, `Redução custo ${ap.modelo}`); ap.modelo = document.getElementById('editModelo').value; ap.valorCompra = novoCompra; ap.valorVenda = Number(document.getElementById('editValorVenda').value); ap.condicao = document.getElementById('editCondicao').value; ap.acessorios = document.getElementById('editAcessorios').value; ap.pecaUtilizada = document.getElementById('editPecaUtilizada').value.trim()||'Nenhuma'; ap.valorPecaUtilizada = novoValorPeca; salvarDados(); atualizarTudo(); fecharEditarAparelhoModal(); switchSubVendaTab('disponiveis'); }
+  
+  function confirmarEditarAparelho() { 
+    let ap = aparelhos.find(a=>a.id===editAparelhoId); if(!ap) return; 
+    let novoCompra = Number(document.getElementById('editValorCompra').value); 
+    let novoValorPeca = Number(document.getElementById('editValorPecaUtilizada').value)||0; 
+    let oldCusto = ap.custoTotal || (ap.valorCompra + ap.valorPecaUtilizada); 
+    let newCusto = novoCompra + novoValorPeca; 
+    let diff = newCusto - oldCusto; 
+    if(diff>0 && !debitarCapital(diff, `Ajuste custo ${ap.modelo}`)) return; 
+    else if(diff<0) creditarCapital(-diff, `Redução custo ${ap.modelo}`); 
+    ap.modelo = document.getElementById('editModelo').value; ap.valorCompra = novoCompra; ap.valorVenda = Number(document.getElementById('editValorVenda').value); ap.condicao = document.getElementById('editCondicao').value; ap.acessorios = document.getElementById('editAcessorios').value; ap.pecaUtilizada = document.getElementById('editPecaUtilizada').value.trim()||'Nenhuma'; ap.valorPecaUtilizada = novoValorPeca; ap.custoTotal = newCusto; 
+    salvarDados(); atualizarTudo(); fecharEditarAparelhoModal(); switchSubVendaTab('disponiveis'); 
+  }
+  
   function fecharEditarAparelhoModal() { document.getElementById('editarAparelhoModal').style.display='none'; editAparelhoId=null; }
   function fecharVendaOrigemModal() { document.getElementById('vendaOrigemModal').style.display='none'; vendaPendenteId=null; }
   function fecharFinalizarVendaModal() { document.getElementById('finalizarVendaModal').style.display='none'; vendaParcelaFinalizandoId=null; document.getElementById('vendaValorRecebido').value=''; }
+  
   function editarVendaFinalizada(id) { let venda = vendasRealizadas.find(v => v.id === id); if(!venda) return; editVendaId = id; document.getElementById('editVendaModelo').value = venda.modelo; document.getElementById('editVendaValor').value = venda.valorVenda; document.getElementById('editVendaLucro').value = venda.lucro; document.getElementById('editVendaOrigem').value = venda.origem || 'Assistência'; document.getElementById('editarVendaFinalizadaModal').style.display = 'flex'; }
+  
   function confirmarEditarVendaFinalizada() { if(!editVendaId) return; let venda = vendasRealizadas.find(v => v.id === editVendaId); if(!venda) return; let oldLucro = venda.lucro; let newLucro = Number(document.getElementById('editVendaLucro').value); let diffLucro = newLucro - oldLucro; venda.modelo = document.getElementById('editVendaModelo').value; venda.valorVenda = Number(document.getElementById('editVendaValor').value); venda.lucro = newLucro; venda.origem = document.getElementById('editVendaOrigem').value; if(diffLucro !== 0) { lucroTotal += diffLucro; adicionarExtrato(diffLucro > 0 ? 'credito' : 'debito', `Ajuste lucro ${venda.modelo}`, Math.abs(diffLucro)); atualizarDisplays(); } salvarDados(); atualizarTudo(); fecharEditarVendaFinalizadaModal(); switchSubVendaTab('finalizados'); }
+  
   function fecharEditarVendaFinalizadaModal() { document.getElementById('editarVendaFinalizadaModal').style.display = 'none'; editVendaId = null; }
   
-  function salvarCompraDetalhada() { 
-    let nome = document.getElementById('nomePeca').value.trim(); 
-    let qtd = document.getElementById('quantidade').value; 
-    let preco = document.getElementById('precoUnitario').value; 
-    if(!nome||qtd===""||preco==="") { alert('Preencha os campos obrigatórios'); return; } 
-    qtd = Number(qtd); preco = Number(preco);
-    let total = qtd * preco; 
-    if(total > 0) {
-      if(!debitarCapital(total, `Compra ${qtd}x ${nome}`)) return; 
-    }
-    comprasPecas.push({ id: Date.now(), nomePeca:nome, category:document.getElementById('categoriaPeca').value, quantidade:qtd, precoUnitario:preco, fornecedor:document.getElementById('fornecedorPeca').value, valorTotal:total, dataCompra:document.getElementById('dataCompraPeca').value||new Date().toISOString().split('T')[0], status:'pendente' }); 
-    let existente = estoquePecas.find(p=>p.nomePeca===nome); 
-    if(existente) { 
-      let custoAntigo = existente.quantidade * existente.precoUnitarioMedio; 
-      existente.quantidade += qtd; 
-      existente.precoUnitarioMedio = existente.quantidade > 0 ? (custoAntigo + (qtd*preco)) / existente.quantidade : 0; 
-    } else { 
-      estoquePecas.push({ id:Date.now(), nomePeca:nome, categoria:document.getElementById('categoriaPeca').value, quantidade:qtd, precoUnitarioMedio:preco, fornecedor:document.getElementById('fornecedorPeca').value, dataEntrada:new Date().toISOString().split('T')[0] }); 
-    } 
-    salvarDados(); 
-    atualizarTudo(); 
-    alert(`Compra registrada!`); 
-    document.getElementById('nomePeca').value = ''; 
-    document.getElementById('quantidade').value = ''; 
-    document.getElementById('precoUnitario').value = ''; 
-    document.getElementById('fornecedorPeca').value = ''; 
-    switchSubPecaTab('estoque'); 
-  }
-
-  function marcarCompraComoPaga(id) { 
-    let compra = comprasPecas.find(c=>c.id===id); 
-    if(!compra||compra.status==='pago') return; 
-    if(confirm(`Marcar como paga?`)) { 
-      compra.status='pago'; 
-      salvarDados(); 
-      atualizarTudo(); 
-      switchSubPecaTab('historico'); 
-    } 
-  }
-
+  function salvarCompraDetalhada() { let nome = document.getElementById('nomePeca').value.trim(); let qtd = document.getElementById('quantidade').value; let preco = document.getElementById('precoUnitario').value; if(!nome||qtd===""||preco==="") { alert('Preencha os campos obrigatórios'); return; } qtd = Number(qtd); preco = Number(preco); let total = qtd * preco; if(total > 0) { if(!debitarCapital(total, `Compra ${qtd}x ${nome}`)) return; } comprasPecas.push({ id: Date.now(), nomePeca:nome, category:document.getElementById('categoriaPeca').value, quantidade:qtd, precoUnitario:preco, fornecedor:document.getElementById('fornecedorPeca').value, valorTotal:total, dataCompra:document.getElementById('dataCompraPeca').value||new Date().toISOString().split('T')[0], status:'pendente' }); let existente = estoquePecas.find(p=>p.nomePeca===nome); if(existente) { let custoAntigo = existente.quantidade * existente.precoUnitarioMedio; existente.quantidade += qtd; existente.precoUnitarioMedio = existente.quantidade > 0 ? (custoAntigo + (qtd*preco)) / existente.quantidade : 0; } else { estoquePecas.push({ id:Date.now(), nomePeca:nome, categoria:document.getElementById('categoriaPeca').value, quantidade:qtd, precoUnitarioMedio:preco, fornecedor:document.getElementById('fornecedorPeca').value, dataEntrada:new Date().toISOString().split('T')[0] }); } salvarDados(); atualizarTudo(); alert(`Compra registrada!`); document.getElementById('nomePeca').value = ''; document.getElementById('quantidade').value = ''; document.getElementById('precoUnitario').value = ''; document.getElementById('fornecedorPeca').value = ''; switchSubPecaTab('estoque'); }
+  
+  function marcarCompraComoPaga(id) { let compra = comprasPecas.find(c=>c.id===id); if(!compra||compra.status==='pago') return; if(confirm(`Marcar como paga?`)) { compra.status='pago'; salvarDados(); atualizarTudo(); switchSubPecaTab('historico'); } }
   function deletarCompraHistorico(id) { if(confirm('Remover do histórico?')) { comprasPecas = comprasPecas.filter(c=>c.id!==id); salvarDados(); atualizarTudo(); switchSubPecaTab('historico'); } }
+  function darBaixaPeca(id) { let item = estoquePecas.find(p=>p.id===id); if(!item) return; let qtd = Number(prompt(`Remover quantas unidades?`, 1)); if(qtd > 0 && qtd <= item.quantidade) { item.quantidade -= qtd; if(item.quantidade === 0) estoquePecas = estoquePecas.filter(p=>p.id!==id); salvarDados(); atualizarTudo(); switchSubPecaTab('estoque'); } }
   
-  function darBaixaPeca(id) { 
-    let item = estoquePecas.find(p=>p.id===id); 
-    if(!item) return; 
-    let qtd = Number(prompt(`Remover quantas unidades?`, 1)); 
-    if(qtd > 0 && qtd <= item.quantidade) { 
-      item.quantidade -= qtd; 
-      if(item.quantidade === 0) estoquePecas = estoquePecas.filter(p=>p.id!==id); 
-      salvarDados(); 
-      atualizarTudo(); 
-      switchSubPecaTab('estoque');
-    } 
-  }
+  function atualizarVendasRealizadas() { let div = document.getElementById('vendasRealizadasLista'); if(!div) return; if(vendasRealizadas.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">Nenhuma venda finalizada.</p>'; else div.innerHTML=vendasRealizadas.map(v=>`<div class="item"><h3>✅ ${v.modelo} <span class="origem-badge">📍 ${v.origem||'N/I'}</span></h3><p>Vendido por: R$ ${v.valorVenda.toFixed(2)} | Custo: R$ ${(v.custoTotal||0).toFixed(2)} | Lucro: R$ ${(v.lucro||0).toFixed(2)}</p><div class="item-actions"><button class="btn-editar" onclick="editarVendaFinalizada(${v.id})">✏️ Editar</button></div></div>`).join(''); }
+  function atualizarEstoque() { let div = document.getElementById('estoqueLista'); if(!div) return; if(estoquePecas.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">🔧 Sem componentes.</p>'; else div.innerHTML=estoquePecas.map(p=>`<div class="item"><h3>🔧 ${p.nomePeca}</h3><p>Estoque: <strong>${p.quantidade}</strong> | Custo médio: R$ ${p.precoUnitarioMedio.toFixed(2)}</p><div class="item-actions"><button style="background:var(--accent-orange); color:#02040a" onclick="darBaixaPeca(${p.id})">⬇️ Dar Baixa</button></div></div>`).join(''); }
+  function atualizarHistoricoCompras() { let div = document.getElementById('historicoComprasLista'); if(!div) return; if(comprasPecas.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">Sem registros.</p>'; else div.innerHTML=comprasPecas.map(c=>`<div class="item"><h3>🛒 ${c.nomePeca} <span class="status-pagamento ${c.status==='pago'?'status-pago':'status-pendente'}">${c.status==='pago'?'Pago':'Pendente'}</span></h3><p>${c.quantidade}x total R$ ${c.valorTotal.toFixed(2)}</p><div class="item-actions">${c.status!=='pago'?`<button onclick="marcarCompraComoPaga(${c.id})" style="background:#30d5c8; color:#02040a;">💰 Marcar Pago</button>`:''}<button class="btn-deletar" onclick="deletarCompraHistorico(${c.id})">🗑️</button></div></div>`).join(''); }
   
-  function atualizarVendasRealizadas() { let div = document.getElementById('vendasRealizadasLista'); if(!div) return; if(vendasRealizadas.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">Nenhuma venda finalizada.</p>'; else div.innerHTML=vendasRealizadas.map(v=>`<div class="item"><h3>✅ ${v.modelo} <span class="origem-badge">📍 ${v.origem||'N/I'}</span></h3><p>Vendido por: R$ ${v.valorVenda.toFixed(2)} | Custo: R$ ${(v.custoTotal||0).toFixed(2)} | Lucro Real: R$ ${(v.lucro||0).toFixed(2)}</p><div class="item-actions"><button class="btn-editar" onclick="editarVendaFinalizada(${v.id})">✏️ Editar Venda</button></div></div>`).join(''); }
-  function atualizarEstoque() { let div = document.getElementById('estoqueLista'); if(!div) return; if(estoquePecas.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">🔧 Sem componentes cadastrados.</p>'; else div.innerHTML=estoquePecas.map(p=>`<div class="item"><h3>🔧 ${p.nomePeca}</h3><p>Unidades em estoque: <strong>${p.quantidade}</strong> | Custo médio: R$ ${p.precoUnitarioMedio.toFixed(2)}</p><div class="item-actions"><button style="background:var(--accent-orange); color:#02040a" onclick="darBaixaPeca(${p.id})">⬇️ Dar Baixa</button></div></div>`).join(''); }
-  function atualizarHistoricoCompras() { let div = document.getElementById('historicoComprasLista'); if(!div) return; if(comprasPecas.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">Sem registros de compra.</p>'; else div.innerHTML=comprasPecas.map(c=>`<div class="item"><h3>🛒 ${c.nomePeca} <span class="status-pagamento ${c.status==='pago'?'status-pago':'status-pendente'}">${c.status==='pago'?'Pago':'Pendente'}</span></h3><p>${c.quantidade}x totalizando R$ ${c.valorTotal.toFixed(2)}</p><div class="item-actions">${c.status!=='pago'?`<button onclick="marcarCompraComoPaga(${c.id})" style="background:#30d5c8; color: #02040a;">💰 Marcar Pago</button>`:''}<button class="btn-deletar" onclick="deletarCompraHistorico(${c.id})">🗑️</button></div></div>`).join(''); }
+  function atualizarResumo() { let div = document.getElementById('resumoFinanceiro'); if(!div) return; let dividaConsertos = consertos.reduce((s,c) => s + (c.origemCustoPeca === 'fornecedor' ? (c.valorPeca || 0) : 0), 0); let dividaVendas = aparelhos.reduce((s,a) => s + (a.origemCustoVenda === 'fornecedor' ? ((a.valorCompra || 0) + (a.valorPecaUtilizada || 0)) : 0), 0); let dividaPecasCompras = comprasPecas.reduce((s,c) => s + (c.status !== 'pago' ? (c.valorTotal || 0) : 0), 0); let totalPecasPendentes = dividaConsertos + dividaVendas + dividaPecasCompras; let lucroTotalReal = consertosFinalizados.reduce((s,c)=>s+(c.lucro||0),0) + vendasRealizadas.reduce((s,v)=>s+(v.lucro||0),0); div.innerHTML = `<div style="line-height:1.8; font-size:14px;"><p>📌 OS pendentes: <strong>${consertos.length}</strong></p><p>✅ Consertos concluídos: <strong>${consertosFinalizados.length}</strong></p><p>📱 Aparelhos vendidos: <strong>${vendasRealizadas.length}</strong></p><p>💼 Capital: <strong>R$ ${capital.toFixed(2)}</strong></p><p>🚨 Contas pendentes: <strong style="color:var(--accent-red);">R$ ${totalPecasPendentes.toFixed(2)}</strong></p><p>📈 LUCRO TOTAL: <strong style="color:var(--accent-green);">R$ ${lucroTotalReal.toFixed(2)}</strong></p></div>`; }
   
-  function atualizarResumo() { 
-    let div = document.getElementById('resumoFinanceiro');
-    if(!div) return;
-    let dividaConsertos = consertos.reduce((s,c) => s + (c.origemCustoPeca === 'fornecedor' ? (c.valorPeca || 0) : 0), 0);
-    let dividaVendas = aparelhos.reduce((s,a) => s + (a.origemCustoVenda === 'fornecedor' ? ((a.valorCompra || 0) + (a.valorPecaUtilizada || 0)) : 0), 0);
-    let dividaPecasCompras = comprasPecas.reduce((s,c) => s + (c.status !== 'pago' ? (c.valorTotal || 0) : 0), 0);
-    let totalPecasPendentes = dividaConsertos + dividaVendas + dividaPecasCompras;
-    let lucroTotalReal = consertosFinalizados.reduce((s,c)=>s+(c.lucro||0),0) + vendasRealizadas.reduce((s,v)=>s+(v.lucro||0),0);
-
-    div.innerHTML = `
-      <div style="line-height:1.8; font-size:14px;">
-        <p>📌 OS com pagamento pendente: <strong>${consertos.length}</strong></p>
-        <p>✅ Consertos concluídos: <strong>${consertosFinalizados.length}</strong></p>
-        <p>📱 Aparelhos vendidos: <strong>${vendasRealizadas.length}</strong></p>
-        <p>💼 Saldo em CAPITAL (peças): <strong>R$ ${capital.toFixed(2)}</strong></p>
-        <p>🚨 Contas em Peças Pendentes: <strong style="color:var(--accent-red);">R$ ${totalPecasPendentes.toFixed(2)}</strong></p>
-        <p>📈 LUCRO TOTAL REAL: <strong style="color:var(--accent-green);">R$ ${lucroTotalReal.toFixed(2)}</strong></p>
-      </div>`; 
-  }
+  function atualizarLucroMensal() { const lucroPorMes = {}; consertosFinalizados.forEach(c => { if(c.dataFinalizacao && c.lucro) { const d = new Date(c.dataFinalizacao); if(!isNaN(d.getTime())) { const m = `${d.getMonth()+1}/${d.getFullYear()}`; if(!lucroPorMes[m]) lucroPorMes[m] = { consertos: 0, vendas: 0, total: 0 }; lucroPorMes[m].consertos += c.lucro; lucroPorMes[m].total += c.lucro; } } }); vendasRealizadas.forEach(v => { if(v.data && v.lucro) { let d = new Date(v.data); if(isNaN(d.getTime())) { const partes = v.data.split(/[\/\s,:]/); if(partes.length >= 3) { d = new Date(partes[2], partes[1] - 1, partes[0]); } } if(!isNaN(d.getTime())) { const m = `${d.getMonth()+1}/${d.getFullYear()}`; if(!lucroPorMes[m]) lucroPorMes[m] = { consertos: 0, vendas: 0, total: 0 }; lucroPorMes[m].vendas += v.lucro; lucroPorMes[m].total += v.lucro; } } }); const meses = Object.keys(lucroPorMes).sort((a,b) => { const [mA, aA] = a.split('/'); const [mB, aB] = b.split('/'); return new Date(aB, mB-1) - new Date(aA, mA-1); }); const container = document.getElementById('lucroMensalLista'); if(!container) return; if(meses.length === 0) { container.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">Sem dados mensais.</p>'; } else { container.innerHTML = meses.map(m => { const d = lucroPorMes[m]; return `<div class="monthly-profit-item"><div class="monthly-profit-header">📅 ${m}</div><div class="monthly-profit-details"><span class="profit-consertos">🔧 Consertos: R$ ${d.consertos.toFixed(2)}</span><span class="profit-vendas">📱 Vendas: R$ ${d.vendas.toFixed(2)}</span><span class="profit-total">💰 Total: R$ ${d.total.toFixed(2)}</span></div></div>`; }).join(''); } }
   
-  function atualizarLucroMensal() {
-    const lucroPorMes = {};
-    
-    consertosFinalizados.forEach(c => { 
-      if(c.dataFinalizacao && c.lucro) { 
-        const d = new Date(c.dataFinalizacao); 
-        if(!isNaN(d.getTime())) {
-          const m = `${d.getMonth()+1}/${d.getFullYear()}`; 
-          if(!lucroPorMes[m]) lucroPorMes[m] = { consertos: 0, vendas: 0, total: 0 }; 
-          lucroPorMes[m].consertos += c.lucro; 
-          lucroPorMes[m].total += c.lucro; 
-        }
-      } 
-    });
-    
-    vendasRealizadas.forEach(v => { 
-      if(v.data && v.lucro) { 
-        let d = new Date(v.data); 
-        if(isNaN(d.getTime())) { 
-          const partes = v.data.split(/[\/\s,:]/); 
-          if(partes.length >= 3) {
-            d = new Date(partes[2], partes[1] - 1, partes[0]); 
-          }
-        } 
-        
-        if(!isNaN(d.getTime())) { 
-          const m = `${d.getMonth()+1}/${d.getFullYear()}`; 
-          if(!lucroPorMes[m]) lucroPorMes[m] = { consertos: 0, vendas: 0, total: 0 }; 
-          lucroPorMes[m].vendas += v.lucro; 
-          lucroPorMes[m].total += v.lucro; 
-        } 
-      } 
-    });
-    
-    const meses = Object.keys(lucroPorMes).sort((a,b) => { 
-      const [mA, aA] = a.split('/'); 
-      const [mB, aB] = b.split('/'); 
-      return new Date(aB, mB-1) - new Date(aA, mA-1); 
-    });
-    
-    const container = document.getElementById('lucroMensalLista');
-    if(!container) return;
-
-    if(meses.length === 0) {
-      container.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">Sem dados mensais disponíveis.</p>';
-    } else {
-      container.innerHTML = meses.map(m => { 
-        const d = lucroPorMes[m]; 
-        return `
-          <div class="monthly-profit-item">
-            <div class="monthly-profit-header">📅 ${m}</div>
-            <div class="monthly-profit-details">
-              <span class="profit-consertos">🔧 Consertos: R$ ${d.consertos.toFixed(2)}</span>
-              <span class="profit-vendas">📱 Vendas: R$ ${d.vendas.toFixed(2)}</span>
-              <span class="profit-total">💰 Total: R$ ${d.total.toFixed(2)}</span>
-            </div>
-          </div>`; 
-      }).join('');
-    }
-  }
-
-  function atualizarRelatorios() { 
-    let div = document.getElementById('relatoriosLista');
-    if(!div) return;
-    let lC = consertosFinalizados.reduce((s,c)=>s+(c.lucro||0),0); 
-    let lV = vendasRealizadas.reduce((s,v)=>s+(v.lucro||0),0); 
-    div.innerHTML = `
-      <div class="item">
-        <p>📈 LUCRO REAL em Consertos: <strong style="color:var(--accent-green);">R$ ${lC.toFixed(2)}</strong></p>
-        <p>📈 LUCRO REAL em Vendas: <strong style="color:var(--accent-green);">R$ ${lV.toFixed(2)}</strong></p>
-        <p style="margin-top: 5px;">💰 LUCRO TOTAL CONSOLIDADO: <strong style="color:var(--accent-green); font-size:16px;">R$ ${(lC + lV).toFixed(2)}</strong></p>
-      </div>`; 
-    atualizarLucroMensal(); 
-  }
-
-  function atualizarTudo() { 
-    atualizarDisplays(); 
-    salvarDados(); 
-  }
-
+  function atualizarRelatorios() { let div = document.getElementById('relatoriosLista'); if(!div) return; let lC = consertosFinalizados.reduce((s,c)=>s+(c.lucro||0),0); let lV = vendasRealizadas.reduce((s,v)=>s+(v.lucro||0),0); div.innerHTML = `<div class="item"><p>📈 LUCRO Consertos: <strong style="color:var(--accent-green);">R$ ${lC.toFixed(2)}</strong></p><p>📈 LUCRO Vendas: <strong style="color:var(--accent-green);">R$ ${lV.toFixed(2)}</strong></p><p style="margin-top:5px;">💰 LUCRO TOTAL: <strong style="color:var(--accent-green); font-size:16px;">R$ ${(lC + lV).toFixed(2)}</strong></p></div>`; atualizarLucroMensal(); }
+  
+  function atualizarTudo() { atualizarDisplays(); salvarDados(); }
   function adicionarCapital() { document.getElementById('capitalModal').style.display='flex'; }
   function fecharModalCapital() { document.getElementById('capitalModal').style.display='none'; }
   function confirmarAdicionarCapital() { let v = parseFloat(document.getElementById('valorCapital').value); if(v>0) creditarCapital(v, document.getElementById('descricaoCapital').value || 'Aporte Manual'); fecharModalCapital(); atualizarTudo(); if(document.getElementById('extratoSection').style.display === 'block') atualizarExtratoDetalhado(); }
@@ -1783,28 +1833,54 @@
   function fecharEditarCapitalModal() { document.getElementById('editarCapitalModal').style.display='none'; }
   function confirmarEditarCapital() { let novo = parseFloat(document.getElementById('novoCapital').value); let motivo = document.getElementById('motivoEdicao').value; if(!isNaN(novo)) { let dif = novo - capital; if(dif>0) creditarCapital(dif, motivo+' (Ajuste)'); else if(dif<0) debitarCapital(-dif, motivo+' (Ajuste)'); } fecharEditarCapitalModal(); atualizarTudo(); if(document.getElementById('extratoSection').style.display === 'block') atualizarExtratoDetalhado(); }
   
-  function showSection(section) { 
-    ['consertos','vendaAparelhos','compras','dashboard','extrato','pendentesFinalizados'].forEach(s=>document.getElementById(s+'Section').style.display='none'); document.getElementById(section+'Section').style.display='block'; 
-    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-    
-    const indexMap = {consertos:0, vendaAparelhos:1, compras:2, dashboard:3, pendentesFinalizados:4, extrato:5};
-    const items = document.querySelectorAll('.nav-item');
-    if(items[indexMap[section]]) items[indexMap[section]].classList.add('active');
-    
-    if(section==='extrato') atualizarExtratoDetalhado(); 
-    if(section==='dashboard') { atualizarResumo(); atualizarRelatorios(); } 
-    if(section==='pendentesFinalizados') {
-      atualizarPendentesFinalizados();
-      switchSubPainelTab('andamento');
+  function showSection(section) { ['consertos','vendaAparelhos','compras','dashboard','extrato','pendentesFinalizados'].forEach(s=>document.getElementById(s+'Section').style.display='none'); document.getElementById(section+'Section').style.display='block'; document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); const indexMap = {consertos:0, vendaAparelhos:1, compras:2, dashboard:3, pendentesFinalizados:4, extrato:5}; const items = document.querySelectorAll('.nav-item'); if(items[indexMap[section]]) items[indexMap[section]].classList.add('active'); if(section==='extrato') atualizarExtratoDetalhado(); if(section==='dashboard') { atualizarResumo(); atualizarRelatorios(); } if(section==='pendentesFinalizados') { atualizarPendentesFinalizados(); switchSubPainelTab('andamento'); } if(section==='vendaAparelhos') switchSubVendaTab('nova'); if(section==='consertos') switchSubConsertoTab('nova'); if(section==='compras') switchSubPecaTab('nova'); }
+  
+  function atualizarPendentesFinalizados() { 
+    let pendentesConsertosDiv = document.getElementById('pendentesConsertosLista'); 
+    if(pendentesConsertosDiv) { 
+      if(consertos.length === 0) pendentesConsertosDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhum conserto pendente</p>'; 
+      else pendentesConsertosDiv.innerHTML = consertos.map(c => { 
+        const atrasado = (c.valorParcelaRestante > 0) && verificarAtraso(c.dataRestantePagamento, c.valorParcelaRestante); 
+        return `<div class="item ${atrasado ? 'item-atrasado' : ''}"><h3>🔧 ${c.modelo} - ${c.cliente}</h3><p>Total: R$ ${c.valorConserto.toFixed(2)} | Restante: R$ ${(c.valorParcelaRestante||0).toFixed(2)} | Lucro já contabilizado: R$ ${(c.lucroImediato||0).toFixed(2)}</p></div>`; 
+      }).join(''); 
+    } 
+    let pendentesVendasDiv = document.getElementById('pendentesVendasLista'); 
+    if(pendentesVendasDiv) {
+      let disponiveis = aparelhos.filter(a => a.status === 'disponivel');
+      if(disponiveis.length === 0) pendentesVendasDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhum aparelho em estoque</p>'; 
+      else pendentesVendasDiv.innerHTML = disponiveis.map(a => {
+        let custoTotal = a.custoTotal || (a.valorCompra + a.valorPecaUtilizada);
+        return `<div class="item"><h3>📱 ${a.modelo}</h3><p>Venda: R$ ${a.valorVenda.toFixed(2)} | Custo: R$ ${custoTotal.toFixed(2)}</p></div>`;
+      }).join(''); 
     }
-    
-    if(section==='vendaAparelhos') switchSubVendaTab('nova');
-    if(section==='consertos') switchSubConsertoTab('nova');
-    if(section==='compras') switchSubPecaTab('nova');
+    let finalizadosConsertosDiv = document.getElementById('finalizadosConsertosLista'); 
+    if(finalizadosConsertosDiv) {
+      if(consertosFinalizados.length === 0) finalizadosConsertosDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhum conserto finalizado</p>'; 
+      else finalizadosConsertosDiv.innerHTML = consertosFinalizados.map(f => `<div class="item"><h3>✅ ${f.modelo}</h3><p>Lucro: R$ ${(f.lucro||0).toFixed(2)}</p></div>`).join(''); 
+    }
+    let finalizadasVendasDiv = document.getElementById('finalizadasVendasLista'); 
+    if(finalizadasVendasDiv) {
+      if(vendasRealizadas.length === 0) finalizadasVendasDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhuma venda realizada</p>'; 
+      else finalizadasVendasDiv.innerHTML = vendasRealizadas.map(v => `<div class="item"><h3>✅ ${v.modelo}</h3><p>Venda: R$ ${v.valorVenda.toFixed(2)} | Lucro: R$ ${(v.lucro||0).toFixed(2)}</p></div>`).join(''); 
+    }
+  }
+
+  function atualizarConsertosFinalizados() { 
+    let div = document.getElementById('consertosFinalizadosLista'); 
+    if(!div) return;
+    if(consertosFinalizados.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">Nenhum conserto finalizado.</p>'; 
+    else div.innerHTML=consertosFinalizados.slice(0,10).map(f=>`<div class="item"><h3>✅ ${f.modelo} - ${f.cliente}</h3><p>Total: R$ ${f.valorConserto.toFixed(2)} | Peça: R$ ${(f.valorPeca||0).toFixed(2)} | Lucro: R$ ${(f.lucro||0).toFixed(2)}</p><div class="item-actions"><button class="ver-detalhes" onclick='verDetalhesOS(${JSON.stringify(f).replace(/"/g, '&quot;')})'>🔍 Ver</button><button class="btn-editar" onclick="abrirEditarOs(${f.id}, true)">✏️ Editar</button></div></div>`).join(''); 
+  }
+  
+  function atualizarExtratoDetalhado() { 
+    let div = document.getElementById('extratoLista'); 
+    if(!div) return;
+    if(extrato.length===0) div.innerHTML='<p style="color:var(--text-muted);font-size:14px;">Sem movimentações.</p>'; 
+    else div.innerHTML=extrato.slice(0,40).map(e=>`<div class="extrato-item-detalhado ${e.tipo}"><div><strong>📌 ${e.descricao}</strong><br><small>${e.data}</small></div><div style="display:flex; gap:10px; align-items:center; font-weight:700;">R$ ${e.valor.toFixed(2)}<button class="btn-deletar" style="padding:4px 8px; border-radius:6px; font-size:11px;" onclick="excluirExtrato(${e.id})">🗑️</button></div></div>`).join(''); 
   }
   
   window.onclick = e => { if(e.target.classList.contains('modal')) e.target.style.display='none'; };
   carregarDados(); showSection('consertos');
 </script>
 </body>
-</html>
+  </html>
