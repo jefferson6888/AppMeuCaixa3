@@ -1181,15 +1181,6 @@
               </div>
             </div>
 
-            <label class="field-group" for="fotoAparelho">
-              <span>📷 Foto do aparelho (opcional)</span>
-              <input type="file" id="fotoAparelho" accept="image/*" onchange="previewFotoAparelho()">
-              <div id="previewFotoAparelho" style="margin-top:10px; display:none;">
-                <img id="imagemPreview" style="max-width:100%; max-height:200px; border-radius:8px; border:1px solid var(--border-color);">
-                <button type="button" onclick="removerFotoAparelho()" style="margin-top:8px; width:100%; padding:8px; background:var(--accent-red); color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">Remover foto</button>
-              </div>
-            </label>
-
             <button class="salvar" onclick="salvarAparelhoDetalhado()">📦 Adicionar ao Estoque</button>
           </div>
         </div>
@@ -1216,58 +1207,6 @@
       <!-- DASHBOARD -->
       <section id="dashboardSection" class="card" style="display:none;" aria-label="Dashboard e relatórios">
         <h2>📊 Dashboard &amp; Relatórios Avançados</h2>
-
-        <div class="sub-section-title">⚙️ Configurações Financeiras</div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
-          <div>
-            <label class="field-group" for="taxaMaquininhaInput">
-              <span>Taxa Maquininha (%)</span>
-              <input type="number" id="taxaMaquininhaInput" placeholder="2.99" step="0.01" min="0" max="10">
-            </label>
-          </div>
-          <div>
-            <label class="field-group" for="metaMensalInput">
-              <span>Meta Mensal (R$)</span>
-              <input type="number" id="metaMensalInput" placeholder="5000" step="100" min="0">
-            </label>
-          </div>
-        </div>
-        <button class="btn-action-top" onclick="salvarConfiguracoesFinanceiras()" style="width:100%; margin-bottom:20px;">💾 Salvar Configurações</button>
-
-        <div class="sub-section-title">💸 Gestão de Despesas</div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
-          <div>
-            <label class="field-group" for="despesaDescricao">
-              <span>Descrição</span>
-              <input type="text" id="despesaDescricao" placeholder="Ex: Aluguel, Luz">
-            </label>
-          </div>
-          <div>
-            <label class="field-group" for="despesaValor">
-              <span>Valor (R$)</span>
-              <input type="number" id="despesaValor" placeholder="0,00" step="0.01" min="0">
-            </label>
-          </div>
-        </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
-          <div>
-            <label class="field-group" for="despesaTipo">
-              <span>Tipo</span>
-              <select id="despesaTipo">
-                <option value="fixa">Fixa (Aluguel, Salário)</option>
-                <option value="variavel">Variável (Luz, Água)</option>
-              </select>
-            </label>
-          </div>
-          <div>
-            <label class="field-group" for="despesaData">
-              <span>Data</span>
-              <input type="date" id="despesaData">
-            </label>
-          </div>
-        </div>
-        <button class="salvar" onclick="adicionarDespesa()" style="margin-bottom:20px;">➕ Adicionar Despesa</button>
-        <div id="despesasLista" aria-live="polite"></div>
 
         <div class="sub-section-title">📌 Resumo Geral Financeiro</div>
         <div id="resumoFinanceiro" aria-live="polite"></div>
@@ -1390,9 +1329,9 @@
     <label class="field-group" for="formaPagamento">
       <span>Forma de pagamento</span>
       <select id="formaPagamento">
-        <option value="dinheiro">💵 Dinheiro</option>
-        <option value="pix">📱 PIX</option>
-        <option value="cartao">💳 Cartão (desconta taxa)</option>
+        <option>Dinheiro</option>
+        <option>PIX</option>
+        <option>Cartão</option>
       </select>
     </label>
     <div class="modal-footer-btns">
@@ -1580,14 +1519,6 @@
       <span>Valor recebido agora (R$)</span>
       <input type="number" id="vendaValorRecebido" placeholder="0,00" min="0" step="0.01">
     </label>
-    <label class="field-group" for="vendaFormaPagamento">
-      <span>Forma de pagamento</span>
-      <select id="vendaFormaPagamento">
-        <option value="dinheiro">💵 Dinheiro</option>
-        <option value="pix">📱 PIX</option>
-        <option value="cartao">💳 Cartão (desconta taxa)</option>
-      </select>
-    </label>
     <div class="modal-footer-btns">
       <button onclick="confirmarFinalizarVendaParcela()">Registrar Pagamento</button>
       <button onclick="fecharFinalizarVendaModal()">Cancelar</button>
@@ -1711,12 +1642,6 @@
   let estoquePecas         = [];
   let capital              = 0;
   let lucroTotal           = 0;
-
-  /* CONTABILIDADE AVANÇADA */
-  let despesas             = [];
-  let taxaMaquininha       = 2.99;
-  let metaMensal           = 5000;
-  let caixaDisponivel      = 0;
 
   // IDs temporários para operações de edição/finalização
   let consertoFinalizandoId    = null;
@@ -1872,7 +1797,7 @@
   /** Serializa o estado completo e salva no localStorage. */
   function salvarDados() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      consertos, consertosFinalizados, aparelhos, vendasRealizadas, despesas, taxaMaquininha, metaMensal, caixaDisponivel,
+      consertos, consertosFinalizados, aparelhos, vendasRealizadas,
       comprasPecas, capital, lucroTotal, extrato, estoquePecas
     }));
   }
@@ -1891,10 +1816,6 @@
       lucroTotal           = p.lucroTotal           || 0;
       extrato              = p.extrato              || [];
       estoquePecas         = p.estoquePecas         || [];
-      despesas             = p.despesas             || [];
-      taxaMaquininha       = p.taxaMaquininha       || 2.99;
-      metaMensal           = p.metaMensal           || 5000;
-      caixaDisponivel      = p.caixaDisponivel      || 0;
     } else {
       inicializarExemplo();
     }
@@ -1917,7 +1838,7 @@
 
   function exportarDados() {
     try {
-      const dataStr      = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas, despesas, taxaMaquininha, metaMensal, caixaDisponivel }, null, 2);
+      const dataStr      = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas }, null, 2);
       const blob         = new Blob([dataStr], { type: 'application/json;charset=utf-8' });
       const dataAtual    = new Date().toISOString().split('T')[0];
       const nomeArquivo  = `jefferson_cell_backup_${dataAtual}.json`;
@@ -2031,11 +1952,6 @@
 
   function atualizarDisplays() {
     el('capitalDisponivel').textContent = brl(capital);
-    const taxaInput = el('taxaMaquininhaInput');
-    const metaInput = el('metaMensalInput');
-    if (taxaInput) taxaInput.value = taxaMaquininha;
-    if (metaInput) metaInput.value = metaMensal;
-    atualizarDespesasLista();
 
     const dividaConsertos   = consertos.reduce((s, c) => s + (c.origemCustoPeca === 'fornecedor' ? (c.valorPeca || 0) : 0), 0);
     const dividaVendas      = aparelhos.reduce((s, a) => s + (a.origemCustoVenda === 'fornecedor' ? ((a.valorCompra || 0) + (a.valorPecaUtilizada || 0)) : 0), 0);
@@ -2243,7 +2159,7 @@
 
   function confirmarFinalizar() {
     const valorRecebido = Number(el('valorRecebido').value);
-    const forma         = el('formaPagamento').value || 'dinheiro';
+    const forma         = el('formaPagamento').value;
     const idx           = consertos.findIndex(c => c.id === consertoFinalizandoId);
     if (idx === -1) return;
     const c = consertos[idx];
@@ -2254,14 +2170,11 @@
       return;
     }
 
-    const lucroComTaxa = calcularLucroComTaxa(valorRecebido, forma);
     const lucroTotalOS = c.valorConserto - (c.valorPeca || 0);
 
     if (valorRecebido > 0) {
-      lucroTotal += lucroComTaxa;
-      const taxaDesconto = valorRecebido - lucroComTaxa;
-      const descTaxa = taxaDesconto > 0 ? ` (Taxa: ${brl(taxaDesconto)})` : '';
-      adicionarExtrato('credito', `💰 LUCRO (restante) - Conserto ${c.modelo}${descTaxa}`, lucroComTaxa);
+      lucroTotal += valorRecebido;
+      adicionarExtrato('credito', `💰 LUCRO (restante) - Conserto ${c.modelo}`, valorRecebido);
       atualizarDisplays();
     }
 
@@ -2269,43 +2182,15 @@
       creditarCapital(c.valorPeca, `Reembolso peça ${c.modelo} (finalização)`);
     }
 
-    const finalizada = { ...c, valorRecebido, formaPagamento: forma, lucro: lucroComTaxa, lucroGrasso: lucroTotalOS, dataFinalizacao: new Date().toISOString() };
+    const finalizada = { ...c, valorRecebido, formaPagamento: forma, lucro: lucroTotalOS, dataFinalizacao: new Date().toISOString() };
     consertosFinalizados.unshift(finalizada);
     consertos.splice(idx, 1);
     salvarDados();
     fecharFinalizarModal();
     atualizarTudo();
-    const taxaInfo = forma === 'cartao' ? `\n💳 Taxa: ${brl(valorRecebido - lucroComTaxa)}` : '';
-    alert(`✅ Conserto finalizado!\n💰 Recebido: ${brl(valorRecebido)}\n📈 Lucro líquido: ${brl(lucroComTaxa)}${taxaInfo}`);
+    alert(`✅ Conserto finalizado!\n💰 Recebido: ${brl(valorRecebido)}\n📈 Lucro total: ${brl(lucroTotalOS)}`);
     mostrarRecibo(finalizada);
     switchSubConsertoTab('finalizados');
-  }
-
-  /* ─────────────────────────────────────────
-     FOTOS DE APARELHOS
-  ───────────────────────────────────────── */
-  let fotoAparelhoAtualBase64 = null;
-
-  function previewFotoAparelho() {
-    const input = el('fotoAparelho');
-    const preview = el('previewFotoAparelho');
-    const img = el('imagemPreview');
-
-    if (input.files && input.files[0]) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        fotoAparelhoAtualBase64 = e.target.result;
-        img.src = fotoAparelhoAtualBase64;
-        preview.style.display = 'block';
-      };
-      reader.readAsDataURL(input.files[0]);
-    }
-  }
-
-  function removerFotoAparelho() {
-    el('fotoAparelho').value = '';
-    el('previewFotoAparelho').style.display = 'none';
-    fotoAparelhoAtualBase64 = null;
   }
 
   /* ─────────────────────────────────────────
@@ -2344,15 +2229,13 @@
       custoTotal, custoJaDebitado: true,
       valorEntrada: 0, dataEntradaPagamento: '',
       valorParcelaRestante: 0, dataRestantePagamento: '',
-      lucroImediato: 0,
-      foto: fotoAparelhoAtualBase64
+      lucroImediato: 0
     });
 
     salvarDados();
     atualizarTudo();
 
     ['modelo','valorCompra','valorVenda','pecaUtilizada','valorPecaUtilizada','nomeFornecedorVenda'].forEach(id => { el(id).value = ''; });
-    removerFotoAparelho();
     el('fornecedorVendaDiv').style.display = 'none';
     document.querySelector('input[name="origemCustoVenda"][value="capital"]').checked = true;
 
@@ -2443,43 +2326,35 @@
 
   function confirmarFinalizarVendaParcela() {
     const valorRecebido = Number(el('vendaValorRecebido').value);
-    const forma = el('vendaFormaPagamento').value || 'dinheiro';
     if (!valorRecebido && valorRecebido !== 0) { alert('Digite o valor recebido'); return; }
     const ap = aparelhos.find(a => a.id === vendaParcelaFinalizandoId);
     if (!ap) return;
 
-    const lucroComTaxa = calcularLucroComTaxa(valorRecebido, forma);
-
     if (valorRecebido >= ap.valorParcelaRestante) {
       const lucroFinal = ap.valorVenda - ap.custoTotal;
       if (valorRecebido > 0) {
-        lucroTotal += lucroComTaxa;
-        const taxaDesconto = valorRecebido - lucroComTaxa;
-        const descTaxa = taxaDesconto > 0 ? ` (Taxa: ${brl(taxaDesconto)})` : '';
-        adicionarExtrato('credito', `💰 LUCRO (restante) - Venda ${ap.modelo}${descTaxa}`, lucroComTaxa);
+        lucroTotal += valorRecebido;
+        adicionarExtrato('credito', `💰 LUCRO (restante) - Venda ${ap.modelo}`, valorRecebido);
       }
       atualizarDisplays();
 
       vendasRealizadas.unshift({
-        id: Date.now(), modelo: ap.modelo, valorVenda: ap.valorVenda, custoTotal: ap.custoTotal, lucro: lucroComTaxa, lucroGrasso: lucroFinal,
+        id: Date.now(), modelo: ap.modelo, valorVenda: ap.valorVenda, custoTotal: ap.custoTotal, lucro: lucroFinal,
         data: new Date().toLocaleString(), condicao: ap.condicao, acessorios: ap.acessorios,
         pecaUtilizada: ap.pecaUtilizada, valorPecaUtilizada: ap.valorPecaUtilizada,
-        origem: ap.origemVendaLocal || 'Loja', valorEntrada: ap.valorEntrada, valorParcelaRestante: 0, formaPagamento: forma
+        origem: ap.origemVendaLocal || 'Loja', valorEntrada: ap.valorEntrada, valorParcelaRestante: 0
       });
 
       aparelhos = aparelhos.filter(a => a.id !== vendaParcelaFinalizandoId);
       salvarDados();
       atualizarTudo();
-      const taxaInfo = forma === 'cartao' ? `\n💳 Taxa: ${brl(valorRecebido - lucroComTaxa)}` : '';
-      alert(`✅ Venda concluída!\n💰 Recebido: ${brl(valorRecebido)}\n📈 Lucro líquido: ${brl(lucroComTaxa)}${taxaInfo}`);
+      alert(`✅ Venda concluída!\n💰 Recebido: ${brl(valorRecebido)}\n📈 Lucro total: ${brl(lucroFinal)}`);
       fecharFinalizarVendaModal();
       switchSubVendaTab('finalizados');
     } else {
       ap.valorParcelaRestante -= valorRecebido;
-      lucroTotal += lucroComTaxa;
-      const taxaDesconto = valorRecebido - lucroComTaxa;
-      const descTaxa = taxaDesconto > 0 ? ` (Taxa: ${brl(taxaDesconto)})` : '';
-      adicionarExtrato('credito', `💰 PARCELA - Venda ${ap.modelo}${descTaxa}`, lucroComTaxa);
+      lucroTotal += valorRecebido;
+      adicionarExtrato('credito', `💰 PARCELA - Venda ${ap.modelo}`, valorRecebido);
       atualizarDisplays();
       alert(`✅ Parcela registrada! Faltam: ${brl(ap.valorParcelaRestante)}`);
       fecharFinalizarVendaModal();
@@ -2765,23 +2640,15 @@
       div.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">Nenhum conserto finalizado.</p>';
       return;
     }
-    div.innerHTML = consertosFinalizados.slice(0, 10).map(f => {
-      const lucroGrasso = f.lucroGrasso || (f.valorConserto - (f.valorPeca || 0));
-      const lucroLiq = f.lucro || 0;
-      const taxaDesconto = lucroGrasso - lucroLiq;
-      const taxaInfo = taxaDesconto > 0 ? `<p style="font-size:12px; color:var(--text-muted);">Taxa: ${brl(taxaDesconto)}</p>` : '';
-      return `
+    div.innerHTML = consertosFinalizados.slice(0, 10).map(f => `
       <div class="item">
         <h3>✅ ${f.modelo} - ${f.cliente}</h3>
-        <p>Total: ${brl(f.valorConserto)} | Peça: ${brl(f.valorPeca || 0)} | Lucro Bruto: ${brl(lucroGrasso)}</p>
-        <p style="color:var(--accent-emerald); font-weight:bold;">Lucro Líquido: ${brl(lucroLiq)}</p>
-        ${taxaInfo}
+        <p>Total: ${brl(f.valorConserto)} | Peça: ${brl(f.valorPeca || 0)} | Lucro: ${brl(f.lucro || 0)}</p>
         <div class="item-actions">
           <button class="ver-detalhes" onclick='verDetalhesOS(${JSON.stringify(f).replace(/"/g, '&quot;')})'>🔍 Ver</button>
           <button class="btn-editar"   onclick="abrirEditarOs(${f.id}, true)">✏️ Editar</button>
         </div>
-      </div>`;
-    }).join('');
+      </div>`).join('');
   }
 
   function atualizarAparelhosLista() {
@@ -2796,10 +2663,8 @@
       const custoTotal    = a.custoTotal || (a.valorCompra + a.valorPecaUtilizada);
       const lucroEstimado = a.valorVenda - custoTotal;
       const tagOrigem     = a.origemCustoVenda === 'capital' ? '💰 Capital' : '🏭 Fornecedor';
-      const fotoHtml = a.foto ? `<div style="margin-bottom:12px; border-radius:8px; overflow:hidden; border:1px solid var(--border-color);"><img src="${a.foto}" style="width:100%; height:auto; max-height:180px; object-fit:cover;"></div>` : '';
       return `
         <div class="item">
-          ${fotoHtml}
           <h3>📱 ${a.modelo}</h3>
           <p>Venda: ${brl(a.valorVenda)} | Custo: ${brl(custoTotal)} | Lucro: ${brl(lucroEstimado)}</p>
           <p>Condição: ${a.condicao} | Origem: ${tagOrigem}</p>
@@ -2848,22 +2713,14 @@
       div.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">Nenhuma venda finalizada.</p>';
       return;
     }
-    div.innerHTML = vendasRealizadas.map(v => {
-      const lucroGrasso = v.lucroGrasso || (v.valorVenda - (v.custoTotal || 0));
-      const lucroLiq = v.lucro || 0;
-      const taxaDesconto = lucroGrasso - lucroLiq;
-      const taxaInfo = taxaDesconto > 0 ? `<p style="font-size:12px; color:var(--text-muted);">Taxa: ${brl(taxaDesconto)}</p>` : '';
-      return `
+    div.innerHTML = vendasRealizadas.map(v => `
       <div class="item">
         <h3>✅ ${v.modelo} <span class="origem-badge">📍 ${v.origem || 'N/I'}</span></h3>
-        <p>Vendido por: ${brl(v.valorVenda)} | Custo: ${brl(v.custoTotal || 0)} | Lucro Bruto: ${brl(lucroGrasso)}</p>
-        <p style="color:var(--accent-emerald); font-weight:bold;">Lucro Liquido: ${brl(lucroLiq)}</p>
-        ${taxaInfo}
+        <p>Vendido por: ${brl(v.valorVenda)} | Custo: ${brl(v.custoTotal || 0)} | Lucro: ${brl(v.lucro || 0)}</p>
         <div class="item-actions">
           <button class="btn-editar" onclick="editarVendaFinalizada(${v.id})">✏️ Editar</button>
         </div>
-      </div>`;
-    }).join('');
+      </div>`).join('');
   }
 
   /* ─────────────────────────────────────────
@@ -2980,24 +2837,11 @@
     if (!div) return;
     const lC = consertosFinalizados.reduce((s, c) => s + (c.lucro || 0), 0);
     const lV = vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0);
-    const lucroGrasso = lC + lV;
-    const totalDespesas = despesas.reduce((s, d) => s + d.valor, 0);
-    const lucroLiquido = lucroGrasso - totalDespesas;
-    const { progress } = calcularMetaProgress();
     div.innerHTML = `
       <div class="item">
-        <p>📈 LUCRO Consertos: <strong style="color:var(--accent-emerald);">${brl(lC)}</strong></p>
-        <p>📈 LUCRO Vendas: <strong style="color:var(--accent-emerald);">${brl(lV)}</strong></p>
-        <p>💰 LUCRO BRUTO: <strong style="color:var(--accent-cyan); font-size:15px;">${brl(lucroGrasso)}</strong></p>
-        <p>💸 Total Despesas: <strong style="color:var(--accent-red);">${brl(totalDespesas)}</strong></p>
-        <p style="margin-top:8px; padding-top:8px; border-top:1px solid var(--border-color);">💵 LUCRO LIQUIDO: <strong style="color:var(--accent-emerald-light); font-size:18px;">${brl(lucroLiquido)}</strong></p>
-        <div style="margin-top:12px; background:rgba(16, 185, 129, 0.1); padding:12px; border-radius:8px;">
-          <p style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">META DO MES: ${brl(metaMensal)}</p>
-          <div style="background:var(--border-color); height:8px; border-radius:4px; overflow:hidden;">
-            <div style="background:linear-gradient(90deg, var(--accent-emerald), var(--accent-emerald-light)); height:100%; width:${progress}%; transition:width 0.3s ease;"></div>
-          </div>
-          <p style="font-size:12px; color:var(--text-secondary); margin-top:6px;">Progresso: ${progress.toFixed(1)}%</p>
-        </div>
+        <p>📈 LUCRO Consertos: <strong style="color:var(--accent-green);">${brl(lC)}</strong></p>
+        <p>📈 LUCRO Vendas: <strong style="color:var(--accent-green);">${brl(lV)}</strong></p>
+        <p style="margin-top:5px;">💰 LUCRO TOTAL: <strong style="color:var(--accent-green); font-size:16px;">${brl(lC + lV)}</strong></p>
       </div>`;
     atualizarLucroMensal();
   }
@@ -3107,110 +2951,6 @@
   window.addEventListener('click', e => {
     if (e.target.classList.contains('modal')) e.target.style.display = 'none';
   });
-
-  /* ─────────────────────────────────────────
-     CONTABILIDADE AVANÇADA
-  ───────────────────────────────────────── */
-  function salvarConfiguracoesFinanceiras() {
-    const taxa = Number(el('taxaMaquininhaInput').value) || 2.99;
-    const meta = Number(el('metaMensalInput').value) || 5000;
-    taxaMaquininha = taxa;
-    metaMensal = meta;
-    salvarDados();
-    alert('✅ Configurações salvas!');
-  }
-
-  function adicionarDespesa() {
-    const desc = el('despesaDescricao').value.trim();
-    const valor = Number(el('despesaValor').value) || 0;
-    const tipo = el('despesaTipo').value;
-    const data = el('despesaData').value;
-
-    if (!desc || valor <= 0 || !data) { alert('Preencha todos os campos!'); return; }
-
-    const despesa = {
-      id: Date.now(),
-      descricao: desc,
-      valor: valor,
-      tipo: tipo,
-      data: data,
-      dataCriacao: new Date().toLocaleString()
-    };
-
-    despesas.push(despesa);
-    lucroTotal -= valor;
-    adicionarExtrato('debito', `💸 DESPESA - ${desc}`, valor);
-    salvarDados();
-    atualizarDisplays();
-    atualizarDespesasLista();
-    atualizarRelatorios();
-    el('despesaDescricao').value = '';
-    el('despesaValor').value = '';
-    el('despesaData').value = '';
-    alert('✅ Despesa adicionada!');
-  }
-
-  function atualizarDespesasLista() {
-    const div = el('despesasLista');
-    if (!div) return;
-    if (despesas.length === 0) {
-      div.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">💵 Nenhuma despesa registrada</p>';
-      return;
-    }
-    div.innerHTML = despesas.slice().reverse().map(d => `
-      <div class="item">
-        <h3>💸 ${d.descricao}</h3>
-        <p>Valor: <strong>${brl(d.valor)}</strong> | Tipo: ${d.tipo === 'fixa' ? '💳 Fixa' : '💱 Variável'} | Data: ${d.data}</p>
-        <div class="item-actions">
-          <button class="btn-deletar" onclick="deletarDespesa(${d.id})">🗑️ Deletar</button>
-        </div>
-      </div>`).join('');
-  }
-
-  function deletarDespesa(id) {
-    const idx = despesas.findIndex(d => d.id === id);
-    if (idx !== -1 && confirm('Excluir despesa?')) {
-      const d = despesas[idx];
-      lucroTotal += d.valor;
-      despesas.splice(idx, 1);
-      salvarDados();
-      atualizarDisplays();
-      atualizarDespesasLista();
-      atualizarRelatorios();
-    }
-  }
-
-  function calcularLucroLiquido() {
-    const lucroGrasso = lucroTotal;
-    const totalDespesas = despesas.reduce((s, d) => s + d.valor, 0);
-    return lucroGrasso - totalDespesas;
-  }
-
-  function calcularMetaProgress() {
-    const lucroLiq = calcularLucroLiquido();
-    const progress = Math.min(100, (lucroLiq / metaMensal) * 100);
-    return { lucroLiq, progress };
-  }
-
-  function calcularLucroComTaxa(valorRecebido, formaPagamento) {
-    if (formaPagamento === 'cartao') {
-      const taxa = (valorRecebido * taxaMaquininha) / 100;
-      return Math.round((valorRecebido - taxa) * 100) / 100;
-    }
-    return Math.round(valorRecebido * 100) / 100;
-  }
-
-  function calcularLucroConserto(valorConserto, valorPeca, valorRecebido, formaPagamento) {
-    const lucroGrasso = valorConserto - (valorPeca || 0);
-    const lucroLiq = calcularLucroComTaxa(valorRecebido, formaPagamento);
-    return Math.round(lucroLiq * 100) / 100;
-  }
-
-  function calcularLucroVenda(valorVenda, custoTotal, valorRecebido, formaPagamento) {
-    const lucroGrasso = valorVenda - custoTotal;
-    const lucroLiq = calcularLucroComTaxa(valorRecebido, formaPagamento);
-    return Math.round(lucroLiq * 100) / 100;
-  }
 
   /* ─────────────────────────────────────────
      ALTERNÂNCIA DE TEMA
