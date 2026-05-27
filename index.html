@@ -1933,17 +1933,21 @@
     const dividaPecasCompras = comprasPecas.reduce((s, c) => s + (c.status !== 'pago' ? (c.valorTotal || 0) : 0), 0);
     el('lucroAcumulado').textContent = brl(dividaConsertos + dividaVendas + dividaPecasCompras);
 
-    const lucroConsertos = consertosFinalizados.reduce((s, c) => s + (c.lucro || 0), 0);
-    const lucroVendas    = vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0);
+    const lucroConsertosFinalizados = consertosFinalizados.reduce((s, c) => s + (c.lucro || 0), 0);
+    const lucroVendasRealizadas    = vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0);
 
     const lucroPendenteConsertos = consertos.reduce((s, c) => s + (c.lucroImediato || 0), 0);
     const lucroPendenteVendas    = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.lucroImediato || 0), 0);
 
-    el('lucroVendasValor').textContent   = brl(lucroVendas);
-    el('lucroConsertosValor').textContent = brl(lucroConsertos);
+    // O usuário deseja que o lucro pendente (já contabilizado no extrato/capital) seja exibido como parte do lucro total nos cards
+    const lucroVendasTotal    = lucroVendasRealizadas + lucroPendenteVendas;
+    const lucroConsertosTotal = lucroConsertosFinalizados + lucroPendenteConsertos;
 
-    el('lucroPendenteVendasInfo').textContent    = lucroPendenteVendas    > 0 ? `💰 Já contabilizado (pendente): ${brl(lucroPendenteVendas)}`    : '';
-    el('lucroPendenteConsertosInfo').textContent = lucroPendenteConsertos > 0 ? `💰 Já contabilizado (pendente): ${brl(lucroPendenteConsertos)}` : '';
+    el('lucroVendasValor').textContent   = brl(lucroVendasTotal);
+    el('lucroConsertosValor').textContent = brl(lucroConsertosTotal);
+
+    el('lucroPendenteVendasInfo').textContent    = '';
+    el('lucroPendenteConsertosInfo').textContent = '';
   }
 
   /* ─────────────────────────────────────────
@@ -2735,8 +2739,11 @@
     const dividaConsertos   = consertos.reduce((s, c) => s + (c.origemCustoPeca === 'fornecedor' ? (c.valorPeca || 0) : 0), 0);
     const dividaVendas      = aparelhos.reduce((s, a) => s + (a.origemCustoVenda === 'fornecedor' ? ((a.valorCompra || 0) + (a.valorPecaUtilizada || 0)) : 0), 0);
     const totalPecasPendentes = dividaConsertos + dividaVendas;
+    const lucroPendenteConsertos = consertos.reduce((s, c) => s + (c.lucroImediato || 0), 0);
+    const lucroPendenteVendas    = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.lucroImediato || 0), 0);
     const lucroTotalReal    = consertosFinalizados.reduce((s, c) => s + (c.lucro || 0), 0)
-                            + vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0);
+                            + vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0)
+                            + lucroPendenteConsertos + lucroPendenteVendas;
     div.innerHTML = `
       <div style="line-height:1.8; font-size:14px;">
         <p>📌 OS pendentes: <strong>${consertos.length}</strong></p>
@@ -2810,8 +2817,10 @@
   function atualizarRelatorios() {
     const div = el('relatoriosLista');
     if (!div) return;
-    const lC = consertosFinalizados.reduce((s, c) => s + (c.lucro || 0), 0);
-    const lV = vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0);
+    const lPendenteC = consertos.reduce((s, c) => s + (c.lucroImediato || 0), 0);
+    const lPendenteV = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.lucroImediato || 0), 0);
+    const lC = consertosFinalizados.reduce((s, c) => s + (c.lucro || 0), 0) + lPendenteC;
+    const lV = vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0) + lPendenteV;
     div.innerHTML = `
       <div class="item">
         <p>📈 LUCRO Consertos: <strong style="color:var(--accent-green);">${brl(lC)}</strong></p>
