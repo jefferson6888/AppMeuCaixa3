@@ -1199,6 +1199,9 @@
 
         <div class="sub-section-title">📈 Evolução Mensal de Lucros</div>
         <div id="lucroMensalLista" aria-live="polite"></div>
+
+        <div class="sub-section-title">📜 Histórico de Fechamentos Mensais</div>
+        <div id="historicoMensalPainel" aria-live="polite"></div>
       </section>
 
       <!-- PAINEL DE FLUXO -->
@@ -1218,9 +1221,6 @@
           <button class="sub-tab-btn" id="btnSubPainelVendasFin"
             role="tab" aria-selected="false" aria-controls="subTabPainelVendasFin"
             onclick="switchSubPainelTab('vendas_fin')">💰 Vendidos</button>
-          <button class="sub-tab-btn" id="btnSubPainelHistorico"
-            role="tab" aria-selected="false" aria-controls="subTabPainelHistorico"
-            onclick="switchSubPainelTab('historico')">📜 Histórico</button>
         </div>
 
         <div id="subTabPainelAndamento" role="tabpanel" aria-labelledby="btnSubPainelAndamento">
@@ -1241,11 +1241,6 @@
         <div id="subTabPainelVendasFin" style="display:none;" role="tabpanel" aria-labelledby="btnSubPainelVendasFin">
           <div class="sub-section-title" style="margin-top:0;">💰 Vendas Finalizadas</div>
           <div id="finalizadasVendasLista" aria-live="polite"></div>
-        </div>
-
-        <div id="subTabPainelHistorico" style="display:none;" role="tabpanel" aria-labelledby="btnSubPainelHistorico">
-          <div class="sub-section-title" style="margin-top:0;">📜 Histórico de Fechamentos Mensais</div>
-          <div id="historicoMensalPainel" aria-live="polite"></div>
         </div>
       </section>
 
@@ -1720,8 +1715,8 @@
 
     // Ações específicas por seção
     if (section === 'extrato')               atualizarExtratoDetalhado();
-    if (section === 'dashboard')             { atualizarResumo(); atualizarRelatorios(); }
-    if (section === 'pendentesFinalizados')  { atualizarPendentesFinalizados(); atualizarHistoricoPainel(); switchSubPainelTab('andamento'); }
+    if (section === 'dashboard')             { atualizarResumo(); atualizarRelatorios(); atualizarHistoricoPainel(); }
+    if (section === 'pendentesFinalizados')  { atualizarPendentesFinalizados(); switchSubPainelTab('andamento'); }
     if (section === 'vendaAparelhos')        switchSubVendaTab('nova');
     if (section === 'consertos')             switchSubConsertoTab('nova');
   }
@@ -1753,7 +1748,6 @@
       finalizados: { tab: 'subTabPainelFinalizados',  btn: 'btnSubPainelFinalizados' },
       vendas_pend: { tab: 'subTabPainelVendasPend',   btn: 'btnSubPainelVendasPend' },
       vendas_fin:  { tab: 'subTabPainelVendasFin',    btn: 'btnSubPainelVendasFin' },
-      historico:   { tab: 'subTabPainelHistorico',    btn: 'btnSubPainelHistorico', onShow: atualizarHistoricoPainel },
     }, target);
   }
 
