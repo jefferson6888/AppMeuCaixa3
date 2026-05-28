@@ -34,6 +34,8 @@
       --accent-orange:  #f97316;
       --accent-red:     #ef4444;
       --accent-yellow:  #eab308;
+      --accent-green:   #10b981;
+      --accent-purple:  #8b5cf6;
 
       --shadow-sm:      0 1px 2px rgba(0, 0, 0, 0.05);
       --shadow-md:      0 4px 6px rgba(0, 0, 0, 0.1);
@@ -79,6 +81,8 @@
       --accent-orange:  #d97706;
       --accent-red:     #dc2626;
       --accent-yellow:  #ca8a04;
+      --accent-green:   #059669;
+      --accent-purple:  #7c3aed;
 
       --shadow-sm:      0 1px 2px rgba(0, 0, 0, 0.05);
       --shadow-md:      0 4px 6px rgba(0, 0, 0, 0.07);
@@ -99,7 +103,11 @@
 
     body {
       background-color: var(--bg-main);
+      background-image: linear-gradient(rgba(15, 20, 25, 0.85), rgba(15, 20, 25, 0.85)), url('https://files.manuscdn.com/user_upload_by_module/session_file/310519663705439359/ayZchKVdwCdwEfJk.png');
+      background-size: cover;
+      background-position: center;
       background-attachment: fixed;
+      background-repeat: no-repeat;
       min-height: 100vh;
       color: var(--text-main);
       padding-bottom: 120px;
@@ -108,18 +116,9 @@
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    /* Dark theme background */
-    body:not(.light-theme) {
-      background-image:
-        radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.06) 0%, transparent 50%);
-    }
-
-    /* Light theme background */
+    /* Light theme background adjustment */
     body.light-theme {
-      background-image:
-        radial-gradient(circle at 20% 50%, rgba(79, 70, 229, 0.06) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(5, 150, 105, 0.04) 0%, transparent 50%);
+      background-image: linear-gradient(rgba(248, 250, 252, 0.92), rgba(248, 250, 252, 0.92)), url('https://files.manuscdn.com/user_upload_by_module/session_file/310519663705439359/ayZchKVdwCdwEfJk.png');
     }
 
     /* ===== LAYOUT ===== */
@@ -271,15 +270,20 @@
 
     /* ===== CARD GENÉRICO ===== */
     .card {
-      background: linear-gradient(135deg, rgba(26, 31, 46, 0.4), rgba(26, 31, 46, 0.2));
+      background: rgba(26, 31, 46, 0.7);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
       border-radius: var(--radius-2xl);
       padding: 28px;
       margin-bottom: 28px;
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: var(--shadow-lg);
       transition: var(--transition-normal);
+    }
+    
+    body.light-theme .card {
+      background: rgba(255, 255, 255, 0.8);
+      border-color: rgba(0, 0, 0, 0.05);
     }
 
     .card:hover {
@@ -529,6 +533,11 @@
       justify-content: center;
       align-items: center;
       padding: 16px;
+    }
+
+    .modal[style*="display: flex"],
+    .modal[style*="display:flex"] {
+      display: flex !important;
     }
 
     .modal-content {
@@ -1042,7 +1051,7 @@
               <input type="date" id="dataEntrada">
             </div>
             <div class="field-group">
-              <label for="dataVencimento">Data de Vencimento</label>
+              <label for="dataVencimento">Data de Entrega</label>
               <input type="date" id="dataVencimento">
             </div>
           </div>
@@ -1113,11 +1122,6 @@
               <input type="text" id="modelo" placeholder="Ex: iPhone 12">
             </label>
 
-            <label class="field-group" for="valorCompra">
-              <span>Valor de compra (R$) *</span>
-              <input type="number" id="valorCompra" placeholder="0,00" min="0" step="0.01">
-            </label>
-
             <label class="field-group" for="valorVenda">
               <span>Valor de venda sugerido (R$) *</span>
               <input type="number" id="valorVenda" placeholder="0,00" min="0" step="0.01">
@@ -1138,30 +1142,44 @@
               <input type="text" id="acessoriosInclusos" placeholder="Ex: Carregador, Caixa">
             </label>
 
-            <div class="origem-custo">
-              <span>💰 Origem do custo do aparelho (compra + peça):</span>
-              <div>
-                <label><input type="radio" name="origemCustoVenda" value="capital" checked> 💰 Capital</label>
-                <label><input type="radio" name="origemCustoVenda" value="fornecedor"> 🏭 Fornecedor</label>
+            <div class="small-input-group">
+              <div class="field-group">
+                <label for="valorCompra">Valor de compra (R$)</label>
+                <input type="number" id="valorCompra" placeholder="0,00" step="0.01" min="0">
+              </div>
+              <div class="field-group">
+                <label>Origem Compra</label>
+                <select id="origemCompraAparelho">
+                  <option value="capital">💰 Capital</option>
+                  <option value="fornecedor">🏭 Fornecedor</option>
+                </select>
               </div>
             </div>
+
+            <div class="small-input-group">
+              <div class="field-group">
+                <label for="valorPecaUtilizada">Custo peça (R$)</label>
+                <input type="number" id="valorPecaUtilizada" placeholder="0,00" step="0.01" min="0">
+              </div>
+              <div class="field-group">
+                <label>Origem Peça</label>
+                <select id="origemPecaAparelho">
+                  <option value="capital">💰 Capital</option>
+                  <option value="fornecedor">🏭 Fornecedor</option>
+                </select>
+              </div>
+            </div>
+
+            <label class="field-group" for="pecaUtilizada">
+              <span>Peça utilizada (opcional)</span>
+              <input type="text" id="pecaUtilizada" placeholder="🔧 Ex: Tela">
+            </label>
 
             <div id="fornecedorVendaDiv" style="display:none;">
               <label class="field-group" for="nomeFornecedorVenda">
                 <span>Nome do Fornecedor</span>
                 <input type="text" id="nomeFornecedorVenda" placeholder="Nome do Fornecedor">
               </label>
-            </div>
-
-            <div class="small-input-group">
-              <div class="field-group">
-                <label for="pecaUtilizada">Peça utilizada (opcional)</label>
-                <input type="text" id="pecaUtilizada" placeholder="🔧 Ex: Tela">
-              </div>
-              <div class="field-group">
-                <label for="valorPecaUtilizada">Custo peça (R$)</label>
-                <input type="number" id="valorPecaUtilizada" placeholder="0,00" step="0.01" min="0">
-              </div>
             </div>
 
             <button class="salvar" onclick="salvarAparelhoDetalhado()">📦 Adicionar ao Estoque</button>
@@ -1189,19 +1207,38 @@
 
       <!-- DASHBOARD -->
       <section id="dashboardSection" class="card" style="display:none;" aria-label="Dashboard e relatórios">
-        <h2>📊 Dashboard &amp; Relatórios Avançados</h2>
+        <h2>📊 Dashboard &amp; Relatórios</h2>
 
-        <div class="sub-section-title">📌 Resumo Geral Financeiro</div>
-        <div id="resumoFinanceiro" aria-live="polite"></div>
+        <div class="sub-tabs-container" role="tablist" aria-label="Abas do dashboard">
+          <button class="sub-tab-btn active" id="btnSubDashGeral"
+            role="tab" aria-selected="true"  aria-controls="subTabDashGeral"
+            onclick="switchSubDashTab('geral')">📊 Geral</button>
+          <button class="sub-tab-btn" id="btnSubDashMensal"
+            role="tab" aria-selected="false" aria-controls="subTabDashMensal"
+            onclick="switchSubDashTab('mensal')">📅 Mensal</button>
+        </div>
 
-        <div class="sub-section-title">📊 Lucro Líquido Consolidado</div>
-        <div id="relatoriosLista" aria-live="polite"></div>
+        <!-- Sub-aba: Geral -->
+        <div id="subTabDashGeral" role="tabpanel" aria-labelledby="btnSubDashGeral">
+          <div class="sub-section-title" style="margin-top:0;">📌 Resumo Geral Financeiro</div>
+          <div id="resumoFinanceiro" aria-live="polite"></div>
 
-        <div class="sub-section-title">📈 Evolução Mensal de Lucros</div>
-        <div id="lucroMensalLista" aria-live="polite"></div>
+          <div class="sub-section-title">📊 Lucro Líquido Consolidado</div>
+          <div id="relatoriosLista" aria-live="polite"></div>
+        </div>
 
-        <div class="sub-section-title">📜 Histórico de Fechamentos Mensais</div>
-        <div id="historicoMensalPainel" aria-live="polite"></div>
+        <!-- Sub-aba: Mensal -->
+        <div id="subTabDashMensal" style="display:none;" role="tabpanel" aria-labelledby="btnSubDashMensal">
+          <div class="sub-section-title" style="margin-top:0;">💰 Fluxo de Caixa</div>
+          <div class="card" style="padding: 20px; background: rgba(26, 31, 46, 0.4); border: 1px solid var(--border-color);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <button class="kpi-btn" style="max-width: 50px;" onclick="navegarMes(-1)">◀</button>
+              <h3 id="nomeMesNavegacao" style="margin: 0; font-size: 18px; color: var(--accent-indigo-light);">Mês/Ano</h3>
+              <button class="kpi-btn" style="max-width: 50px;" onclick="navegarMes(1)">▶</button>
+            </div>
+            <div id="detalheMesNavegacao" aria-live="polite"></div>
+          </div>
+        </div>
       </section>
 
       <!-- PAINEL DE FLUXO -->
@@ -1242,6 +1279,9 @@
           <div class="sub-section-title" style="margin-top:0;">💰 Vendas Finalizadas</div>
           <div id="finalizadasVendasLista" aria-live="polite"></div>
         </div>
+
+        <div class="sub-section-title" style="margin-top:24px;">📅 Histórico de Fechamentos Mensais</div>
+        <div id="historicoMensalPainel" aria-live="polite"></div>
       </section>
 
       <!-- EXTRATO -->
@@ -1343,7 +1383,7 @@
     <h2 id="tituloRecibo">🧾 RECIBO</h2>
     <div id="reciboConteudo" class="recibo" style="margin:15px 0;"></div>
     <button onclick="imprimirRecibo()"
-      style="width:100%; background:var(--accent-blue); padding:12px; border:none; border-radius:12px; color:#02040a; font-weight:700; cursor:pointer;">
+      style="width:100%; background:var(--accent-cyan); padding:12px; border:none; border-radius:12px; color:#02040a; font-weight:700; cursor:pointer;">
       🖨️ Imprimir Recibo
     </button>
   </div>
@@ -1359,7 +1399,7 @@
     </p>
 
     <button onclick="gerarBackupCopiaCola()"
-      style="width:100%; background:var(--accent-purple); color:#fff; padding:10px; border:none; border-radius:10px; font-weight:700; cursor:pointer; margin-bottom:10px;">
+      style="width:100%; background:var(--accent-indigo); color:#fff; padding:10px; border:none; border-radius:10px; font-weight:700; cursor:pointer; margin-bottom:10px;">
       ✨ 1. Gerar Código Texto (Copia e Cola)
     </button>
 
@@ -1383,7 +1423,7 @@
       <textarea id="txtRestaurarCodigo" rows="3" placeholder="Cole o código criptografado aqui..."></textarea>
     </label>
     <button onclick="confirmarRestaurarTexto()"
-      style="width:100%; background:var(--accent-green); color:#02040a; padding:12px; border:none; border-radius:12px; font-weight:700; cursor:pointer;">
+      style="width:100%; background:var(--accent-emerald); color:#fff; padding:12px; border:none; border-radius:12px; font-weight:700; cursor:pointer;">
       ⚡ Restaurar via Código
     </button>
   </div>
@@ -1458,14 +1498,44 @@
       <span>Modelo</span>
       <input type="text" id="editModelo">
     </label>
-    <label class="field-group" for="editValorCompra">
-      <span>Valor de compra (R$)</span>
-      <input type="number" id="editValorCompra" min="0" step="0.01">
-    </label>
+    <div class="small-input-group">
+      <div class="field-group">
+        <label for="editValorCompra">Valor de compra (R$)</label>
+        <input type="number" id="editValorCompra" min="0" step="0.01">
+      </div>
+      <div class="field-group">
+        <label>Origem Compra</label>
+        <select id="editOrigemCompraAparelho">
+          <option value="capital">💰 Capital</option>
+          <option value="fornecedor">🏭 Fornecedor</option>
+        </select>
+      </div>
+    </div>
+
     <label class="field-group" for="editValorVenda">
       <span>Valor de venda (R$)</span>
       <input type="number" id="editValorVenda" min="0" step="0.01">
     </label>
+
+    <div class="small-input-group">
+      <div class="field-group">
+        <label for="editValorPecaUtilizada">Custo peça (R$)</label>
+        <input type="number" id="editValorPecaUtilizada" min="0" step="0.01">
+      </div>
+      <div class="field-group">
+        <label>Origem Peça</label>
+        <select id="editOrigemPecaAparelho">
+          <option value="capital">💰 Capital</option>
+          <option value="fornecedor">🏭 Fornecedor</option>
+        </select>
+      </div>
+    </div>
+
+    <label class="field-group" for="editPecaUtilizada">
+      <span>Peça utilizada</span>
+      <input type="text" id="editPecaUtilizada">
+    </label>
+
     <label class="field-group" for="editCondicao">
       <span>Condição</span>
       <select id="editCondicao">
@@ -1479,16 +1549,7 @@
       <span>Acessórios</span>
       <input type="text" id="editAcessorios">
     </label>
-    <div class="small-input-group">
-      <div class="field-group">
-        <label for="editPecaUtilizada">Peça utilizada</label>
-        <input type="text" id="editPecaUtilizada">
-      </div>
-      <div class="field-group">
-        <label for="editValorPecaUtilizada">Custo peça (R$)</label>
-        <input type="number" id="editValorPecaUtilizada" min="0" step="0.01">
-      </div>
-    </div>
+
     <div class="modal-footer-btns">
       <button onclick="confirmarEditarAparelho()">Salvar</button>
       <button onclick="fecharEditarAparelhoModal()">Cancelar</button>
@@ -1604,6 +1665,47 @@
   </div>
 </div>
 
+<!-- Modal: Editar Venda Pendente (Parcelada) -->
+<div id="editarVendaPendenteModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloEditarVendaPend">
+  <div class="modal-content">
+    <span class="close-modal" onclick="fecharEditarVendaPendenteModal()" aria-label="Fechar">&times;</span>
+    <h3 id="tituloEditarVendaPend">✏️ Editar Venda Pendente</h3>
+
+    <label class="field-group" for="editVendaPendModelo">
+      <span>Modelo</span>
+      <input type="text" id="editVendaPendModelo">
+    </label>
+    <label class="field-group" for="editVendaPendValorTotal">
+      <span>Valor Total (R$)</span>
+      <input type="number" id="editVendaPendValorTotal" min="0" step="0.01">
+    </label>
+    <div class="small-input-group">
+      <div class="field-group">
+        <label for="editVendaPendValorEntrada">Valor Entrada (R$)</label>
+        <input type="number" id="editVendaPendValorEntrada" min="0" step="0.01">
+      </div>
+      <div class="field-group">
+        <label for="editVendaPendDataEntrada">Data Entrada</label>
+        <input type="date" id="editVendaPendDataEntrada">
+      </div>
+    </div>
+    <div class="small-input-group">
+      <div class="field-group">
+        <label for="editVendaPendValorParcela">Restante (R$)</label>
+        <input type="number" id="editVendaPendValorParcela" min="0" step="0.01">
+      </div>
+      <div class="field-group">
+        <label for="editVendaPendDataParcela">Vencimento</label>
+        <input type="date" id="editVendaPendDataParcela">
+      </div>
+    </div>
+    <div class="modal-footer-btns">
+      <button onclick="confirmarEditarVendaPendente()">💾 Salvar</button>
+      <button onclick="fecharEditarVendaPendenteModal()" style="background:var(--accent-red);">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== JAVASCRIPT ===== -->
 <script>
   'use strict';
@@ -1622,6 +1724,7 @@
   let lucroTotal           = 0;
   let historicoMensal      = [];
   let ultimoMesFechado     = null; // Formato "MM/YYYY"
+  let mesNavegacaoAtual    = null; // Mês sendo visualizado no navegador
 
   // IDs temporários para operações de edição/finalização
   let consertoFinalizandoId    = null;
@@ -1640,7 +1743,7 @@
   const el = id => document.getElementById(id);
 
   /** Formata um número como moeda BRL. */
-  const brl = v => `R$ ${Number(v).toFixed(2)}`;
+  const brl = v => `R$ ${Number(v || 0).toFixed(2).replace('.', ',')}`;
 
   /**
    * Verifica se uma OS/venda está com pagamento atrasado.
@@ -1651,7 +1754,9 @@
   function verificarAtraso(dataVencimento, saldoRestante) {
     if (!dataVencimento || saldoRestante <= 0) return false;
     const hoje      = new Date(); hoje.setHours(0, 0, 0, 0);
-    const vencimento = new Date(dataVencimento); vencimento.setHours(0, 0, 0, 0);
+    // Adiciona T00:00:00 para evitar interpretação UTC que causa erro de 1 dia
+    const vencimento = new Date(dataVencimento.includes('T') ? dataVencimento : dataVencimento + 'T00:00:00');
+    vencimento.setHours(0, 0, 0, 0);
     return vencimento < hoje;
   }
 
@@ -1670,14 +1775,18 @@
       });
     });
 
-    // Exibir/ocultar campo de fornecedor (venda)
-    document.querySelectorAll('input[name="origemCustoVenda"]').forEach(radio => {
-      radio.addEventListener('change', function () {
-        const fornecedorDiv = el('fornecedorVendaDiv');
-        fornecedorDiv.style.display = this.value === 'fornecedor' ? 'block' : 'none';
-        if (this.value !== 'fornecedor') el('nomeFornecedorVenda').value = '';
-      });
-    });
+    // Exibir/ocultar campo de fornecedor (venda) — via select
+    const origemCompraSelect = el('origemCompraAparelho');
+    const origemPecaSelect   = el('origemPecaAparelho');
+    function atualizarFornecedorVenda() {
+      const mostrar = (origemCompraSelect && origemCompraSelect.value === 'fornecedor') ||
+                      (origemPecaSelect   && origemPecaSelect.value   === 'fornecedor');
+      const div = el('fornecedorVendaDiv');
+      if (div) div.style.display = mostrar ? 'block' : 'none';
+      if (!mostrar && el('nomeFornecedorVenda')) el('nomeFornecedorVenda').value = '';
+    }
+    if (origemCompraSelect) origemCompraSelect.addEventListener('change', atualizarFornecedorVenda);
+    if (origemPecaSelect)   origemPecaSelect.addEventListener('change', atualizarFornecedorVenda);
 
     // Mostrar/ocultar campos de parcelamento na venda
     const checkParcelado      = el('vendaParceladaCheckbox');
@@ -1715,7 +1824,7 @@
 
     // Ações específicas por seção
     if (section === 'extrato')               atualizarExtratoDetalhado();
-    if (section === 'dashboard')             { atualizarResumo(); atualizarRelatorios(); atualizarHistoricoPainel(); }
+    if (section === 'dashboard')             { switchSubDashTab('geral'); }
     if (section === 'pendentesFinalizados')  { atualizarPendentesFinalizados(); switchSubPainelTab('andamento'); }
     if (section === 'vendaAparelhos')        switchSubVendaTab('nova');
     if (section === 'consertos')             switchSubConsertoTab('nova');
@@ -1765,6 +1874,13 @@
       disponiveis:     { tab: 'subTabDisponiveis',     btn: 'btnSubDisponiveis',     onShow: atualizarAparelhosLista },
       vendas_andamento:{ tab: 'subTabVendasAndamento', btn: 'btnSubVendasAndamento', onShow: atualizarVendasAndamentoLista },
       finalizados:     { tab: 'subTabFinalizados',     btn: 'btnSubFinalizados',     onShow: atualizarVendasRealizadas },
+    }, target);
+  }
+
+  function switchSubDashTab(target) {
+    _switchSubTab({
+      geral:  { tab: 'subTabDashGeral',  btn: 'btnSubDashGeral',  onShow: () => { atualizarResumo(); atualizarRelatorios(); } },
+      mensal: { tab: 'subTabDashMensal', btn: 'btnSubDashMensal', onShow: () => { atualizarNavegadorMensal(); } },
     }, target);
   }
 
@@ -1824,7 +1940,7 @@
 
   function exportarDados() {
     try {
-      const dataStr      = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas }, null, 2);
+      const dataStr      = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas, historicoMensal, ultimoMesFechado }, null, 2);
       const blob         = new Blob([dataStr], { type: 'application/json;charset=utf-8' });
       const dataAtual    = new Date().toISOString().split('T')[0];
       const nomeArquivo  = `jefferson_cell_backup_${dataAtual}.json`;
@@ -1845,7 +1961,7 @@
   }
 
   function gerarBackupCopiaCola() {
-    const dataStr   = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas });
+    const dataStr   = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas, historicoMensal, ultimoMesFechado });
     const codificado = btoa(unescape(encodeURIComponent(dataStr)));
     const txtEl      = el('txtCodigoBackup');
     const btnEl      = el('btnCopiarCodigo');
@@ -1884,6 +2000,8 @@
     lucroTotal           = data.lucroTotal           || 0;
     extrato              = data.extrato              || [];
     estoquePecas         = data.estoquePecas         || [];
+    historicoMensal      = data.historicoMensal      || [];
+    ultimoMesFechado     = data.ultimoMesFechado     || null;
     salvarDados();
     atualizarTudo();
     alert('✅ Todos os dados da Jefferson Cell foram recuperados com sucesso!');
@@ -1940,7 +2058,14 @@
     el('capitalDisponivel').textContent = brl(capital);
 
     const dividaConsertos   = consertos.reduce((s, c) => s + (c.origemCustoPeca === 'fornecedor' ? (c.valorPeca || 0) : 0), 0);
-    const dividaVendas      = aparelhos.reduce((s, a) => s + (a.origemCustoVenda === 'fornecedor' ? ((a.valorCompra || 0) + (a.valorPecaUtilizada || 0)) : 0), 0);
+    const dividaVendas      = aparelhos.reduce((s, a) => {
+      let d = 0;
+      if (a.origemCompra === 'fornecedor') d += (Number(a.valorCompra) || 0);
+      if (a.origemPeca === 'fornecedor')   d += (Number(a.valorPecaUtilizada) || 0);
+      // Compatibilidade antiga
+      if (!a.origemCompra && a.origemCustoVenda === 'fornecedor') d += (Number(a.valorCompra) || 0) + (Number(a.valorPecaUtilizada) || 0);
+      return s + d;
+    }, 0);
     const dividaPecasCompras = comprasPecas.reduce((s, c) => s + (c.status !== 'pago' ? (c.valorTotal || 0) : 0), 0);
     el('lucroAcumulado').textContent = brl(dividaConsertos + dividaVendas + dividaPecasCompras);
 
@@ -1957,8 +2082,8 @@
     el('lucroVendasValor').textContent   = brl(lucroVendasTotal);
     el('lucroConsertosValor').textContent = brl(lucroConsertosTotal);
 
-    el('lucroPendenteVendasInfo').textContent    = '';
-    el('lucroPendenteConsertosInfo').textContent = '';
+    el('lucroPendenteVendasInfo').textContent    = lucroPendenteVendas > 0 ? `(+${brl(lucroPendenteVendas)} a receber)` : '';
+    el('lucroPendenteConsertosInfo').textContent = lucroPendenteConsertos > 0 ? `(+${brl(lucroPendenteConsertos)} a receber)` : '';
   }
 
   /* ─────────────────────────────────────────
@@ -2040,7 +2165,7 @@
 
     const isAVista = (valorEntrada === valorConserto && parcelaRestante === 0);
 
-    if (valorEntrada + parcelaRestante !== valorConserto) {
+    if (Math.abs((valorEntrada + parcelaRestante) - valorConserto) > 0.01) {
       alert(`A soma da entrada (${brl(valorEntrada)}) + parcela (${brl(parcelaRestante)}) deve ser igual ao valor total (${brl(valorConserto)})`);
       return;
     }
@@ -2155,16 +2280,24 @@
     const c = consertos[idx];
 
     if (valorRecebido < 0) { alert('Valor inválido'); return; }
-    if (valorRecebido > c.valorParcelaRestante) {
+    if (valorRecebido > c.valorParcelaRestante + 0.01) {
       alert(`O valor máximo a receber é ${brl(c.valorParcelaRestante)}`);
       return;
     }
 
+    // Lucro Total Real da OS = Valor Total - Custo da Peça
     const lucroTotalOS = c.valorConserto - (c.valorPeca || 0);
+    
+    // Lucro que falta registrar = Lucro Total - Lucro Imediato (já registrado na entrada)
+    const lucroRestante = lucroTotalOS - (c.lucroImediato || 0);
 
-    if (valorRecebido > 0) {
-      lucroTotal += valorRecebido;
-      adicionarExtrato('credito', `💰 LUCRO (restante) - Conserto ${c.modelo}`, valorRecebido);
+    if (lucroRestante > 0) {
+      lucroTotal += lucroRestante;
+      adicionarExtrato('credito', `💰 LUCRO (restante) - Conserto ${c.modelo}`, lucroRestante);
+      atualizarDisplays();
+    } else if (lucroRestante < 0) {
+      lucroTotal += lucroRestante;
+      adicionarExtrato('debito', `⚠️ AJUSTE PREJUÍZO - Conserto ${c.modelo}`, Math.abs(lucroRestante));
       atualizarDisplays();
     }
 
@@ -2191,19 +2324,33 @@
     const modelo           = el('modelo').value.trim();
     const compraRaw        = el('valorCompra').value;
     const vendaRaw         = el('valorVenda').value;
-    if (!modelo || compraRaw === '' || vendaRaw === '') { alert('Preencha modelo, compra e venda'); return; }
+    if (!modelo || vendaRaw === '') { alert('Preencha modelo e valor de venda'); return; }
     const compra           = Number(compraRaw);
     const venda            = Number(vendaRaw);
     const pecaUtilizada    = el('pecaUtilizada').value.trim();
     const valorPecaUtilizada = Number(el('valorPecaUtilizada').value) || 0;
-    const origenCusto      = document.querySelector('input[name="origemCustoVenda"]:checked').value;
+    
+    const origemCompra     = el('origemCompraAparelho').value;
+    const origemPeca       = el('origemPecaAparelho').value;
     const fornecedorNome   = el('nomeFornecedorVenda').value.trim();
     const custoTotal       = compra + valorPecaUtilizada;
 
-    if (custoTotal > 0 && origenCusto === 'capital') {
-      if (!debitarCapital(custoTotal, `Compra ${modelo}`)) return;
-    } else if (custoTotal > 0 && origenCusto === 'fornecedor') {
-      adicionarExtrato('debito', `Compra ${modelo} (${fornecedorNome || 'N/I'}) - Fornecedor (dívida)`, 0);
+    // Processar Custo da Compra
+    if (compra > 0) {
+      if (origemCompra === 'capital') {
+        if (!debitarCapital(compra, `Compra ${modelo}`)) return;
+      } else {
+        adicionarExtrato('debito', `Compra ${modelo} (${fornecedorNome || 'N/I'}) - Fornecedor`, 0);
+      }
+    }
+
+    // Processar Custo da Peça
+    if (valorPecaUtilizada > 0) {
+      if (origemPeca === 'capital') {
+        if (!debitarCapital(valorPecaUtilizada, `Peça p/ ${modelo}`)) return;
+      } else {
+        adicionarExtrato('debito', `Peça ${modelo} (${fornecedorNome || 'N/I'}) - Fornecedor`, 0);
+      }
     }
 
     aparelhos.push({
@@ -2214,8 +2361,9 @@
       valorPecaUtilizada,
       dataEntrada: new Date().toISOString().split('T')[0],
       status: 'disponivel',
-      origemCustoVenda: origenCusto,
-      fornecedorVenda: origenCusto === 'fornecedor' ? fornecedorNome : null,
+      origemCompra,
+      origemPeca,
+      fornecedorVenda: (origemCompra === 'fornecedor' || origemPeca === 'fornecedor') ? fornecedorNome : null,
       custoTotal, custoJaDebitado: true,
       valorEntrada: 0, dataEntradaPagamento: '',
       valorParcelaRestante: 0, dataRestantePagamento: '',
@@ -2225,9 +2373,10 @@
     salvarDados();
     atualizarTudo();
 
-    ['modelo','valorCompra','valorVenda','pecaUtilizada','valorPecaUtilizada','nomeFornecedorVenda'].forEach(id => { el(id).value = ''; });
-    el('fornecedorVendaDiv').style.display = 'none';
-    document.querySelector('input[name="origemCustoVenda"][value="capital"]').checked = true;
+    ['modelo','valorCompra','valorVenda','pecaUtilizada','valorPecaUtilizada','nomeFornecedorVenda'].forEach(id => { if (el(id)) el(id).value = ''; });
+    if (el('fornecedorVendaDiv')) el('fornecedorVendaDiv').style.display = 'none';
+    if (el('origemCompraAparelho')) el('origemCompraAparelho').value = 'capital';
+    if (el('origemPecaAparelho'))   el('origemPecaAparelho').value   = 'capital';
 
     alert(`✅ Aparelho adicionado! Custo: ${brl(custoTotal)} | Venda: ${brl(venda)} | Lucro estimado: ${brl(venda - custoTotal)}`);
     switchSubVendaTab('disponiveis');
@@ -2240,6 +2389,8 @@
     if (!ap) { fecharVendaOrigemModal(); return; }
 
     const isParcelada = el('vendaParceladaCheckbox').checked;
+    // RECALCULAR CUSTO TOTAL DINAMICAMENTE PARA EVITAR ERROS EM DADOS ANTIGOS
+    const custoTotal  = (Number(ap.valorCompra) || 0) + (Number(ap.valorPecaUtilizada) || 0);
 
     if (isParcelada) {
       const valorEntrada        = Number(el('vendaValorEntrada').value) || 0;
@@ -2248,17 +2399,24 @@
       const dataRestantePag     = el('vendaDataRestantePagamento').value;
 
       if (valorEntrada <= 0 || valorParcelaRestante <= 0) { alert('Informe os valores de parcelamento!'); return; }
-      if (valorEntrada + valorParcelaRestante !== ap.valorVenda) { alert(`A soma deve dar ${brl(ap.valorVenda)}`); return; }
+      if (Math.abs((valorEntrada + valorParcelaRestante) - ap.valorVenda) > 0.01) { alert(`A soma deve dar ${brl(ap.valorVenda)}`); return; }
 
-      const custoTotal   = ap.custoTotal;
-      let   lucroImediato = 0;
+      let lucroImediato = 0;
+      // Reembolsar apenas o que foi pago com CAPITAL
+      // COMPATIBILIDADE: Se não existir origemCompra/Peca (aparelhos antigos), assume CAPITAL.
+      let reembolsoCapital = 0;
+      const oC = ap.origemCompra || 'capital';
+      const oP = ap.origemPeca   || 'capital';
+      
+      if (oC === 'capital') reembolsoCapital += Number(ap.valorCompra) || 0;
+      if (oP === 'capital') reembolsoCapital += Number(ap.valorPecaUtilizada) || 0;
 
-      if (ap.origemCustoVenda === 'capital' && custoTotal > 0) {
-        creditarCapital(custoTotal, `🔁 Reembolso custo (entrada) - Venda ${ap.modelo}`);
-        lucroImediato = valorEntrada - custoTotal;
-      } else if (ap.origemCustoVenda === 'fornecedor') {
-        lucroImediato = valorEntrada;
+      if (reembolsoCapital > 0) {
+        creditarCapital(reembolsoCapital, `🔁 Reembolso custo (entrada) - Venda ${ap.modelo}`);
       }
+      
+      // Lucro Imediato = Entrada - Custo que saiu do Capital
+      lucroImediato = valorEntrada - reembolsoCapital;
 
       if (lucroImediato > 0) {
         lucroTotal += lucroImediato;
@@ -2289,12 +2447,19 @@
     }
 
     // Venda à vista
-    const custoTotal = ap.custoTotal;
-    if (ap.origemCustoVenda === 'capital' && custoTotal > 0) {
-      creditarCapital(custoTotal, `🔁 Reembolso custo - Venda ${ap.modelo}`);
+    // COMPATIBILIDADE: Se não existir origemCompra/Peca (aparelhos antigos), assume CAPITAL.
+    let reembolsoCapital = 0;
+    const oC = ap.origemCompra || 'capital';
+    const oP = ap.origemPeca   || 'capital';
+
+    if (oC === 'capital') reembolsoCapital += Number(ap.valorCompra) || 0;
+    if (oP === 'capital') reembolsoCapital += Number(ap.valorPecaUtilizada) || 0;
+
+    if (reembolsoCapital > 0) {
+      creditarCapital(reembolsoCapital, `🔁 Reembolso custo - Venda ${ap.modelo}`);
     }
 
-    const lucro = ap.valorVenda - custoTotal;
+    const lucro = Number(ap.valorVenda || 0) - custoTotal;
     lucroTotal += lucro;
     adicionarExtrato(lucro >= 0 ? 'credito' : 'debito', `${lucro >= 0 ? '📈 LUCRO' : '📉 PREJUÍZO'} Venda ${ap.modelo}`, Math.abs(lucro));
     atualizarDisplays();
@@ -2320,19 +2485,27 @@
     const ap = aparelhos.find(a => a.id === vendaParcelaFinalizandoId);
     if (!ap) return;
 
-    if (valorRecebido >= ap.valorParcelaRestante) {
-      const lucroFinal = ap.valorVenda - ap.custoTotal;
-      if (valorRecebido > 0) {
-        lucroTotal += valorRecebido;
-        adicionarExtrato('credito', `💰 LUCRO (restante) - Venda ${ap.modelo}`, valorRecebido);
+    if (valorRecebido >= ap.valorParcelaRestante - 0.01) {
+      // RECALCULAR CUSTO TOTAL DINAMICAMENTE PARA EVITAR ERROS EM DADOS ANTIGOS
+      const custoT = (Number(ap.valorCompra) || 0) + (Number(ap.valorPecaUtilizada) || 0);
+      const lucroFinal = Number(ap.valorVenda || 0) - custoT;
+      // O lucro restante é o lucro total menos o que já foi contabilizado na entrada
+      const lucroRestante = lucroFinal - (ap.lucroImediato || 0);
+      
+      if (lucroRestante > 0) {
+        lucroTotal += lucroRestante;
+        adicionarExtrato('credito', `💰 LUCRO (restante) - Venda ${ap.modelo}`, lucroRestante);
+      } else if (lucroRestante < 0) {
+        lucroTotal += lucroRestante;
+        adicionarExtrato('debito', `⚠️ AJUSTE PREJUÍZO - Venda ${ap.modelo}`, Math.abs(lucroRestante));
       }
       atualizarDisplays();
 
       vendasRealizadas.unshift({
-        id: Date.now(), modelo: ap.modelo, valorVenda: ap.valorVenda, custoTotal: ap.custoTotal, lucro: lucroFinal,
+        id: Date.now(), modelo: ap.modelo, valorVenda: ap.valorVenda, custoTotal: custoT, lucro: lucroFinal,
         data: new Date().toLocaleString(), condicao: ap.condicao, acessorios: ap.acessorios,
         pecaUtilizada: ap.pecaUtilizada, valorPecaUtilizada: ap.valorPecaUtilizada,
-        origem: ap.origemVendaLocal || 'Loja', valorEntrada: ap.valorEntrada, valorParcelaRestante: 0
+        origem: ap.origemVendaLocal, valorEntrada: ap.valorEntrada, valorParcelaRestante: 0
       });
 
       aparelhos = aparelhos.filter(a => a.id !== vendaParcelaFinalizandoId);
@@ -2445,29 +2618,57 @@
     el('editAcessorios').value          = ap.acessorios || '';
     el('editPecaUtilizada').value       = ap.pecaUtilizada !== 'Nenhuma' ? ap.pecaUtilizada : '';
     el('editValorPecaUtilizada').value  = ap.valorPecaUtilizada || 0;
+    el('editOrigemCompraAparelho').value = ap.origemCompra || 'capital';
+    el('editOrigemPecaAparelho').value   = ap.origemPeca   || 'capital';
+
     el('editarAparelhoModal').style.display = 'flex';
   }
 
   function confirmarEditarAparelho() {
     const ap = aparelhos.find(a => a.id === editAparelhoId);
     if (!ap) return;
-    const novoCompra    = Number(el('editValorCompra').value);
-    const novoValorPeca = Number(el('editValorPecaUtilizada').value) || 0;
-    const oldCusto      = ap.custoTotal || (ap.valorCompra + ap.valorPecaUtilizada);
-    const newCusto      = novoCompra + novoValorPeca;
-    const diff          = newCusto - oldCusto;
+    
+    const nCompra      = Number(el('editValorCompra').value);
+    const nPeca        = Number(el('editValorPecaUtilizada').value) || 0;
+    const nOrigemC     = el('editOrigemCompraAparelho').value;
+    const nOrigemP     = el('editOrigemPecaAparelho').value;
 
-    if      (diff > 0 && !debitarCapital( diff, `Ajuste custo ${ap.modelo}`)) return;
-    else if (diff < 0) creditarCapital(-diff, `Redução custo ${ap.modelo}`);
+    // AJUSTE FINANCEIRO COMPRA
+    if (nOrigemC === 'capital') {
+      if (ap.origemCompra === 'capital') {
+        const diff = nCompra - (ap.valorCompra || 0);
+        if (diff > 0 && !debitarCapital(diff, `Ajuste compra ${ap.modelo}`)) return;
+        else if (diff < 0) creditarCapital(-diff, `Estorno compra ${ap.modelo}`);
+      } else {
+        if (!debitarCapital(nCompra, `Compra ${ap.modelo} (Mudança p/ Capital)`)) return;
+      }
+    } else if (ap.origemCompra === 'capital') {
+      creditarCapital(ap.valorCompra, `Estorno compra ${ap.modelo} (Mudança p/ Fornecedor)`);
+    }
+
+    // AJUSTE FINANCEIRO PEÇA
+    if (nOrigemP === 'capital') {
+      if (ap.origemPeca === 'capital') {
+        const diff = nPeca - (ap.valorPecaUtilizada || 0);
+        if (diff > 0 && !debitarCapital(diff, `Ajuste peça ${ap.modelo}`)) return;
+        else if (diff < 0) creditarCapital(-diff, `Estorno peça ${ap.modelo}`);
+      } else {
+        if (!debitarCapital(nPeca, `Peça ${ap.modelo} (Mudança p/ Capital)`)) return;
+      }
+    } else if (ap.origemPeca === 'capital') {
+      creditarCapital(ap.valorPecaUtilizada, `Estorno peça ${ap.modelo} (Mudança p/ Fornecedor)`);
+    }
 
     ap.modelo              = el('editModelo').value;
-    ap.valorCompra         = novoCompra;
+    ap.valorCompra         = nCompra;
     ap.valorVenda          = Number(el('editValorVenda').value);
     ap.condicao            = el('editCondicao').value;
     ap.acessorios          = el('editAcessorios').value;
     ap.pecaUtilizada       = el('editPecaUtilizada').value.trim() || 'Nenhuma';
-    ap.valorPecaUtilizada  = novoValorPeca;
-    ap.custoTotal          = newCusto;
+    ap.valorPecaUtilizada  = nPeca;
+    ap.custoTotal          = nCompra + nPeca;
+    ap.origemCompra        = nOrigemC;
+    ap.origemPeca          = nOrigemP;
 
     salvarDados();
     atualizarTudo();
@@ -2486,7 +2687,7 @@
     const a = aparelhos.find(x => x.id === id);
     if (a && confirm(`Excluir ${a.modelo}?`)) {
       const totalEstorno = a.custoTotal || (a.valorCompra + a.valorPecaUtilizada);
-      if (a.origemCustoVenda === 'capital' && a.custoJaDebitado && totalEstorno > 0 && a.status === 'disponivel') {
+      if ((a.origemCompra === 'capital' || a.origemCustoVenda === 'capital') && a.custoJaDebitado && totalEstorno > 0 && a.status === 'disponivel') {
         creditarCapital(totalEstorno, `Estorno ${a.modelo}`);
       }
       if (a.lucroImediato && a.lucroImediato > 0) lucroTotal -= a.lucroImediato;
@@ -2531,6 +2732,66 @@
   }
 
   function fecharEditarVendaFinalizadaModal() { el('editarVendaFinalizadaModal').style.display = 'none'; editVendaId = null; }
+
+  let editVendaPendenteId = null;
+  function abrirEditarVendaPendente(id) {
+    const ap = aparelhos.find(a => a.id === id);
+    if (!ap) return;
+    editVendaPendenteId = id;
+    el('editVendaPendModelo').value       = ap.modelo;
+    el('editVendaPendValorTotal').value   = ap.valorVenda;
+    el('editVendaPendValorEntrada').value = ap.valorEntrada;
+    el('editVendaPendDataEntrada').value  = ap.dataEntradaPagamento || '';
+    el('editVendaPendValorParcela').value = ap.valorParcelaRestante;
+    el('editVendaPendDataParcela').value  = ap.dataRestantePagamento || '';
+    el('editarVendaPendenteModal').style.display = 'flex';
+  }
+
+  function confirmarEditarVendaPendente() {
+    const ap = aparelhos.find(a => a.id === editVendaPendenteId);
+    if (!ap) return;
+    
+    const novoValorVenda = Number(el('editVendaPendValorTotal').value);
+    const novoEntrada    = Number(el('editVendaPendValorEntrada').value);
+    const novoParcela    = Number(el('editVendaPendValorParcela').value);
+
+    if (Math.abs((novoEntrada + novoParcela) - novoValorVenda) > 0.01) {
+      alert(`A soma da entrada + restante deve ser igual ao valor total (${brl(novoValorVenda)})`);
+      return;
+    }
+
+    // Recalcular lucro imediato se a entrada mudou
+    // Lucro Imediato = entrada - custo (se origem for capital)
+    const custoTotal = ap.custoTotal || (ap.valorCompra + ap.valorPecaUtilizada);
+    let novoLucroImediato = 0;
+    const origemC = ap.origemCompra || ap.origemCustoVenda || 'capital';
+    const origemP = ap.origemPeca || 'capital';
+    let custoCapital = 0;
+    if (origemC === 'capital') custoCapital += Number(ap.valorCompra) || 0;
+    if (origemP === 'capital') custoCapital += Number(ap.valorPecaUtilizada) || 0;
+    novoLucroImediato = novoEntrada - custoCapital;
+
+    const diffLucro = novoLucroImediato - (ap.lucroImediato || 0);
+    if (diffLucro !== 0) {
+      lucroTotal += diffLucro;
+      adicionarExtrato(diffLucro > 0 ? 'credito' : 'debito', `Ajuste lucro entrada ${ap.modelo}`, Math.abs(diffLucro));
+    }
+
+    ap.modelo               = el('editVendaPendModelo').value;
+    ap.valorVenda           = novoValorVenda;
+    ap.valorEntrada         = novoEntrada;
+    ap.dataEntradaPagamento = el('editVendaPendDataEntrada').value;
+    ap.valorParcelaRestante = novoParcela;
+    ap.dataRestantePagamento = el('editVendaPendDataParcela').value;
+    ap.lucroImediato        = novoLucroImediato;
+
+    salvarDados();
+    atualizarTudo();
+    fecharEditarVendaPendenteModal();
+    alert('Venda pendente atualizada!');
+  }
+
+  function fecharEditarVendaPendenteModal() { el('editarVendaPendenteModal').style.display = 'none'; editVendaPendenteId = null; }
 
   /* ─────────────────────────────────────────
      RECIBO
@@ -2614,8 +2875,7 @@
           <p>Custo peça: ${brl(c.valorPeca || 0)} | <span class="lucro-parcial-badge">💰 Lucro já contabilizado: ${brl(lucroParcial)}</span></p>
           <div class="item-actions">
             <button class="ver-detalhes" onclick='verDetalhesOS(${JSON.stringify(c).replace(/"/g, '&quot;')})'>📄 Detalhes</button>
-            <button class="btn-editar"   onclick="abrirEditarOs(${c.id}, false)">
-✏️ Editar</button>
+            <button class="btn-editar"   onclick="abrirEditarOs(${c.id}, false)">✏️ Editar</button>
             <button class="btn-finalizar" onclick="finalizarConserto(${c.id})">✅ Finalizar</button>
             <button class="btn-deletar"   onclick="deletarConserto(${c.id})">🗑️</button>
           </div>
@@ -2650,15 +2910,22 @@
       return;
     }
     div.innerHTML = disponiveis.map(a => {
-      const custoTotal    = a.custoTotal || (a.valorCompra + a.valorPecaUtilizada);
-      const lucroEstimado = a.valorVenda - custoTotal;
-      const tagOrigem     = a.origemCustoVenda === 'capital' ? '💰 Capital' : '🏭 Fornecedor';
+      const vCompra = Number(a.valorCompra) || 0;
+      const vPeca   = Number(a.valorPecaUtilizada) || 0;
+      const cTotal  = vCompra + vPeca;
+      const lucroE  = (Number(a.valorVenda) || 0) - cTotal;
+      
+      const oC = a.origemCompra || 'capital';
+      const oP = a.origemPeca   || 'capital';
+      const tagC = oC === 'capital' ? '💰 Cap' : '🏭 Forn';
+      const tagP = oP === 'capital' ? '💰 Cap' : '🏭 Forn';
+
       return `
         <div class="item">
           <h3>📱 ${a.modelo}</h3>
-          <p>Venda: ${brl(a.valorVenda)} | Custo: ${brl(custoTotal)} | Lucro: ${brl(lucroEstimado)}</p>
-          <p>Condição: ${a.condicao} | Origem: ${tagOrigem}</p>
-          ${a.pecaUtilizada !== 'Nenhuma' ? `<div class="peca-usada">🔧 Peça: ${a.pecaUtilizada} (${brl(a.valorPecaUtilizada)})</div>` : ''}
+          <p>Venda: ${brl(a.valorVenda)} | Custo Total: ${brl(cTotal)} | Lucro: ${brl(lucroE)}</p>
+          <p><small>Compra: ${brl(vCompra)} (${tagC}) | Peça: ${brl(vPeca)} (${tagP})</small></p>
+          <p>Condição: ${a.condicao}</p>
           <div class="item-actions">
             <button class="btn-editar"   onclick="editarAparelho(${a.id})">✏️ Editar</button>
             <button class="btn-finalizar" onclick="iniciarVendaAparelho(${a.id})">💰 Vender</button>
@@ -2678,17 +2945,26 @@
     }
     div.innerHTML = emAndamento.map(a => {
       const atrasado   = verificarAtraso(a.dataRestantePagamento, a.valorParcelaRestante);
-      const custoTotal = a.custoTotal || (a.valorCompra + a.valorPecaUtilizada);
+      const vCompra = Number(a.valorCompra) || 0;
+      const vPeca   = Number(a.valorPecaUtilizada) || 0;
+      const cTotal  = vCompra + vPeca;
       const lucroParcial = a.lucroImediato || 0;
+      
+      const oC = a.origemCompra || 'capital';
+      const oP = a.origemPeca   || 'capital';
+      const tagC = oC === 'capital' ? '💰 Cap' : '🏭 Forn';
+      const tagP = oP === 'capital' ? '💰 Cap' : '🏭 Forn';
+
       return `
         <div class="item ${atrasado ? 'item-atrasado' : ''}">
           <h3>📱 ${a.modelo}${atrasado ? ' <span class="atrasado-badge">ATRASADO</span>' : ''}</h3>
-          <p>Valor Total: ${brl(a.valorVenda)} | Origem: ${a.origemVendaLocal || 'N/I'}</p>
-          <p>Custo total: ${brl(custoTotal)}</p>
+          <p>Valor Total: ${brl(a.valorVenda)} | Custo Total: ${brl(cTotal)}</p>
+          <p><small>Compra: ${brl(vCompra)} (${tagC}) | Peça: ${brl(vPeca)} (${tagP})</small></p>
           <p>💰 Entrada: ${brl(a.valorEntrada)} | Resta: ${brl(a.valorParcelaRestante)}</p>
           <p><span class="lucro-parcial-badge">💰 Lucro já contabilizado: ${brl(lucroParcial)}</span></p>
           <p><small style="color:var(--text-muted);">Vencimento: ${a.dataRestantePagamento || 'N/I'}</small></p>
           <div class="item-actions">
+            <button class="btn-editar"    onclick="abrirEditarVendaPendente(${a.id})">✏️ Editar</button>
             <button class="btn-finalizar" onclick="iniciarVendaAparelho(${a.id})">💵 Receber Parcela</button>
             <button class="btn-deletar"   onclick="deletarAparelho(${a.id})">🗑️ Deletar</button>
           </div>
@@ -2748,7 +3024,13 @@
     const div = el('resumoFinanceiro');
     if (!div) return;
     const dividaConsertos   = consertos.reduce((s, c) => s + (c.origemCustoPeca === 'fornecedor' ? (c.valorPeca || 0) : 0), 0);
-    const dividaVendas      = aparelhos.reduce((s, a) => s + (a.origemCustoVenda === 'fornecedor' ? ((a.valorCompra || 0) + (a.valorPecaUtilizada || 0)) : 0), 0);
+    const dividaVendas      = aparelhos.reduce((s, a) => {
+      let d = 0;
+      if (a.origemCompra === 'fornecedor') d += (Number(a.valorCompra) || 0);
+      if (a.origemPeca === 'fornecedor')   d += (Number(a.valorPecaUtilizada) || 0);
+      if (!a.origemCompra && a.origemCustoVenda === 'fornecedor') d += (Number(a.valorCompra) || 0) + (Number(a.valorPecaUtilizada) || 0);
+      return s + d;
+    }, 0);
     const totalPecasPendentes = dividaConsertos + dividaVendas;
     const lucroPendenteConsertos = consertos.reduce((s, c) => s + (c.lucroImediato || 0), 0);
     const lucroPendenteVendas    = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.lucroImediato || 0), 0);
@@ -2762,21 +3044,47 @@
         <p>📱 Aparelhos vendidos: <strong>${vendasRealizadas.length}</strong></p>
         <p>💼 Capital: <strong>${brl(capital)}</strong></p>
         <p>🚨 Contas pendentes: <strong style="color:var(--accent-red);">${brl(totalPecasPendentes)}</strong></p>
-        <p>📈 LUCRO TOTAL: <strong style="color:var(--accent-green);">${brl(lucroTotalReal)}</strong></p>
+        <p>📈 LUCRO TOTAL: <strong style="color:var(--accent-emerald-light);">${brl(lucroTotalReal)}</strong></p>
       </div>`;
   }
 
   function atualizarLucroMensal() {
     const lucroPorMes = {};
 
+    // 1. Processar dados do mês atual (que ainda não foram fechados)
+    const dataAtual = new Date();
+    const mesAnoAtual = `${(dataAtual.getMonth() + 1).toString().padStart(2, '0')}/${dataAtual.getFullYear()}`;
+    
+    // Incluir lucros pendentes (já contabilizados) e faturamento no mês atual
+    const lPendenteC = consertos.reduce((s, c) => s + (c.lucroImediato || 0), 0);
+    const fPendenteC = consertos.reduce((s, c) => s + (c.valorEntrada || 0), 0); // Faturamento parcial (entradas)
+
+    const lPendenteV = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.lucroImediato || 0), 0);
+    const fPendenteV = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.valorEntrada || 0), 0); // Faturamento parcial
+
+    lucroPorMes[mesAnoAtual] = { 
+      consertosLucro: lPendenteC, 
+      consertosFat: fPendenteC,
+      vendasLucro: lPendenteV, 
+      vendasFat: fPendenteV,
+      totalLucro: lPendenteC + lPendenteV,
+      totalFat: fPendenteC + fPendenteV,
+      status: 'Aberto (Mês Atual)'
+    };
+
     consertosFinalizados.forEach(c => {
       if (c.dataFinalizacao && c.lucro) {
         const d = new Date(c.dataFinalizacao);
         if (!isNaN(d.getTime())) {
-          const m = `${d.getMonth() + 1}/${d.getFullYear()}`;
-          if (!lucroPorMes[m]) lucroPorMes[m] = { consertos: 0, vendas: 0, total: 0 };
-          lucroPorMes[m].consertos += c.lucro;
-          lucroPorMes[m].total     += c.lucro;
+          const m = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+          if (!lucroPorMes[m]) lucroPorMes[m] = { consertosLucro: 0, consertosFat: 0, vendasLucro: 0, vendasFat: 0, totalLucro: 0, totalFat: 0, status: 'Em andamento' };
+          lucroPorMes[m].consertosLucro += c.lucro;
+          // CORREÇÃO: faturamento total = entrada já paga + valor recebido na finalização.
+          // Para OS à vista: valorEntrada=0 e valorRecebido=valorConserto (correto).
+          // Para OS parceladas: valorEntrada + valorRecebido = total faturado.
+          lucroPorMes[m].consertosFat   += (c.valorEntrada || 0) + (c.valorRecebido || 0);
+          lucroPorMes[m].totalLucro     += c.lucro;
+          lucroPorMes[m].totalFat       += (c.valorEntrada || 0) + (c.valorRecebido || 0);
         }
       }
     });
@@ -2789,11 +3097,28 @@
           if (partes.length >= 3) d = new Date(partes[2], partes[1] - 1, partes[0]);
         }
         if (!isNaN(d.getTime())) {
-          const m = `${d.getMonth() + 1}/${d.getFullYear()}`;
-          if (!lucroPorMes[m]) lucroPorMes[m] = { consertos: 0, vendas: 0, total: 0 };
-          lucroPorMes[m].vendas += v.lucro;
-          lucroPorMes[m].total  += v.lucro;
+          const m = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+          if (!lucroPorMes[m]) lucroPorMes[m] = { consertosLucro: 0, consertosFat: 0, vendasLucro: 0, vendasFat: 0, totalLucro: 0, totalFat: 0, status: 'Em andamento' };
+          lucroPorMes[m].vendasLucro += v.lucro;
+          lucroPorMes[m].vendasFat   += (v.valorVenda || 0);
+          lucroPorMes[m].totalLucro  += v.lucro;
+          lucroPorMes[m].totalFat    += (v.valorVenda || 0);
         }
+      }
+    });
+
+    // 2. Adicionar dados do Histórico de Fechamentos (meses passados)
+    historicoMensal.forEach(h => {
+      if (!lucroPorMes[h.mes]) {
+        lucroPorMes[h.mes] = { 
+          consertosLucro: h.lucroConsertos, 
+          consertosFat: h.faturamentoConsertos || 0,
+          vendasLucro: h.lucroVendas, 
+          vendasFat: h.faturamentoVendas || 0,
+          totalLucro: h.lucroTotal,
+          totalFat: h.faturamentoTotal || 0,
+          status: 'Fechado'
+        };
       }
     });
 
@@ -2813,16 +3138,128 @@
 
     container.innerHTML = meses.map(m => {
       const d = lucroPorMes[m];
+      const isAberto = d.status === 'Aberto (Mês Atual)';
       return `
-        <div class="monthly-profit-item">
-          <div class="monthly-profit-header">📅 ${m}</div>
+        <div class="monthly-profit-item" style="${isAberto ? 'border-left: 4px solid var(--accent-indigo);' : ''}">
+          <div class="monthly-profit-header">
+            📅 ${m} 
+            <span style="font-size:10px; margin-left:8px; padding:2px 6px; border-radius:4px; background:${isAberto ? 'rgba(99,102,241,0.2)' : 'rgba(16,185,129,0.1)'}; color:${isAberto ? 'var(--accent-indigo-light)' : 'var(--accent-emerald-light)'};">
+              ${d.status || 'Finalizado'}
+            </span>
+          </div>
           <div class="monthly-profit-details">
-            <span class="profit-consertos">🔧 Consertos: ${brl(d.consertos)}</span>
-            <span class="profit-vendas">📱 Vendas: ${brl(d.vendas)}</span>
-            <span class="profit-total">💰 Total: ${brl(d.total)}</span>
+            <div style="flex:1; min-width:140px;">
+              <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:4px;">🔧 Consertos</p>
+              <span class="profit-consertos" style="display:block; margin-bottom:4px;">Faturado: ${brl(d.consertosFat)}</span>
+              <span class="profit-consertos" style="display:block; background:rgba(16,185,129,0.1); color:var(--accent-emerald-light);">Lucro: ${brl(d.consertosLucro)}</span>
+            </div>
+            <div style="flex:1; min-width:140px;">
+              <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:4px;">📱 Vendas</p>
+              <span class="profit-vendas" style="display:block; margin-bottom:4px;">Faturado: ${brl(d.vendasFat)}</span>
+              <span class="profit-vendas" style="display:block; background:rgba(16,185,129,0.1); color:var(--accent-emerald-light);">Lucro: ${brl(d.vendasLucro)}</span>
+            </div>
+            <div style="flex:1; min-width:140px; border-top:1px solid var(--border-color); padding-top:8px; margin-top:4px;">
+              <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:4px;">💰 Total Mensal</p>
+              <span class="profit-total" style="display:block; margin-bottom:4px; background:rgba(99,102,241,0.1); color:var(--accent-indigo-light);">Faturado: ${brl(d.totalFat)}</span>
+              <span class="profit-total" style="display:block; background:rgba(16,185,129,0.2); color:var(--accent-emerald-light); font-weight:800;">Lucro: ${brl(d.totalLucro)}</span>
+            </div>
           </div>
         </div>`;
     }).join('');
+  }
+
+  function navegarMes(direcao) {
+    if (!mesNavegacaoAtual) {
+      const d = new Date();
+      mesNavegacaoAtual = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+    }
+
+    const [m, a] = mesNavegacaoAtual.split('/').map(Number);
+    let novoM = m + direcao;
+    let novoA = a;
+
+    if (novoM > 12) { novoM = 1; novoA++; }
+    if (novoM < 1)  { novoM = 12; novoA--; }
+
+    mesNavegacaoAtual = `${novoM.toString().padStart(2, '0')}/${novoA}`;
+    atualizarNavegadorMensal();
+  }
+
+  function atualizarNavegadorMensal() {
+    if (!mesNavegacaoAtual) {
+      const d = new Date();
+      mesNavegacaoAtual = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+    }
+
+    el('nomeMesNavegacao').textContent = mesNavegacaoAtual;
+    const container = el('detalheMesNavegacao');
+    
+    // Buscar dados do mês (ou no histórico ou no atual)
+    let dados = null;
+    const dataAtual = new Date();
+    const mesAnoHoje = `${(dataAtual.getMonth() + 1).toString().padStart(2, '0')}/${dataAtual.getFullYear()}`;
+
+    if (mesNavegacaoAtual === mesAnoHoje) {
+      const lPendenteC = consertos.reduce((s, c) => s + (c.lucroImediato || 0), 0);
+      // CORREÇÃO: faturamento de OS pendentes usa apenas a entrada já recebida (valorEntrada).
+      // O valorRecebido das finalizadas já inclui a entrada + restante, então não há dupla contagem.
+      const fPendenteC = consertos.reduce((s, c) => s + (c.valorEntrada || 0), 0);
+      const lFinalizadoC = consertosFinalizados.reduce((s, c) => s + (c.lucro || 0), 0);
+      // CORREÇÃO: para OS finalizadas que vieram de pendentes (com entrada), o valorRecebido
+      // é apenas o restante pago na finalização. O total faturado = valorEntrada + valorRecebido.
+      // Para OS finalizadas à vista (criadas direto), valorRecebido = valorConserto (correto).
+      const fFinalizadoC = consertosFinalizados.reduce((s, c) => s + (c.valorEntrada || 0) + (c.valorRecebido || 0), 0);
+
+      const lPendenteV = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.lucroImediato || 0), 0);
+      const fPendenteV = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.valorEntrada || 0), 0);
+      const lRealizadoV = vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0);
+      const fRealizadoV = vendasRealizadas.reduce((s, v) => s + (v.valorVenda || 0), 0);
+
+      dados = {
+        cL: lPendenteC + lFinalizadoC,
+        cF: fPendenteC + fFinalizadoC,
+        vL: lPendenteV + lRealizadoV,
+        vF: fPendenteV + fRealizadoV,
+        status: 'Aberto'
+      };
+    } else {
+      const h = historicoMensal.find(x => x.mes === mesNavegacaoAtual);
+      if (h) {
+        dados = {
+          cL: h.lucroConsertos,
+          cF: h.faturamentoConsertos,
+          vL: h.lucroVendas,
+          vF: h.faturamentoVendas,
+          status: 'Fechado'
+        };
+      }
+    }
+
+    if (!dados) {
+      container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px;">Sem registros para este período.</p>`;
+      return;
+    }
+
+    container.innerHTML = `
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+        <div class="item" style="margin-top:0; border-left-color: var(--accent-indigo);">
+          <h4 style="font-size:12px; color:var(--text-muted); text-transform:uppercase; margin-bottom:10px;">🔧 Consertos</h4>
+          <p style="font-size:13px;">Faturado: <strong style="color:var(--accent-indigo-light);">${brl(dados.cF)}</strong></p>
+          <p style="font-size:13px;">Lucro: <strong style="color:var(--accent-emerald-light);">${brl(dados.cL)}</strong></p>
+        </div>
+        <div class="item" style="margin-top:0; border-left-color: var(--accent-cyan);">
+          <h4 style="font-size:12px; color:var(--text-muted); text-transform:uppercase; margin-bottom:10px;">📱 Vendas</h4>
+          <p style="font-size:13px;">Faturado: <strong style="color:var(--accent-cyan);">${brl(dados.vF)}</strong></p>
+          <p style="font-size:13px;">Lucro: <strong style="color:var(--accent-emerald-light);">${brl(dados.vL)}</strong></p>
+        </div>
+      </div>
+      <div class="item" style="margin-top:15px; border-left-color: var(--accent-emerald); background: rgba(16, 185, 129, 0.1);">
+        <h4 style="font-size:12px; color:var(--text-muted); text-transform:uppercase; margin-bottom:5px;">💰 Resultado Total</h4>
+        <p style="font-size:14px;">Faturamento: <strong>${brl(dados.cF + dados.vF)}</strong></p>
+        <p style="font-size:18px; color:var(--accent-emerald-light);">Lucro Líquido: <strong>${brl(dados.cL + dados.vL)}</strong></p>
+        <span style="font-size:10px; margin-top:5px; display:block; color:var(--text-dim);">Status: ${dados.status}</span>
+      </div>
+    `;
   }
 
   function atualizarRelatorios() {
@@ -2834,9 +3271,9 @@
     const lV = vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0) + lPendenteV;
     div.innerHTML = `
       <div class="item">
-        <p>📈 LUCRO Consertos: <strong style="color:var(--accent-green);">${brl(lC)}</strong></p>
-        <p>📈 LUCRO Vendas: <strong style="color:var(--accent-green);">${brl(lV)}</strong></p>
-        <p style="margin-top:5px;">💰 LUCRO TOTAL: <strong style="color:var(--accent-green); font-size:16px;">${brl(lC + lV)}</strong></p>
+        <p>📈 LUCRO Consertos: <strong style="color:var(--accent-emerald-light);">${brl(lC)}</strong></p>
+        <p>📈 LUCRO Vendas: <strong style="color:var(--accent-emerald-light);">${brl(lV)}</strong></p>
+        <p style="margin-top:5px;">💰 LUCRO TOTAL: <strong style="color:var(--accent-emerald-light); font-size:16px;">${brl(lC + lV)}</strong></p>
       </div>`;
     atualizarLucroMensal();
   }
@@ -2864,16 +3301,24 @@
 
     const pendentesVendasDiv = el('pendentesVendasLista');
     if (pendentesVendasDiv) {
-      const disponiveis = aparelhos.filter(a => a.status === 'disponivel');
-      if (disponiveis.length === 0) {
-        pendentesVendasDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhum aparelho em estoque</p>';
+      const comDivida = aparelhos.filter(a => a.origemCompra === 'fornecedor' || a.origemPeca === 'fornecedor' || (!a.origemCompra && a.origemCustoVenda === 'fornecedor'));
+      if (comDivida.length === 0) {
+        pendentesVendasDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhuma dívida de aparelho/peça pendente.</p>';
       } else {
-        pendentesVendasDiv.innerHTML = disponiveis.map(a => {
-          const custoTotal = a.custoTotal || (a.valorCompra + a.valorPecaUtilizada);
+        pendentesVendasDiv.innerHTML = comDivida.map(a => {
+          let dComp = 0, dPeca = 0;
+          if (a.origemCompra === 'fornecedor') dComp = Number(a.valorCompra) || 0;
+          if (a.origemPeca === 'fornecedor')   dPeca = Number(a.valorPecaUtilizada) || 0;
+          if (!a.origemCompra && a.origemCustoVenda === 'fornecedor') {
+            dComp = Number(a.valorCompra) || 0;
+            dPeca = Number(a.valorPecaUtilizada) || 0;
+          }
+          const totalD = dComp + dPeca;
           return `
-            <div class="item">
-              <h3>📱 ${a.modelo}</h3>
-              <p>Venda: ${brl(a.valorVenda)} | Custo: ${brl(custoTotal)}</p>
+            <div class="item" style="border-left: 3px solid var(--accent-red);">
+              <h3>📱 ${a.modelo} (Dívida)</h3>
+              <p>Total a pagar: <strong style="color:var(--accent-red);">${brl(totalD)}</strong></p>
+              <p><small>Compra: ${brl(dComp)} | Peça: ${brl(dPeca)}</small></p>
             </div>`;
         }).join('');
       }
@@ -2904,6 +3349,8 @@
           </div>`).join('');
       }
     }
+
+    atualizarHistoricoPainel();
   }
 
   /* ─────────────────────────────────────────
@@ -2971,15 +3418,23 @@
    */
   function realizarFechamentoMensal(mesReferencia) {
     const lucroC = consertosFinalizados.reduce((s, c) => s + (c.lucro || 0), 0);
+    const fatC   = consertosFinalizados.reduce((s, c) => s + (c.valorEntrada || 0) + (c.valorRecebido || 0), 0);
+    
     const lucroV = vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0);
-    const total  = lucroC + lucroV;
+    const fatV   = vendasRealizadas.reduce((s, v) => s + (v.valorVenda || 0), 0);
+    
+    const totalLucro = lucroC + lucroV;
+    const totalFat   = fatC + fatV;
 
     // Adiciona ao histórico
     historicoMensal.unshift({
       mes: mesReferencia,
       lucroConsertos: lucroC,
+      faturamentoConsertos: fatC,
       lucroVendas: lucroV,
-      lucroTotal: total,
+      faturamentoVendas: fatV,
+      lucroTotal: totalLucro,
+      faturamentoTotal: totalFat,
       dataFechamento: new Date().toLocaleString()
     });
 
