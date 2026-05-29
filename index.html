@@ -2633,18 +2633,8 @@
     const nOrigemC     = el('editOrigemCompraAparelho').value;
     const nOrigemP     = el('editOrigemPecaAparelho').value;
 
-    // AJUSTE FINANCEIRO COMPRA
-    if (nOrigemC === 'capital') {
-      if (ap.origemCompra === 'capital') {
-        const diff = nCompra - (ap.valorCompra || 0);
-        if (diff > 0 && !debitarCapital(diff, `Ajuste compra ${ap.modelo}`)) return;
-        else if (diff < 0) creditarCapital(-diff, `Estorno compra ${ap.modelo}`);
-      } else {
-        if (!debitarCapital(nCompra, `Compra ${ap.modelo} (Mudança p/ Capital)`)) return;
-      }
-    } else if (ap.origemCompra === 'capital') {
-      creditarCapital(ap.valorCompra, `Estorno compra ${ap.modelo} (Mudança p/ Fornecedor)`);
-    }
+    // AJUSTE FINANCEIRO COMPRA removido da edição para evitar duplicação de débito.
+    // O valor de compra original é preservado conforme definido no cadastro.
 
     // AJUSTE FINANCEIRO PEÇA
     if (nOrigemP === 'capital') {
