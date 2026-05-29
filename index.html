@@ -2196,7 +2196,7 @@
         lucroImediato = valorConserto - valorPeca;
         pecaPaga = true;
       } else if (valorPeca > 0 && origenCusto === 'fornecedor') {
-        adicionarExtrato('debito', `Peça (${fornecedorNome || 'N/I'}) p/ ${modelo} - Fornecedor (dívida)`, 0);
+        adicionarExtrato('debito', `Peça (${fornecedorNome || 'N/I'}) p/ ${modelo} - Fornecedor (dívida)`, valorPeca);
         lucroImediato = valorConserto;
       } else if (valorPeca > 0 && origenCusto === 'entrada') {
         lucroImediato = valorConserto - valorPeca;
@@ -2210,7 +2210,7 @@
         lucroImediato = valorEntrada - valorPeca;
         pecaPaga = true;
       } else if (valorPeca > 0 && origenCusto === 'fornecedor') {
-        adicionarExtrato('debito', `Peça (${fornecedorNome || 'N/I'}) p/ ${modelo} - Fornecedor (dívida)`, 0);
+        adicionarExtrato('debito', `Peça (${fornecedorNome || 'N/I'}) p/ ${modelo} - Fornecedor (dívida)`, valorPeca);
         lucroImediato = valorEntrada;
       } else if (valorPeca > 0 && origenCusto === 'entrada') {
         lucroImediato = valorEntrada - valorPeca;
@@ -2221,7 +2221,7 @@
       if (valorPeca > 0 && origenCusto === 'capital') {
         if (!debitarCapital(valorPeca, `Peça p/ ${modelo} (OS - sem entrada)`)) return;
       } else if (valorPeca > 0 && origenCusto === 'fornecedor') {
-        adicionarExtrato('debito', `Peça (${fornecedorNome || 'N/I'}) p/ ${modelo} - Fornecedor (dívida)`, 0);
+        adicionarExtrato('debito', `Peça (${fornecedorNome || 'N/I'}) p/ ${modelo} - Fornecedor (dívida)`, valorPeca);
       }
       lucroImediato = 0;
     }
@@ -2356,7 +2356,7 @@
       if (origemCompra === 'capital') {
         if (!debitarCapital(compra, `Compra ${modelo}`)) return;
       } else {
-        adicionarExtrato('debito', `Compra ${modelo} (${fornecedorNome || 'N/I'}) - Fornecedor`, 0);
+        adicionarExtrato('debito', `Compra ${modelo} (${fornecedorNome || 'N/I'}) - Fornecedor`, compra);
       }
     }
 
@@ -2365,7 +2365,7 @@
       if (origemPeca === 'capital') {
         if (!debitarCapital(valorPecaUtilizada, `Peça p/ ${modelo}`)) return;
       } else {
-        adicionarExtrato('debito', `Peça ${modelo} (${fornecedorNome || 'N/I'}) - Fornecedor`, 0);
+        adicionarExtrato('debito', `Peça ${modelo} (${fornecedorNome || 'N/I'}) - Fornecedor`, valorPecaUtilizada);
       }
     }
 
