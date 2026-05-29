@@ -1006,6 +1006,16 @@
             <input type="number" id="valorConserto" placeholder="0,00" min="0" step="0.01">
           </label>
 
+          <label class="field-group" for="tempoGarantia">
+            <span>🛡️ Tempo de Garantia</span>
+            <select id="tempoGarantia">
+              <option value="0">Sem garantia</option>
+              <option value="1">1 mês</option>
+              <option value="2">2 meses</option>
+              <option value="3">3 meses</option>
+            </select>
+          </label>
+
           <div class="origem-custo">
             <span>💰 Origem do custo da peça:</span>
             <div>
@@ -1266,44 +1276,26 @@
         </div>
       </section>
 
-      <!-- PAINEL DE FLUXO -->
-      <section id="pendentesFinalizadosSection" class="card" style="display:none;" aria-label="Controle de fluxo">
-        <h2>📋 Controle de Fluxo</h2>
+      <!-- GARANTIA -->
+      <section id="pendentesFinalizadosSection" class="card" style="display:none;" aria-label="Histórico de Garantia">
+        <h2>🛡️ Histórico de Garantia</h2>
 
-        <div class="sub-tabs-container" role="tablist" aria-label="Abas do painel">
-          <button class="sub-tab-btn active" id="btnSubPainelAndamento"
-            role="tab" aria-selected="true"  aria-controls="subTabPainelAndamento"
-            onclick="switchSubPainelTab('andamento')">⏳ Consertos</button>
-          <button class="sub-tab-btn" id="btnSubPainelFinalizados"
-            role="tab" aria-selected="false" aria-controls="subTabPainelFinalizados"
-            onclick="switchSubPainelTab('finalizados')">✅ Concluídos</button>
-          <button class="sub-tab-btn" id="btnSubPainelVendasPend"
-            role="tab" aria-selected="false" aria-controls="subTabPainelVendasPend"
-            onclick="switchSubPainelTab('vendas_pend')">📱 Estoque</button>
-          <button class="sub-tab-btn" id="btnSubPainelVendasFin"
-            role="tab" aria-selected="false" aria-controls="subTabPainelVendasFin"
-            onclick="switchSubPainelTab('vendas_fin')">💰 Vendidos</button>
-        </div>
+        <div id="garantiaLista" aria-live="polite"></div>
 
-        <div id="subTabPainelAndamento" role="tabpanel" aria-labelledby="btnSubPainelAndamento">
-          <div class="sub-section-title" style="margin-top:0;">⏳ Consertos em Andamento</div>
-          <div id="pendentesConsertosLista" aria-live="polite"></div>
-        </div>
-
-        <div id="subTabPainelFinalizados" style="display:none;" role="tabpanel" aria-labelledby="btnSubPainelFinalizados">
-          <div class="sub-section-title" style="margin-top:0;">✅ Consertos Finalizados</div>
-          <div id="finalizadosConsertosLista" aria-live="polite"></div>
-        </div>
-
-        <div id="subTabPainelVendasPend" style="display:none;" role="tabpanel" aria-labelledby="btnSubPainelVendasPend">
-          <div class="sub-section-title" style="margin-top:0;">📱 Vendas Pendentes (Em Estoque)</div>
-          <div id="pendentesVendasLista" aria-live="polite"></div>
-        </div>
-
-        <div id="subTabPainelVendasFin" style="display:none;" role="tabpanel" aria-labelledby="btnSubPainelVendasFin">
-          <div class="sub-section-title" style="margin-top:0;">💰 Vendas Finalizadas</div>
-          <div id="finalizadasVendasLista" aria-live="polite"></div>
-        </div>
+        <!-- Containers ocultos mantidos para compatibilidade com outras abas -->
+        <div id="pendentesConsertosLista" style="display:none;"></div>
+        <div id="finalizadosConsertosLista" style="display:none;"></div>
+        <div id="pendentesVendasLista" style="display:none;"></div>
+        <div id="finalizadasVendasLista" style="display:none;"></div>
+        <!-- Sub-tabs ocultos mantidos para compatibilidade -->
+        <div id="subTabPainelAndamento" style="display:none;"></div>
+        <div id="subTabPainelFinalizados" style="display:none;"></div>
+        <div id="subTabPainelVendasPend" style="display:none;"></div>
+        <div id="subTabPainelVendasFin" style="display:none;"></div>
+        <button id="btnSubPainelAndamento" style="display:none;"></button>
+        <button id="btnSubPainelFinalizados" style="display:none;"></button>
+        <button id="btnSubPainelVendasPend" style="display:none;"></button>
+        <button id="btnSubPainelVendasFin" style="display:none;"></button>
       </section>
 
       <!-- EXTRATO -->
@@ -1321,7 +1313,7 @@
   <button class="nav-item active" onclick="showSection('consertos')"           aria-label="Consertos"><span>🔧</span><span>Consertos</span></button>
   <button class="nav-item"        onclick="showSection('vendaAparelhos')"      aria-label="Vendas">   <span>📱</span><span>Vendas</span></button>
   <button class="nav-item"        onclick="showSection('dashboard')"           aria-label="Dashboard"><span>📊</span><span>Dashboard</span></button>
-  <button class="nav-item"        onclick="showSection('pendentesFinalizados')" aria-label="Painel">  <span>📋</span><span>Painel</span></button>
+  <button class="nav-item"        onclick="showSection('pendentesFinalizados')" aria-label="Garantia">  <span>🛡️</span><span>Garantia</span></button>
   <button class="nav-item"        onclick="showSection('extrato')"             aria-label="Extrato">  <span>📜</span><span>Extrato</span></button>
 </nav>
 
@@ -1520,9 +1512,19 @@
       <span>Modelo</span>
       <input type="text" id="editModelo">
     </label>
-    <!-- Valor de compra e Origem de compra removidos da edição conforme solicitação -->
-    <input type="hidden" id="editValorCompra">
-    <input type="hidden" id="editOrigemCompraAparelho">
+    <div class="small-input-group">
+      <div class="field-group">
+        <label for="editValorCompra">Valor de compra (R$)</label>
+        <input type="number" id="editValorCompra" min="0" step="0.01">
+      </div>
+      <div class="field-group">
+        <label>Origem Compra</label>
+        <select id="editOrigemCompraAparelho">
+          <option value="capital">💰 Capital</option>
+          <option value="fornecedor">🏭 Fornecedor</option>
+        </select>
+      </div>
+    </div>
 
     <label class="field-group" for="editValorVenda">
       <span>Valor de venda (R$)</span>
@@ -1614,6 +1616,15 @@
     <label class="field-group" for="editTipoPecaOs">
       <span>Tipo de peça</span>
       <input type="text" id="editTipoPecaOs" placeholder="Ex: Tela/LCD, Bateria, Conector, etc.">
+    </label>
+    <label class="field-group" for="editTempoGarantia">
+      <span>🛡️ Tempo de Garantia</span>
+      <select id="editTempoGarantia">
+        <option value="0">Sem garantia</option>
+        <option value="1">1 mês</option>
+        <option value="2">2 meses</option>
+        <option value="3">3 meses</option>
+      </select>
     </label>
     <div class="small-input-group">
       <div class="field-group">
@@ -2225,12 +2236,14 @@
     }
     atualizarDisplays();
 
+    const mesesGarantia = parseInt(el('tempoGarantia').value) || 0;
     const novaOS = {
       id: Date.now(), cliente, modelo, defeito, valorConserto, valorPeca,
       tipoPeca: el('tipoPeca').value,
       dataEntrada: el('dataEntrada').value || new Date().toISOString().split('T')[0],
       dataVencimento: el('dataVencimento').value,
       status: isAVista ? 'finalizado' : 'em_andamento',
+      tempoGarantia: mesesGarantia,
       valorEntrada, dataEntradaPagamento: dataEntradaPag,
       valorParcelaRestante: isAVista ? 0 : parcelaRestante,
       dataRestantePagamento: el('dataRestantePagamento').value,
@@ -2244,6 +2257,11 @@
       novaOS.valorRecebido   = valorConserto;
       novaOS.formaPagamento  = 'À vista';
       novaOS.dataFinalizacao = new Date().toISOString();
+      if (mesesGarantia > 0) {
+        const dtFim = new Date();
+        dtFim.setMonth(dtFim.getMonth() + mesesGarantia);
+        novaOS.dataFimGarantia = dtFim.toISOString().split('T')[0];
+      }
       consertosFinalizados.unshift(novaOS);
     } else {
       consertos.push(novaOS);
@@ -2255,6 +2273,7 @@
     // Limpar formulário
     ['clienteConserto','modeloConserto','defeitoConserto','valorConserto',
      'valorPeca','valorEntrada','valorParcela','nomeFornecedor'].forEach(id => { el(id).value = ''; });
+    el('tempoGarantia').value = '0';
     el('fornecedorDiv').style.display  = 'none';
     el('avisoEntradaDiv').style.display = 'none';
     document.querySelector('input[name="origemCustoPeca"][value="capital"]').checked = true;
@@ -2312,6 +2331,11 @@
     }
 
     const finalizada = { ...c, valorRecebido, formaPagamento: forma, lucro: lucroTotalOS, dataFinalizacao: new Date().toISOString() };
+    if ((c.tempoGarantia || 0) > 0 && !finalizada.dataFimGarantia) {
+      const dtFim = new Date();
+      dtFim.setMonth(dtFim.getMonth() + c.tempoGarantia);
+      finalizada.dataFimGarantia = dtFim.toISOString().split('T')[0];
+    }
     consertosFinalizados.unshift(finalizada);
     consertos.splice(idx, 1);
     salvarDados();
@@ -2550,6 +2574,7 @@
     el('editDataEntradaPag').value       = os.dataEntradaPagamento || '';
     el('editValorParcelaRestante').value = os.valorParcelaRestante || 0;
     el('editDataRestantePag').value      = os.dataRestantePagamento || '';
+    el('editTempoGarantia').value        = os.tempoGarantia || 0;
 
     el('editarOsModal').style.display = 'flex';
   }
@@ -2566,14 +2591,31 @@
     const dataEntradaPagamento = el('editDataEntradaPag').value;
     const valorParcelaRestante = Number(el('editValorParcelaRestante').value) || 0;
     const dataRestantePagamento = el('editDataRestantePag').value;
+    const tempoGarantia        = parseInt(el('editTempoGarantia').value) || 0;
 
     if (!cliente || !modelo || !defeito || valorConsertoRaw === '') { alert('Preencha os campos obrigatórios!'); return; }
     const valorConserto = Number(valorConsertoRaw);
-    const updated = { cliente, modelo, defeito, valorConserto, valorPeca, tipoPeca, valorEntrada, dataEntradaPagamento, valorParcelaRestante, dataRestantePagamento };
+    const updated = { cliente, modelo, defeito, valorConserto, valorPeca, tipoPeca, valorEntrada, dataEntradaPagamento, valorParcelaRestante, dataRestantePagamento, tempoGarantia };
 
     if (editandoFinalizada) {
       const idx = consertosFinalizados.findIndex(c => c.id === editandoOsId);
-      if (idx !== -1) consertosFinalizados[idx] = { ...consertosFinalizados[idx], ...updated };
+      if (idx !== -1) {
+        const osOriginal = consertosFinalizados[idx];
+        const novaOS = { ...osOriginal, ...updated };
+        
+        // Se o tempo de garantia mudou ou foi adicionado, recalcula a data de fim
+        if (tempoGarantia > 0) {
+          // Usa a data de finalização original para o cálculo
+          const baseDate = osOriginal.dataFinalizacao ? new Date(osOriginal.dataFinalizacao) : new Date();
+          const dtFim = new Date(baseDate);
+          dtFim.setMonth(dtFim.getMonth() + tempoGarantia);
+          novaOS.dataFimGarantia = dtFim.toISOString().split('T')[0];
+          delete novaOS.garantiaExpirada;
+        } else {
+          novaOS.dataFimGarantia = null;
+        }
+        consertosFinalizados[idx] = novaOS;
+      }
     } else {
       const idx = consertos.findIndex(c => c.id === editandoOsId);
       if (idx !== -1) consertos[idx] = { ...consertos[idx], ...updated };
@@ -2633,8 +2675,18 @@
     const nOrigemC     = el('editOrigemCompraAparelho').value;
     const nOrigemP     = el('editOrigemPecaAparelho').value;
 
-    // AJUSTE FINANCEIRO COMPRA removido da edição para evitar duplicação de débito.
-    // O valor de compra original é preservado conforme definido no cadastro.
+    // AJUSTE FINANCEIRO COMPRA
+    if (nOrigemC === 'capital') {
+      if (ap.origemCompra === 'capital') {
+        const diff = nCompra - (ap.valorCompra || 0);
+        if (diff > 0 && !debitarCapital(diff, `Ajuste compra ${ap.modelo}`)) return;
+        else if (diff < 0) creditarCapital(-diff, `Estorno compra ${ap.modelo}`);
+      } else {
+        if (!debitarCapital(nCompra, `Compra ${ap.modelo} (Mudança p/ Capital)`)) return;
+      }
+    } else if (ap.origemCompra === 'capital') {
+      creditarCapital(ap.valorCompra, `Estorno compra ${ap.modelo} (Mudança p/ Fornecedor)`);
+    }
 
     // AJUSTE FINANCEIRO PEÇA
     if (nOrigemP === 'capital') {
@@ -2647,13 +2699,6 @@
       }
     } else if (ap.origemPeca === 'capital') {
       creditarCapital(ap.valorPecaUtilizada, `Estorno peça ${ap.modelo} (Mudança p/ Fornecedor)`);
-      adicionarExtrato('debito', `Peça ${ap.modelo} (Dívida Fornecedor)`, nPeca);
-    } else {
-      // Se já era fornecedor e o valor mudou, apenas registra o ajuste no extrato para controle
-      const diff = nPeca - (ap.valorPecaUtilizada || 0);
-      if (diff !== 0) {
-        adicionarExtrato('debito', `Ajuste dívida peça ${ap.modelo} (Fornecedor)`, Math.abs(diff));
-      }
     }
 
     ap.modelo              = el('editModelo').value;
@@ -3478,76 +3523,102 @@
   }
 
   /* ─────────────────────────────────────────
-     PAINEL DE FLUXO
+     HISTÓRICO DE GARANTIA
   ───────────────────────────────────────── */
 
+  /**
+   * Verifica se a garantia de um conserto ainda está válida.
+   * @param {string} dataFimGarantia - Data no formato YYYY-MM-DD.
+   * @returns {boolean}
+   */
+  function garantiaAtiva(dataFimGarantia) {
+    if (!dataFimGarantia) return false;
+    const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+    const fim  = new Date(dataFimGarantia); fim.setHours(0, 0, 0, 0);
+    return fim >= hoje;
+  }
+
+  /**
+   * Formata uma data ISO (YYYY-MM-DD) para o formato brasileiro DD/MM/AAAA.
+   */
+  function formatarDataBR(dataIso) {
+    if (!dataIso) return 'N/I';
+    const [y, m, d] = dataIso.split('-');
+    return `${d}/${m}/${y}`;
+  }
+
+  /**
+   * Calcula quantos dias faltam (ou já passaram) para o fim da garantia.
+   */
+  function diasParaFimGarantia(dataFimGarantia) {
+    const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+    const fim  = new Date(dataFimGarantia); fim.setHours(0, 0, 0, 0);
+    return Math.round((fim - hoje) / (1000 * 60 * 60 * 24));
+  }
+
+  /**
+   * Remove do histórico de garantia os consertos cuja garantia já expirou.
+   * Apenas marca o campo dataFimGarantia como nulo — não remove o conserto
+   * das outras abas (finalizados, dashboard, extrato, etc.).
+   */
+  function limparGarantiasExpiradas() {
+    let alterou = false;
+    consertosFinalizados = consertosFinalizados.map(c => {
+      if (c.dataFimGarantia && !garantiaAtiva(c.dataFimGarantia)) {
+        alterou = true;
+        return { ...c, dataFimGarantia: null, garantiaExpirada: true };
+      }
+      return c;
+    });
+    if (alterou) salvarDados();
+  }
+
   function atualizarPendentesFinalizados() {
-    const pendentesConsertosDiv = el('pendentesConsertosLista');
-    if (pendentesConsertosDiv) {
-      if (consertos.length === 0) {
-        pendentesConsertosDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhum conserto pendente</p>';
-      } else {
-        pendentesConsertosDiv.innerHTML = consertos.map(c => {
-          const atrasado = (c.valorParcelaRestante > 0) && verificarAtraso(c.dataRestantePagamento, c.valorParcelaRestante);
-          return `
-            <div class="item ${atrasado ? 'item-atrasado' : ''}">
-              <h3>🔧 ${c.modelo} - ${c.cliente}</h3>
-              <p>Total: ${brl(c.valorConserto)} | Restante: ${brl(c.valorParcelaRestante || 0)} | Lucro já contabilizado: ${brl(c.lucroImediato || 0)}</p>
-            </div>`;
-        }).join('');
-      }
+    // Remover garantias expiradas antes de renderizar
+    limparGarantiasExpiradas();
+
+    const garantiaDiv = el('garantiaLista');
+    if (!garantiaDiv) return;
+
+    // Filtrar apenas consertos finalizados com garantia ainda ativa
+    const comGarantia = consertosFinalizados.filter(c => c.dataFimGarantia && garantiaAtiva(c.dataFimGarantia));
+
+    if (comGarantia.length === 0) {
+      garantiaDiv.innerHTML = `
+        <div style="text-align:center; padding:40px 20px;">
+          <div style="font-size:48px; margin-bottom:16px;">🛡️</div>
+          <p style="color:var(--text-muted); font-size:14px; font-weight:600;">Nenhum conserto com garantia ativa no momento.</p>
+          <p style="color:var(--text-dim); font-size:12px; margin-top:8px;">As garantias aparecem aqui após a finalização do conserto e são removidas automaticamente ao expirar.</p>
+        </div>`;
+      return;
     }
 
-    const pendentesVendasDiv = el('pendentesVendasLista');
-    if (pendentesVendasDiv) {
-      const comDivida = aparelhos.filter(a => a.origemCompra === 'fornecedor' || a.origemPeca === 'fornecedor' || (!a.origemCompra && a.origemCustoVenda === 'fornecedor'));
-      if (comDivida.length === 0) {
-        pendentesVendasDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhuma dívida de aparelho/peça pendente.</p>';
-      } else {
-        pendentesVendasDiv.innerHTML = comDivida.map(a => {
-          let dComp = 0, dPeca = 0;
-          if (a.origemCompra === 'fornecedor') dComp = Number(a.valorCompra) || 0;
-          if (a.origemPeca === 'fornecedor')   dPeca = Number(a.valorPecaUtilizada) || 0;
-          if (!a.origemCompra && a.origemCustoVenda === 'fornecedor') {
-            dComp = Number(a.valorCompra) || 0;
-            dPeca = Number(a.valorPecaUtilizada) || 0;
-          }
-          const totalD = dComp + dPeca;
-          return `
-            <div class="item" style="border-left: 3px solid var(--accent-red);">
-              <h3>📱 ${a.modelo} (Dívida)</h3>
-              <p>Total a pagar: <strong style="color:var(--accent-red);">${brl(totalD)}</strong></p>
-              <p><small>Compra: ${brl(dComp)} | Peça: ${brl(dPeca)}</small></p>
-            </div>`;
-        }).join('');
-      }
-    }
+    garantiaDiv.innerHTML = comGarantia.map(c => {
+      const dias        = diasParaFimGarantia(c.dataFimGarantia);
+      const meses       = c.tempoGarantia || 0;
+      const dataFimFmt  = formatarDataBR(c.dataFimGarantia);
+      const urgente     = dias <= 7;
+      const cor         = urgente ? 'var(--accent-orange)' : 'var(--accent-emerald)';
+      const borderColor = urgente ? 'var(--accent-orange)' : 'var(--accent-emerald)';
+      const bgColor     = urgente ? 'rgba(249,115,22,0.06)' : 'rgba(16,185,129,0.06)';
+      const badgeBg     = urgente ? 'rgba(249,115,22,0.15)' : 'rgba(16,185,129,0.15)';
+      const diasTexto   = dias === 0 ? 'Expira hoje!' : dias === 1 ? '1 dia restante' : `${dias} dias restantes`;
+      const dataFin     = c.dataFinalizacao ? formatarDataBR(c.dataFinalizacao.split('T')[0]) : 'N/I';
 
-    const finalizadosConsertosDiv = el('finalizadosConsertosLista');
-    if (finalizadosConsertosDiv) {
-      if (consertosFinalizados.length === 0) {
-        finalizadosConsertosDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhum conserto finalizado</p>';
-      } else {
-        finalizadosConsertosDiv.innerHTML = consertosFinalizados.map(f => `
-          <div class="item">
-            <h3>✅ ${f.modelo}</h3>
-            <p>Lucro: ${brl(f.lucro || 0)}</p>
-          </div>`).join('');
-      }
-    }
-
-    const finalizadasVendasDiv = el('finalizadasVendasLista');
-    if (finalizadasVendasDiv) {
-      if (vendasRealizadas.length === 0) {
-        finalizadasVendasDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhuma venda realizada</p>';
-      } else {
-        finalizadasVendasDiv.innerHTML = vendasRealizadas.map(v => `
-          <div class="item">
-            <h3>✅ ${v.modelo}</h3>
-            <p>Venda: ${brl(v.valorVenda)} | Lucro: ${brl(v.lucro || 0)}</p>
-          </div>`).join('');
-      }
-    }
+      return `
+        <div class="item" style="border-left-color:${borderColor}; background:${bgColor};">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:6px;">
+            <h3 style="margin-bottom:4px;">🔧 ${c.modelo} — ${c.cliente}</h3>
+            <span style="background:${badgeBg}; color:${cor}; padding:3px 10px; border-radius:var(--radius-xs); font-size:10px; font-weight:800; white-space:nowrap;">🛡️ ${meses} ${meses === 1 ? 'mês' : 'meses'}</span>
+          </div>
+          <p style="margin-bottom:3px;">Defeito: ${c.defeito}</p>
+          <p style="margin-bottom:3px;">Finalizado: ${dataFin} &nbsp;|&nbsp; Valor: <strong>${brl(c.valorConserto)}</strong></p>
+          <div style="margin-top:10px; padding:8px 12px; border-radius:var(--radius-sm); background:${badgeBg}; border:1px solid ${urgente ? 'rgba(249,115,22,0.3)' : 'rgba(16,185,129,0.3)'}; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+            <span style="font-size:12px; font-weight:700; color:${cor};">📅 Garantia válida até: ${dataFimFmt}</span>
+            <span style="font-size:11px; font-weight:800; color:${cor};">${diasTexto}</span>
+          </div>
+        </div>`;
+    }).join('');
   }
 
   /* ─────────────────────────────────────────
