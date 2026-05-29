@@ -1,0 +1,3797 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Jefferson Cell - Meu Caixa PRO | Assistência Técnica</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    /* ===== VARIÁVEIS GLOBAIS (DARK THEME - PADRÃO) ===== */
+    :root {
+      --bg-main:    #0f1419;
+      --bg-secondary: #1a1f2e;
+      --bg-card:    rgba(26, 31, 46, 0.6);
+      --bg-input:   #16192b;
+      --bg-hover:   rgba(26, 31, 46, 0.9);
+
+      --border-color: rgba(255, 255, 255, 0.06);
+      --border-focus: #6366f1;
+      --border-subtle: rgba(255, 255, 255, 0.03);
+
+      --text-main:  #f5f7fa;
+      --text-secondary: #cbd5e1;
+      --text-muted: #64748b;
+      --text-dim:   #475569;
+
+      --accent-indigo:  #6366f1;
+      --accent-indigo-light: #818cf8;
+      --accent-indigo-dark:  #4f46e5;
+      --accent-emerald: #10b981;
+      --accent-emerald-light: #34d399;
+      --accent-cyan:    #06b6d4;
+      --accent-orange:  #f97316;
+      --accent-red:     #ef4444;
+      --accent-yellow:  #eab308;
+
+      --shadow-sm:      0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md:      0 4px 6px rgba(0, 0, 0, 0.1);
+      --shadow-lg:      0 10px 15px rgba(0, 0, 0, 0.1);
+      --shadow-xl:      0 20px 25px rgba(0, 0, 0, 0.15);
+      --shadow-premium: 0 25px 50px rgba(0, 0, 0, 0.25);
+
+      --radius-xs:  6px;
+      --radius-sm:  8px;
+      --radius-md:  12px;
+      --radius-lg:  16px;
+      --radius-xl:  20px;
+      --radius-2xl: 24px;
+
+      --transition-fast:   all 0.15s ease-out;
+      --transition-normal: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow:   all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ===== LIGHT THEME ===== */
+    body.light-theme {
+      --bg-main:    #f8fafc;
+      --bg-secondary: #f1f5f9;
+      --bg-card:    rgba(255, 255, 255, 0.7);
+      --bg-input:   #ffffff;
+      --bg-hover:   rgba(255, 255, 255, 0.95);
+
+      --border-color: rgba(15, 23, 42, 0.08);
+      --border-focus: #4f46e5;
+      --border-subtle: rgba(15, 23, 42, 0.04);
+
+      --text-main:  #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --text-dim:   #94a3b8;
+
+      --accent-indigo:  #4f46e5;
+      --accent-indigo-light: #6366f1;
+      --accent-indigo-dark:  #3730a3;
+      --accent-emerald: #059669;
+      --accent-emerald-light: #10b981;
+      --accent-cyan:    #0891b2;
+      --accent-orange:  #d97706;
+      --accent-red:     #dc2626;
+      --accent-yellow:  #ca8a04;
+
+      --shadow-sm:      0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md:      0 4px 6px rgba(0, 0, 0, 0.07);
+      --shadow-lg:      0 10px 15px rgba(0, 0, 0, 0.1);
+      --shadow-xl:      0 20px 25px rgba(0, 0, 0, 0.12);
+      --shadow-premium: 0 25px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-main);
+      background-image: linear-gradient(rgba(15, 20, 25, 0.85), rgba(15, 20, 25, 0.85)), url('https://files.manuscdn.com/user_upload_by_module/session_file/310519663705439359/ayZchKVdwCdwEfJk.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      color: var(--text-main);
+      padding-bottom: 120px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Light theme background adjustment */
+    body.light-theme {
+      background-image: linear-gradient(rgba(248, 250, 252, 0.92), rgba(248, 250, 252, 0.92)), url('https://files.manuscdn.com/user_upload_by_module/session_file/310519663705439359/ayZchKVdwCdwEfJk.png');
+    }
+
+    /* ===== LAYOUT ===== */
+    .overlay {
+      min-height: 100vh;
+      padding: 20px 14px;
+    }
+
+    .container {
+      max-width: 768px;
+      margin: auto;
+    }
+
+    /* ===== CABEÇALHO ===== */
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+      padding: 40px 24px;
+      background: linear-gradient(135deg, rgba(26, 31, 46, 0.4), rgba(15, 20, 25, 0.6));
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-radius: var(--radius-2xl);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-lg);
+      transition: var(--transition-normal);
+    }
+
+    .header:hover {
+      background: linear-gradient(135deg, rgba(26, 31, 46, 0.5), rgba(15, 20, 25, 0.7));
+      border-color: var(--border-focus);
+    }
+
+    .header h1 {
+      font-size: 42px;
+      font-weight: 900;
+      letter-spacing: -1.2px;
+      background: linear-gradient(135deg, var(--accent-indigo) 0%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+
+    /* ===== KPI CARDS ===== */
+    .quad-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+
+    .kpi-card {
+      background: linear-gradient(135deg, rgba(26, 31, 46, 0.5), rgba(26, 31, 46, 0.3));
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: var(--transition-normal);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, currentColor, transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-4px);
+      background: linear-gradient(135deg, rgba(26, 31, 46, 0.7), rgba(26, 31, 46, 0.5));
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .kpi-card.capital   { --accent-color: var(--accent-orange); }
+    .kpi-card.lucro     { --accent-color: var(--accent-red); }
+    .kpi-card.vendas    { --accent-color: var(--accent-cyan); }
+    .kpi-card.consertos { --accent-color: var(--accent-indigo-light); }
+
+    .kpi-card h3 {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .kpi-card .valor {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+    }
+
+    .capital   .valor { color: var(--accent-orange); }
+    .lucro     .valor { color: var(--accent-red); }
+    .vendas    .valor { color: var(--accent-cyan); }
+    .consertos .valor { color: var(--accent-indigo-light); }
+
+    .kpi-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .kpi-btn {
+      flex: 1;
+      background: rgba(99, 102, 241, 0.08);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      color: var(--accent-indigo-light);
+      padding: 9px 12px;
+      border-radius: var(--radius-md);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .kpi-btn:hover {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: var(--accent-indigo);
+      box-shadow: 0 0 12px rgba(99, 102, 241, 0.2);
+    }
+
+    .kpi-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* ===== CARD GENÉRICO ===== */
+    .card {
+      background: rgba(26, 31, 46, 0.7);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-radius: var(--radius-2xl);
+      padding: 28px;
+      margin-bottom: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: var(--shadow-lg);
+      transition: var(--transition-normal);
+    }
+    
+    body.light-theme .card {
+      background: rgba(255, 255, 255, 0.8);
+      border-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .card:hover {
+      border-color: rgba(99, 102, 241, 0.3);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .card h2 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 24px;
+      color: var(--text-main);
+      letter-spacing: -0.6px;
+    }
+
+    .card-header-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    /* ===== BOTÃO DE AÇÃO (TOPO) ===== */
+    .btn-action-top {
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      color: var(--accent-indigo-light);
+      padding: 11px 16px;
+      border-radius: var(--radius-md);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .btn-action-top:hover {
+      background: rgba(99, 102, 241, 0.18);
+      border-color: var(--accent-indigo);
+      box-shadow: 0 0 16px rgba(99, 102, 241, 0.25);
+    }
+
+    .btn-action-top:active {
+      transform: scale(0.96);
+    }
+
+    /* ===== CAMPOS DE FORMULÁRIO ===== */
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 500;
+      transition: var(--transition-fast);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--text-dim);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      background: rgba(22, 25, 43, 0.8);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .field-group {
+      margin-bottom: 12px;
+      width: 100%;
+    }
+
+    .field-group label {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 700;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ===== BOTÃO SALVAR ===== */
+    button.salvar {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--accent-emerald) 0%, var(--accent-emerald-light) 100%);
+      font-weight: 700;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 15px;
+      letter-spacing: 0.4px;
+      transition: var(--transition-normal);
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.25);
+    }
+
+    button.salvar:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+    }
+
+    button.salvar:active {
+      transform: translateY(0);
+    }
+
+    /* ===== ITEM DE LISTA ===== */
+    .item {
+      background: linear-gradient(135deg, rgba(26, 31, 46, 0.3), rgba(26, 31, 46, 0.15));
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--accent-indigo);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-top: 12px;
+      transition: var(--transition-fast);
+    }
+
+    .item:hover {
+      background: linear-gradient(135deg, rgba(26, 31, 46, 0.5), rgba(26, 31, 46, 0.3));
+      border-color: rgba(99, 102, 241, 0.3);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .item-atrasado {
+      border-left: 4px solid var(--accent-red) !important;
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(239, 68, 68, 0.04)) !important;
+    }
+
+    .atrasado-badge {
+      background: var(--accent-red);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: var(--radius-xs);
+      font-size: 10px;
+      font-weight: 800;
+      margin-left: 8px;
+    }
+
+    .item h3 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+
+    .item p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .item-actions button {
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      font-size: 11px;
+      font-weight: 700;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    /* Botões de ação de item */
+    .ver-detalhes          { background: rgba(99, 102, 241, 0.15); color: var(--accent-indigo-light) !important; border: 1px solid rgba(99, 102, 241, 0.2); }
+    .ver-detalhes:hover    { background: rgba(99, 102, 241, 0.25); border-color: var(--accent-indigo); }
+    .btn-editar            { background: rgba(249, 115, 22, 0.15); color: var(--accent-orange) !important; border: 1px solid rgba(249, 115, 22, 0.2); }
+    .btn-editar:hover      { background: rgba(249, 115, 22, 0.25); border-color: var(--accent-orange); }
+    .btn-finalizar         { background: linear-gradient(135deg, var(--accent-emerald), var(--accent-emerald-light)); color: #ffffff !important; }
+    .btn-finalizar:hover   { box-shadow: 0 0 16px rgba(16, 185, 129, 0.3); transform: translateY(-1px); }
+    .btn-deletar           { background: rgba(239, 68, 68, 0.15); color: var(--accent-red) !important; border: 1px solid rgba(239, 68, 68, 0.2); }
+    .btn-deletar:hover     { background: rgba(239, 68, 68, 0.25); border-color: var(--accent-red); }
+
+    /* ===== NAVEGAÇÃO INFERIOR ===== */
+    .bottom-nav {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, rgba(26, 31, 46, 0.8), rgba(15, 20, 25, 0.9));
+      backdrop-filter: blur(32px);
+      -webkit-backdrop-filter: blur(32px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-2xl);
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      z-index: 1100;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      transition: var(--transition-normal);
+    }
+
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      padding: 10px 6px;
+      border-radius: var(--radius-lg);
+      transition: var(--transition-fast);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .nav-item span:first-child {
+      font-size: 20px;
+    }
+
+    .nav-item:hover {
+      color: var(--text-secondary);
+    }
+
+    .nav-item.active {
+      color: var(--accent-indigo-light);
+      background: rgba(99, 102, 241, 0.12);
+    }
+
+    /* ===== MODAIS ===== */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 20, 25, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 1200;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, rgba(26, 31, 46, 0.8), rgba(26, 31, 46, 0.6));
+      padding: 28px;
+      border-radius: var(--radius-2xl);
+      max-width: 480px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-premium);
+      animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal h3 {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      color: var(--text-main);
+    }
+
+    .modal-footer-btns {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .modal-footer-btns button {
+      flex: 1;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      font-size: 14px;
+    }
+
+    .modal-footer-btns button:first-child { background: linear-gradient(135deg, var(--accent-indigo), var(--accent-indigo-light)); color: #ffffff; }
+    .modal-footer-btns button:first-child:hover { box-shadow: 0 0 16px rgba(99, 102, 241, 0.3); }
+    .modal-footer-btns button:last-child  { background: rgba(255, 255, 255, 0.08); color: var(--text-main); border: 1px solid var(--border-color); }
+    .modal-footer-btns button:last-child:hover { background: rgba(255, 255, 255, 0.12); }
+
+    .close-modal {
+      float: right;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-muted);
+      line-height: 1;
+      transition: var(--transition-fast);
+    }
+
+    .close-modal:hover {
+      color: var(--text-main);
+    }
+
+    /* ===== EXTRATO ===== */
+    .extrato-item-detalhado {
+      background: linear-gradient(135deg, rgba(26, 31, 46, 0.3), rgba(26, 31, 46, 0.15));
+      margin-bottom: 10px;
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      border-left: 4px solid;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: var(--transition-fast);
+    }
+
+    .extrato-item-detalhado:hover {
+      background: linear-gradient(135deg, rgba(26, 31, 46, 0.5), rgba(26, 31, 46, 0.3));
+    }
+
+    .credito {
+      border-left-color: var(--accent-emerald);
+      color: var(--accent-emerald-light);
+      background: rgba(16, 185, 129, 0.05);
+    }
+
+    .debito {
+      border-left-color: var(--accent-red);
+      color: var(--accent-red);
+      background: rgba(239, 68, 68, 0.05);
+    }
+
+    /* ===== STATUS DE PAGAMENTO ===== */
+    .status-pagamento {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 800;
+      display: inline-block;
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+
+    .status-pendente { background: rgba(255, 159, 10, 0.12); color: var(--accent-orange); }
+    .status-parcial  { background: rgba(255, 214, 10, 0.12); color: #ffd60a; }
+    .status-pago     { background: rgba(48, 213, 200, 0.12); color: #30d5c8; }
+
+    /* ===== SEÇÕES E SUBTÍTULOS ===== */
+    .sub-section-title {
+      font-size: 12px;
+      font-weight: 800;
+      margin: 28px 0 16px;
+      color: var(--accent-indigo-light);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    /* ===== ORIGEM DO CUSTO ===== */
+    .origem-custo {
+      background: linear-gradient(135deg, rgba(26, 31, 46, 0.3), rgba(26, 31, 46, 0.15));
+      padding: 16px;
+      border-radius: var(--radius-md);
+      margin-bottom: 14px;
+      border: 1px solid var(--border-color);
+      transition: var(--transition-fast);
+    }
+
+    .origem-custo:hover {
+      background: linear-gradient(135deg, rgba(26, 31, 46, 0.5), rgba(26, 31, 46, 0.3));
+    }
+
+    .origem-custo span {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .origem-custo > div {
+      display: flex;
+      gap: 20px;
+    }
+
+    .origem-custo label {
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: var(--transition-fast);
+    }
+
+    .origem-custo label:hover {
+      color: var(--text-main);
+    }
+
+    .origem-custo input[type="radio"] {
+      width: auto;
+      margin-bottom: 0;
+      cursor: pointer;
+    }
+
+    /* ===== GRUPOS DE INPUTS ===== */
+    .small-input-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* ===== RECIBO ===== */
+    .recibo {
+      background: #f8fafc;
+      color: #1e293b;
+      padding: 20px;
+      border-radius: var(--radius-md);
+      font-family: 'Courier New', 'Courier', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+
+
+    /* ===== SUB-TABS ===== */
+    .sub-tabs-container {
+      display: flex;
+      gap: 8px;
+      background: rgba(26, 31, 46, 0.3);
+      padding: 6px;
+      border-radius: var(--radius-lg);
+      margin-bottom: 20px;
+      border: 1px solid var(--border-color);
+    }
+
+    .sub-tab-btn {
+      flex: 1;
+      padding: 11px 12px;
+      border: none;
+      border-radius: var(--radius-md);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: var(--transition-fast);
+      letter-spacing: 0.5px;
+    }
+
+    .sub-tab-btn:hover {
+      color: var(--text-secondary);
+    }
+
+    .sub-tab-btn.active {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(99, 102, 241, 0.1));
+      color: var(--accent-indigo-light);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    /* ===== AVISO / INFO ===== */
+    .aviso-entrada {
+      background: rgba(234, 179, 8, 0.08);
+      border: 1px solid rgba(234, 179, 8, 0.3);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 14px;
+    }
+
+    .aviso-entrada p {
+      color: var(--accent-yellow);
+      font-size: 12px;
+      margin: 0;
+      font-weight: 500;
+    }
+
+    .lucro-pendente-info {
+      font-size: 11px;
+      color: var(--accent-yellow);
+      margin-top: 6px;
+      font-weight: 600;
+    }
+
+    /* ===== SEÇÃO DE INVENTÁRIO ===== */
+    .inventario-wrapper {
+      background: linear-gradient(135deg, rgba(26, 31, 46, 0.3), rgba(26, 31, 46, 0.15));
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border-color);
+      transition: var(--transition-fast);
+    }
+
+    .inventario-wrapper:hover {
+      background: linear-gradient(135deg, rgba(26, 31, 46, 0.5), rgba(26, 31, 46, 0.3));
+    }
+
+    .inventario-wrapper h3 {
+      font-size: 14px;
+      margin-bottom: 14px;
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    /* ===== BADGES E CORES ===== */
+    .status-pendente { background: rgba(249, 115, 22, 0.12); color: var(--accent-orange); }
+    .status-parcial  { background: rgba(234, 179, 8, 0.12); color: var(--accent-yellow); }
+    .status-pago     { background: rgba(16, 185, 129, 0.12); color: var(--accent-emerald-light); }
+
+    .origem-badge {
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--accent-indigo-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-xs);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .lucro-parcial-badge {
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--accent-emerald-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-xs);
+      font-size: 10px;
+      font-weight: 800;
+      display: inline-block;
+      margin-top: 6px;
+    }
+
+    .peca-usada {
+      background: rgba(249, 115, 22, 0.08);
+      border: 1px dashed rgba(249, 115, 22, 0.25);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--accent-orange);
+    }
+
+    .monthly-profit-item {
+      background: linear-gradient(135deg, rgba(26, 31, 46, 0.3), rgba(26, 31, 46, 0.15));
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border-color);
+      transition: var(--transition-fast);
+    }
+
+    .monthly-profit-item:hover {
+      background: linear-gradient(135deg, rgba(26, 31, 46, 0.5), rgba(26, 31, 46, 0.3));
+    }
+
+    .monthly-profit-header {
+      font-weight: 800;
+      font-size: 14px;
+      margin-bottom: 10px;
+      color: var(--accent-indigo-light);
+    }
+
+    .monthly-profit-details {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .monthly-profit-details span {
+      font-size: 11px;
+      padding: 5px 10px;
+      border-radius: var(--radius-xs);
+      font-weight: 700;
+    }
+
+    .profit-consertos { background: rgba(99, 102, 241, 0.12); color: var(--accent-indigo-light); }
+    .profit-vendas    { background: rgba(6, 182, 212, 0.12); color: var(--accent-cyan); }
+    .profit-total     { background: rgba(249, 115, 22, 0.12); color: var(--accent-orange); }
+
+    /* THEME TOGGLE */
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1050;
+      background: linear-gradient(135deg, rgba(26, 31, 46, 0.8), rgba(15, 20, 25, 0.9));
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-2xl);
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: var(--transition-normal);
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+      font-weight: 700;
+      box-shadow: var(--shadow-md);
+    }
+
+    body.light-theme .theme-toggle {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(241, 245, 249, 0.9));
+    }
+
+    .theme-toggle:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .theme-toggle-label {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+<!-- THEME TOGGLE BUTTON -->
+<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Alternar tema">
+  <span id="themeIcon">🌙</span>
+  <span class="theme-toggle-label" id="themeLabel">Light</span>
+</button>
+
+<div class="overlay">
+  <div class="container">
+
+    <!-- CABEÇALHO -->
+    <header class="header">
+      <h1>Jefferson Cell</h1>
+      <p>ASSISTÊNCIA TÉCNICA • GESTÃO PRO</p>
+    </header>
+
+    <!-- KPI CARDS -->
+    <section class="quad-cards" aria-label="Resumo financeiro">
+      <div class="kpi-card capital">
+        <h3>💼 CAPITAL (PEÇAS)</h3>
+        <div class="valor" id="capitalDisponivel" aria-live="polite">R$ 0,00</div>
+        <div class="kpi-actions">
+          <button class="kpi-btn" onclick="adicionarCapital()" aria-label="Adicionar capital">+ Capital</button>
+          <button class="kpi-btn" onclick="editarCapital()" aria-label="Editar capital">✏️ Editar</button>
+        </div>
+      </div>
+
+      <div class="kpi-card lucro">
+        <h3>🚨 PEÇAS PENDENTES</h3>
+        <div class="valor" id="lucroAcumulado" aria-live="polite">R$ 0,00</div>
+      </div>
+
+      <div class="kpi-card vendas">
+        <h3>📱 LUCRO VENDAS</h3>
+        <div class="valor" id="lucroVendasValor" aria-live="polite">R$ 0,00</div>
+        <div id="lucroPendenteVendasInfo" class="lucro-pendente-info" aria-live="polite"></div>
+      </div>
+
+      <div class="kpi-card consertos">
+        <h3>🔧 LUCRO CONSERTOS</h3>
+        <div class="valor" id="lucroConsertosValor" aria-live="polite">R$ 0,00</div>
+        <div id="lucroPendenteConsertosInfo" class="lucro-pendente-info" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- SEÇÕES PRINCIPAIS -->
+    <main class="scroll-content">
+
+      <!-- CONSERTOS -->
+      <section id="consertosSection" class="card" aria-label="Consertos">
+        <div class="card-header-actions">
+          <button class="btn-action-top" onclick="exportarDados()" aria-label="Salvar backup dos dados">💾 Salvar Backup</button>
+          <button class="btn-action-top" onclick="importarDados()" aria-label="Restaurar backup dos dados">📂 Restaurar Backup</button>
+        </div>
+
+        <div class="sub-tabs-container" role="tablist" aria-label="Abas de consertos">
+          <button class="sub-tab-btn active" id="btnSubNovaOs"
+            role="tab" aria-selected="true"  aria-controls="subTabNovaOs"
+            onclick="switchSubConsertoTab('nova')">🔧 Nova OS</button>
+          <button class="sub-tab-btn" id="btnSubAndamento"
+            role="tab" aria-selected="false" aria-controls="subTabAndamento"
+            onclick="switchSubConsertoTab('andamento')">📋 Pag. Pendentes</button>
+          <button class="sub-tab-btn" id="btnSubFinalizadosConserto"
+            role="tab" aria-selected="false" aria-controls="subTabFinalizadosConserto"
+            onclick="switchSubConsertoTab('finalizados')">✅ Finalizados</button>
+        </div>
+
+        <!-- Aba: Nova OS -->
+        <div id="subTabNovaOs" role="tabpanel" aria-labelledby="btnSubNovaOs">
+          <h2>🔧 Nova OS - Conserto</h2>
+
+          <label class="field-group" for="clienteConserto">
+            <span>Cliente *</span>
+            <input type="text" id="clienteConserto" placeholder="Nome do cliente" autocomplete="name">
+          </label>
+
+          <label class="field-group" for="modeloConserto">
+            <span>Modelo *</span>
+            <input type="text" id="modeloConserto" placeholder="Ex: iPhone 12">
+          </label>
+
+          <label class="field-group" for="defeitoConserto">
+            <span>Defeito *</span>
+            <textarea id="defeitoConserto" rows="2" placeholder="Descreva o defeito"></textarea>
+          </label>
+
+          <label class="field-group" for="valorConserto">
+            <span>Valor total do conserto (R$) *</span>
+            <input type="number" id="valorConserto" placeholder="0,00" min="0" step="0.01">
+          </label>
+
+          <label class="field-group" for="tempoGarantia">
+            <span>🛡️ Tempo de Garantia</span>
+            <select id="tempoGarantia">
+              <option value="0">Sem garantia</option>
+              <option value="1">1 mês</option>
+              <option value="2">2 meses</option>
+              <option value="3">3 meses</option>
+            </select>
+          </label>
+
+          <div class="origem-custo">
+            <span>💰 Origem do custo da peça:</span>
+            <div>
+              <label><input type="radio" name="origemCustoPeca" value="capital" checked> 💰 Capital</label>
+              <label><input type="radio" name="origemCustoPeca" value="fornecedor"> 🏭 Fornecedor</label>
+              <label><input type="radio" name="origemCustoPeca" value="entrada"> 💳 Pagar com a entrada</label>
+            </div>
+          </div>
+
+          <div id="fornecedorDiv" style="display:none;">
+            <label class="field-group" for="nomeFornecedor">
+              <span>Nome do Fornecedor</span>
+              <input type="text" id="nomeFornecedor" placeholder="Ex: João Peças">
+            </label>
+          </div>
+
+          <div id="avisoEntradaDiv" class="aviso-entrada" style="display:none;">
+            <p>💡 A peça será paga COM O VALOR DA ENTRADA. O custo será descontado diretamente da entrada recebida.</p>
+          </div>
+
+          <label class="field-group" for="valorPeca">
+            <span>Valor da peça (R$)</span>
+            <input type="number" id="valorPeca" placeholder="0,00" min="0" step="0.01">
+          </label>
+
+          <label class="field-group" for="tipoPeca">
+            <span>Tipo de peça</span>
+            <input type="text" id="tipoPeca" placeholder="Ex: Tela/LCD, Bateria, Conector, etc.">
+          </label>
+
+          <div class="small-input-group">
+            <div class="field-group">
+              <label for="dataEntrada">Data de Entrada</label>
+              <input type="date" id="dataEntrada">
+            </div>
+            <div class="field-group">
+              <label for="dataVencimento">Data de Entrega</label>
+              <input type="date" id="dataVencimento">
+            </div>
+          </div>
+
+          <div class="small-input-group">
+            <div class="field-group">
+              <label for="valorEntrada">Valor de entrada (R$)</label>
+              <input type="number" id="valorEntrada" placeholder="0,00" step="0.01" min="0">
+            </div>
+            <div class="field-group">
+              <label for="dataEntradaPagamento">Data Pagamento Entrada</label>
+              <input type="date" id="dataEntradaPagamento">
+            </div>
+          </div>
+
+          <div class="small-input-group">
+            <div class="field-group">
+              <label for="valorParcela">Parcela restante (R$)</label>
+              <input type="number" id="valorParcela" placeholder="0,00" step="0.01" min="0">
+            </div>
+            <div class="field-group">
+              <label for="dataRestantePagamento">Vencimento da Parcela</label>
+              <input type="date" id="dataRestantePagamento">
+            </div>
+          </div>
+
+          <button class="salvar" onclick="salvarConserto()">📝 Criar Ordem</button>
+        </div>
+
+        <!-- Aba: Pagamentos Pendentes -->
+        <div id="subTabAndamento" style="display:none;" role="tabpanel" aria-labelledby="btnSubAndamento">
+          <div class="sub-section-title" style="margin-top:0;">📋 Pag. Pendentes</div>
+          <div id="consertosLista" aria-live="polite"></div>
+        </div>
+
+        <!-- Aba: Finalizados -->
+        <div id="subTabFinalizadosConserto" style="display:none;" role="tabpanel" aria-labelledby="btnSubFinalizadosConserto">
+          <div class="sub-section-title" style="margin-top:0;">✅ Finalizados</div>
+          <div id="consertosFinalizadosLista" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <!-- VENDAS -->
+      <section id="vendaAparelhosSection" class="card" style="display:none;" aria-label="Vendas de aparelhos">
+        <div class="sub-tabs-container" role="tablist" aria-label="Abas de vendas">
+          <button class="sub-tab-btn active" id="btnSubNovaVenda"
+            role="tab" aria-selected="true"  aria-controls="subTabNovaVenda"
+            onclick="switchSubVendaTab('nova')">📱 Nova Venda</button>
+          <button class="sub-tab-btn" id="btnSubDisponiveis"
+            role="tab" aria-selected="false" aria-controls="subTabDisponiveis"
+            onclick="switchSubVendaTab('disponiveis')">📦 Disponíveis</button>
+          <button class="sub-tab-btn" id="btnSubVendasAndamento"
+            role="tab" aria-selected="false" aria-controls="subTabVendasAndamento"
+            onclick="switchSubVendaTab('vendas_andamento')">⏳ Pag. Pendentes</button>
+          <button class="sub-tab-btn" id="btnSubFinalizados"
+            role="tab" aria-selected="false" aria-controls="subTabFinalizados"
+            onclick="switchSubVendaTab('finalizados')">📊 Vendas Realizadas</button>
+        </div>
+
+        <!-- Aba: Nova Venda -->
+        <div id="subTabNovaVenda" role="tabpanel" aria-labelledby="btnSubNovaVenda">
+          <h2>📱 Cadastro de Aparelhos para Venda</h2>
+          <div class="inventario-wrapper">
+            <h3>➕ Adicionar novo aparelho ao inventário</h3>
+
+            <label class="field-group" for="modelo">
+              <span>Modelo *</span>
+              <input type="text" id="modelo" placeholder="Ex: iPhone 12">
+            </label>
+
+            <label class="field-group" for="valorVenda">
+              <span>Valor de venda sugerido (R$) *</span>
+              <input type="number" id="valorVenda" placeholder="0,00" min="0" step="0.01">
+            </label>
+
+            <label class="field-group" for="condicaoAparelho">
+              <span>Condição</span>
+              <select id="condicaoAparelho">
+                <option value="Novo">Novo</option>
+                <option value="Usado - Ótimo">Usado - Ótimo</option>
+                <option value="Usado - Bom">Usado - Bom</option>
+                <option value="Com defeito leve">Com defeito leve</option>
+              </select>
+            </label>
+
+            <label class="field-group" for="acessoriosInclusos">
+              <span>Acessórios inclusos</span>
+              <input type="text" id="acessoriosInclusos" placeholder="Ex: Carregador, Caixa">
+            </label>
+
+            <div class="small-input-group">
+              <div class="field-group">
+                <label for="valorCompra">Valor de compra (R$)</label>
+                <input type="number" id="valorCompra" placeholder="0,00" step="0.01" min="0">
+              </div>
+              <div class="field-group">
+                <label>Origem Compra</label>
+                <select id="origemCompraAparelho">
+                  <option value="capital">💰 Capital</option>
+                  <option value="fornecedor">🏭 Fornecedor</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="small-input-group">
+              <div class="field-group">
+                <label for="valorPecaUtilizada">Custo peça (R$)</label>
+                <input type="number" id="valorPecaUtilizada" placeholder="0,00" step="0.01" min="0">
+              </div>
+              <div class="field-group">
+                <label>Origem Peça</label>
+                <select id="origemPecaAparelho">
+                  <option value="capital">💰 Capital</option>
+                  <option value="fornecedor">🏭 Fornecedor</option>
+                </select>
+              </div>
+            </div>
+
+            <label class="field-group" for="pecaUtilizada">
+              <span>Peça utilizada (opcional)</span>
+              <input type="text" id="pecaUtilizada" placeholder="🔧 Ex: Tela">
+            </label>
+
+            <div id="fornecedorVendaDiv" style="display:none;">
+              <label class="field-group" for="nomeFornecedorVenda">
+                <span>Nome do Fornecedor</span>
+                <input type="text" id="nomeFornecedorVenda" placeholder="Nome do Fornecedor">
+              </label>
+            </div>
+
+            <button class="salvar" onclick="salvarAparelhoDetalhado()">📦 Adicionar ao Estoque</button>
+          </div>
+        </div>
+
+        <!-- Aba: Disponíveis -->
+        <div id="subTabDisponiveis" style="display:none;" role="tabpanel" aria-labelledby="btnSubDisponiveis">
+          <div class="sub-section-title" style="margin-top:0;">📦 Aparelhos Disponíveis (Estoque)</div>
+          <div id="aparelhosLista" aria-live="polite"></div>
+        </div>
+
+        <!-- Aba: Vendas em Andamento -->
+        <div id="subTabVendasAndamento" style="display:none;" role="tabpanel" aria-labelledby="btnSubVendasAndamento">
+          <div class="sub-section-title" style="margin-top:0;">⏳ Vendas Parceladas / Pagamentos Pendentes</div>
+          <div id="vendasAndamentoLista" aria-live="polite"></div>
+        </div>
+
+        <!-- Aba: Vendas Finalizadas -->
+        <div id="subTabFinalizados" style="display:none;" role="tabpanel" aria-labelledby="btnSubFinalizados">
+          <div class="sub-section-title" style="margin-top:0;">📊 Vendas Realizadas</div>
+          <div id="vendasRealizadasLista" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <!-- DASHBOARD -->
+      <section id="dashboardSection" class="card" style="display:none;" aria-label="Dashboard e relatórios">
+        <h2>📊 Dashboard &amp; Relatórios</h2>
+
+        <div class="sub-tabs-container" role="tablist" aria-label="Abas do dashboard">
+          <button class="sub-tab-btn active" id="btnSubDashGeral"
+            role="tab" aria-selected="true"  aria-controls="subTabDashGeral"
+            onclick="switchSubDashTab('geral')">📊 Geral</button>
+          <button class="sub-tab-btn" id="btnSubDashMensal"
+            role="tab" aria-selected="false" aria-controls="subTabDashMensal"
+            onclick="switchSubDashTab('mensal')">📅 Mensal</button>
+          <button class="sub-tab-btn" id="btnSubDashHistoricoOs"
+            role="tab" aria-selected="false" aria-controls="subTabDashHistoricoOs"
+            onclick="switchSubDashTab('historico_os')">🗂️ Hist. OS</button>
+          <button class="sub-tab-btn" id="btnSubDashHistoricoVendas"
+            role="tab" aria-selected="false" aria-controls="subTabDashHistoricoVendas"
+            onclick="switchSubDashTab('historico_vendas')">💰 Hist. Vendas</button>
+        </div>
+
+        <!-- Sub-aba: Geral -->
+        <div id="subTabDashGeral" role="tabpanel" aria-labelledby="btnSubDashGeral">
+          <div class="sub-section-title" style="margin-top:0;">📌 Resumo Geral Financeiro</div>
+          <div id="resumoFinanceiro" aria-live="polite"></div>
+
+          <div class="sub-section-title">📊 Lucro Líquido Consolidado</div>
+          <div id="relatoriosLista" aria-live="polite"></div>
+        </div>
+
+        <!-- Sub-aba: Mensal -->
+        <div id="subTabDashMensal" style="display:none;" role="tabpanel" aria-labelledby="btnSubDashMensal">
+          <div class="sub-section-title" style="margin-top:0;">💰 Fluxo de Caixa</div>
+          <div class="card" style="padding: 20px; background: rgba(26, 31, 46, 0.4); border: 1px solid var(--border-color);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <button class="kpi-btn" style="max-width: 50px;" onclick="navegarMes(-1)">◀</button>
+              <h3 id="nomeMesNavegacao" style="margin: 0; font-size: 18px; color: var(--accent-indigo-light);">Mês/Ano</h3>
+              <button class="kpi-btn" style="max-width: 50px;" onclick="navegarMes(1)">▶</button>
+            </div>
+            <div id="detalheMesNavegacao" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <!-- Sub-aba: Histórico de OS -->
+        <div id="subTabDashHistoricoOs" style="display:none;" role="tabpanel" aria-labelledby="btnSubDashHistoricoOs">
+          <div class="sub-section-title" style="margin-top:0;">🗂️ Histórico de OS Finalizadas</div>
+          <div class="card" style="padding: 20px; background: rgba(26, 31, 46, 0.4); border: 1px solid var(--border-color);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <button class="kpi-btn" style="max-width: 50px;" onclick="navegarMesHistoricoOs(-1)">◀</button>
+              <h3 id="nomeHistoricoOsMes" style="margin: 0; font-size: 18px; color: var(--accent-indigo-light);">Mês/Ano</h3>
+              <button class="kpi-btn" style="max-width: 50px;" onclick="navegarMesHistoricoOs(1)">▶</button>
+            </div>
+            <div id="historicoOsResumo" style="margin-bottom: 16px;" aria-live="polite"></div>
+            <div id="historicoOsLista" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <!-- Sub-aba: Histórico de Vendas -->
+        <div id="subTabDashHistoricoVendas" style="display:none;" role="tabpanel" aria-labelledby="btnSubDashHistoricoVendas">
+          <div class="sub-section-title" style="margin-top:0;">💰 Histórico de Vendas Realizadas</div>
+          <div class="card" style="padding: 20px; background: rgba(26, 31, 46, 0.4); border: 1px solid var(--border-color);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <button class="kpi-btn" style="max-width: 50px;" onclick="navegarMesHistoricoVendas(-1)">◀</button>
+              <h3 id="nomeHistoricoVendasMes" style="margin: 0; font-size: 18px; color: var(--accent-indigo-light);">Mês/Ano</h3>
+              <button class="kpi-btn" style="max-width: 50px;" onclick="navegarMesHistoricoVendas(1)">▶</button>
+            </div>
+            <div id="historicoVendasResumo" style="margin-bottom: 16px;" aria-live="polite"></div>
+            <div id="historicoVendasLista" aria-live="polite"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GARANTIA -->
+      <section id="pendentesFinalizadosSection" class="card" style="display:none;" aria-label="Histórico de Garantia">
+        <h2>🛡️ Histórico de Garantia</h2>
+
+        <div id="garantiaLista" aria-live="polite"></div>
+
+        <!-- Containers ocultos mantidos para compatibilidade com outras abas -->
+        <div id="pendentesConsertosLista" style="display:none;"></div>
+        <div id="finalizadosConsertosLista" style="display:none;"></div>
+        <div id="pendentesVendasLista" style="display:none;"></div>
+        <div id="finalizadasVendasLista" style="display:none;"></div>
+        <!-- Sub-tabs ocultos mantidos para compatibilidade -->
+        <div id="subTabPainelAndamento" style="display:none;"></div>
+        <div id="subTabPainelFinalizados" style="display:none;"></div>
+        <div id="subTabPainelVendasPend" style="display:none;"></div>
+        <div id="subTabPainelVendasFin" style="display:none;"></div>
+        <button id="btnSubPainelAndamento" style="display:none;"></button>
+        <button id="btnSubPainelFinalizados" style="display:none;"></button>
+        <button id="btnSubPainelVendasPend" style="display:none;"></button>
+        <button id="btnSubPainelVendasFin" style="display:none;"></button>
+      </section>
+
+      <!-- EXTRATO -->
+      <section id="extratoSection" class="card" style="display:none;" aria-label="Extrato detalhado">
+        <h2>📜 Extrato Detalhado</h2>
+        <div id="extratoLista" style="max-height:450px; overflow-y:auto;" aria-live="polite"></div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- NAVEGAÇÃO INFERIOR -->
+<nav class="bottom-nav" aria-label="Navegação principal">
+  <button class="nav-item active" onclick="showSection('consertos')"           aria-label="Consertos"><span>🔧</span><span>Consertos</span></button>
+  <button class="nav-item"        onclick="showSection('vendaAparelhos')"      aria-label="Vendas">   <span>📱</span><span>Vendas</span></button>
+  <button class="nav-item"        onclick="showSection('dashboard')"           aria-label="Dashboard"><span>📊</span><span>Dashboard</span></button>
+  <button class="nav-item"        onclick="showSection('pendentesFinalizados')" aria-label="Garantia">  <span>🛡️</span><span>Garantia</span></button>
+  <button class="nav-item"        onclick="showSection('extrato')"             aria-label="Extrato">  <span>📜</span><span>Extrato</span></button>
+</nav>
+
+<!-- ===== MODAIS ===== -->
+
+<!-- Modal: Editar Capital -->
+<div id="editarCapitalModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloEditarCapital">
+  <div class="modal-content">
+    <h3 id="tituloEditarCapital">✏️ Editar Capital</h3>
+    <label class="field-group" for="novoCapital">
+      <span>Novo valor (R$)</span>
+      <input type="number" id="novoCapital" placeholder="0,00" min="0" step="0.01">
+    </label>
+    <label class="field-group" for="motivoEdicao">
+      <span>Motivo</span>
+      <input type="text" id="motivoEdicao" placeholder="Ex: Ajuste de inventário">
+    </label>
+    <div class="modal-footer-btns">
+      <button onclick="confirmarEditarCapital()">Salvar</button>
+      <button onclick="fecharEditarCapitalModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Adicionar Capital -->
+<div id="capitalModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloAdicionarCapital">
+  <div class="modal-content">
+    <h3 id="tituloAdicionarCapital">➕ Adicionar Capital</h3>
+    <label class="field-group" for="valorCapital">
+      <span>Valor (R$)</span>
+      <input type="number" id="valorCapital" placeholder="0,00" min="0" step="0.01">
+    </label>
+    <label class="field-group" for="descricaoCapital">
+      <span>Descrição</span>
+      <input type="text" id="descricaoCapital" placeholder="Ex: Aporte inicial">
+    </label>
+    <div class="modal-footer-btns">
+      <button onclick="confirmarAdicionarCapital()">Adicionar</button>
+      <button onclick="fecharModalCapital()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Finalizar Serviço -->
+<div id="finalizarModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloFinalizarServico">
+  <div class="modal-content">
+    <h3 id="tituloFinalizarServico">✅ Finalizar Serviço</h3>
+    <p id="finalizarInfo" style="font-size:13px; color:var(--text-muted); margin-bottom:10px;"></p>
+    <label class="field-group" for="valorRecebido">
+      <span>Valor recebido agora (R$)</span>
+      <input type="number" id="valorRecebido" placeholder="0,00" min="0" step="0.01">
+    </label>
+    <label class="field-group" for="formaPagamento">
+      <span>Forma de pagamento</span>
+      <select id="formaPagamento">
+        <option>Dinheiro</option>
+        <option>PIX</option>
+        <option>Cartão</option>
+      </select>
+    </label>
+    <div class="modal-footer-btns">
+      <button onclick="confirmarFinalizar()">Finalizar</button>
+      <button onclick="fecharFinalizarModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Detalhes da OS -->
+<div id="detalheOsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="detalheTitulo">
+  <div class="modal-content">
+    <span class="close-modal" onclick="fecharDetalheModal()" aria-label="Fechar">&times;</span>
+    <h3 id="detalheTitulo">Detalhes</h3>
+    <div id="detalheConteudo" style="margin-top:15px; line-height:1.6;"></div>
+  </div>
+</div>
+
+<!-- Modal: Recibo -->
+<div id="reciboModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloRecibo">
+  <div class="modal-content">
+    <span class="close-modal" onclick="fecharReciboModal()" aria-label="Fechar">&times;</span>
+    <h2 id="tituloRecibo">🧾 RECIBO</h2>
+    <div id="reciboConteudo" class="recibo" style="margin:15px 0;"></div>
+    <button onclick="imprimirRecibo()"
+      style="width:100%; background:var(--accent-blue); padding:12px; border:none; border-radius:12px; color:#02040a; font-weight:700; cursor:pointer;">
+      🖨️ Imprimir Recibo
+    </button>
+  </div>
+</div>
+
+<!-- Modal: Backup Completo -->
+<div id="backupCompletoModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloBackup">
+  <div class="modal-content" style="max-width:500px;">
+    <span class="close-modal" onclick="fecharBackupModal()" aria-label="Fechar">&times;</span>
+    <h3 id="tituloBackup">💾 Central de Backup Inviolável</h3>
+    <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">
+      Se o arquivo JSON não baixar ou falhar no celular, use a criptografia abaixo:
+    </p>
+
+    <button onclick="gerarBackupCopiaCola()"
+      style="width:100%; background:var(--accent-purple); color:#fff; padding:10px; border:none; border-radius:10px; font-weight:700; cursor:pointer; margin-bottom:10px;">
+      ✨ 1. Gerar Código Texto (Copia e Cola)
+    </button>
+
+    <textarea id="txtCodigoBackup" rows="5"
+      style="font-family:monospace; font-size:11px; display:none;"
+      readonly placeholder="O código aparecerá aqui..." aria-label="Código de backup gerado"></textarea>
+
+    <button id="btnCopiarCodigo" onclick="copiarCodigoTexto()"
+      style="width:100%; background:#242f47; color:#fff; padding:8px; border:none; border-radius:10px; font-weight:700; cursor:pointer; margin-bottom:20px; display:none;">
+      📋 Copiar Código Gerado
+    </button>
+
+    <hr style="border:0; border-top:1px solid var(--border-color); margin-bottom:15px;">
+
+    <h4>📂 Restaurar por Código</h4>
+    <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">
+      Cole o código guardado para restaurar tudo instantaneamente:
+    </p>
+    <label class="field-group" for="txtRestaurarCodigo">
+      <span>Código criptografado</span>
+      <textarea id="txtRestaurarCodigo" rows="3" placeholder="Cole o código criptografado aqui..."></textarea>
+    </label>
+    <button onclick="confirmarRestaurarTexto()"
+      style="width:100%; background:var(--accent-green); color:#02040a; padding:12px; border:none; border-radius:12px; font-weight:700; cursor:pointer;">
+      ⚡ Restaurar via Código
+    </button>
+  </div>
+</div>
+
+<!-- Modal: Origem da Venda -->
+<div id="vendaOrigemModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloVendaOrigem">
+  <div class="modal-content">
+    <span class="close-modal" onclick="fecharVendaOrigemModal()" aria-label="Fechar">&times;</span>
+    <h3 id="tituloVendaOrigem">📍 Local de Venda</h3>
+
+    <label class="field-group" for="origemVenda">
+      <span>Origem</span>
+      <select id="origemVenda">
+        <option value="">Selecione a Origem</option>
+        <option value="Facebook">📘 Facebook</option>
+        <option value="OLX">🛒 OLX</option>
+        <option value="WhatsApp">💬 WhatsApp</option>
+        <option value="Instagram">📸 Instagram</option>
+        <option value="Assistência">🏪 Loja Física</option>
+      </select>
+    </label>
+
+    <div style="margin:10px 0 15px;">
+      <label style="display:flex; align-items:center; gap:8px; font-size:14px; cursor:pointer;">
+        <input type="checkbox" id="vendaParceladaCheckbox" style="width:auto; margin:0;">
+        Venda parcelada (com entrada)
+      </label>
+    </div>
+
+    <div id="camposParcelamentoVenda" style="display:none; border-top:1px solid var(--border-color); padding-top:15px;">
+      <div class="small-input-group">
+        <div class="field-group">
+          <label for="vendaValorEntrada">Entrada (R$)</label>
+          <input type="number" id="vendaValorEntrada" placeholder="0,00" step="0.01" min="0">
+        </div>
+        <div class="field-group">
+          <label for="vendaDataEntradaPagamento">Data Pagamento Entrada</label>
+          <input type="date" id="vendaDataEntradaPagamento">
+        </div>
+      </div>
+      <div class="small-input-group">
+        <div class="field-group">
+          <label for="vendaValorParcela">Restante (R$)</label>
+          <input type="number" id="vendaValorParcela" placeholder="0,00" step="0.01" min="0">
+        </div>
+        <div class="field-group">
+          <label for="vendaDataRestantePagamento">Vencimento do Restante</label>
+          <input type="date" id="vendaDataRestantePagamento">
+        </div>
+      </div>
+
+      <div class="aviso-entrada" style="margin-top:12px;">
+        <p>💡 O aparelho será pago COM O VALOR DA ENTRADA. O custo será reembolsado e o lucro calculado automaticamente.</p>
+      </div>
+    </div>
+
+    <div class="modal-footer-btns" style="margin-top:20px;">
+      <button onclick="confirmarVendaComOrigem()" style="background:#30d5c8; color:#02040a;">Confirmar Venda</button>
+      <button onclick="fecharVendaOrigemModal()" style="background:var(--accent-red);">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Editar Aparelho -->
+<div id="editarAparelhoModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloEditarAparelho">
+  <div class="modal-content">
+    <span class="close-modal" onclick="fecharEditarAparelhoModal()" aria-label="Fechar">&times;</span>
+    <h3 id="tituloEditarAparelho">✏️ Editar Aparelho</h3>
+
+    <label class="field-group" for="editModelo">
+      <span>Modelo</span>
+      <input type="text" id="editModelo">
+    </label>
+    <div class="small-input-group">
+      <div class="field-group">
+        <label for="editValorCompra">Valor de compra (R$)</label>
+        <input type="number" id="editValorCompra" min="0" step="0.01">
+      </div>
+      <div class="field-group">
+        <label>Origem Compra</label>
+        <select id="editOrigemCompraAparelho">
+          <option value="capital">💰 Capital</option>
+          <option value="fornecedor">🏭 Fornecedor</option>
+        </select>
+      </div>
+    </div>
+
+    <label class="field-group" for="editValorVenda">
+      <span>Valor de venda (R$)</span>
+      <input type="number" id="editValorVenda" min="0" step="0.01">
+    </label>
+
+    <div class="small-input-group">
+      <div class="field-group">
+        <label for="editValorPecaUtilizada">Custo peça (R$)</label>
+        <input type="number" id="editValorPecaUtilizada" min="0" step="0.01">
+      </div>
+      <div class="field-group">
+        <label>Origem Peça</label>
+        <select id="editOrigemPecaAparelho">
+          <option value="capital">💰 Capital</option>
+          <option value="fornecedor">🏭 Fornecedor</option>
+        </select>
+      </div>
+    </div>
+
+    <label class="field-group" for="editPecaUtilizada">
+      <span>Peça utilizada</span>
+      <input type="text" id="editPecaUtilizada">
+    </label>
+
+    <label class="field-group" for="editCondicao">
+      <span>Condição</span>
+      <select id="editCondicao">
+        <option>Novo</option>
+        <option>Usado - Ótimo</option>
+        <option>Usado - Bom</option>
+        <option>Com defeito leve</option>
+      </select>
+    </label>
+    <label class="field-group" for="editAcessorios">
+      <span>Acessórios</span>
+      <input type="text" id="editAcessorios">
+    </label>
+
+    <div class="modal-footer-btns">
+      <button onclick="confirmarEditarAparelho()">Salvar</button>
+      <button onclick="fecharEditarAparelhoModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Finalizar Venda Parcelada -->
+<div id="finalizarVendaModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloFinalizarVenda">
+  <div class="modal-content">
+    <h3 id="tituloFinalizarVenda">💰 Finalizar Venda Parcelada</h3>
+    <p id="vendaParcelaInfo" style="font-size:14px; color:var(--text-muted); margin-bottom:12px; line-height:1.5;"></p>
+    <label class="field-group" for="vendaValorRecebido">
+      <span>Valor recebido agora (R$)</span>
+      <input type="number" id="vendaValorRecebido" placeholder="0,00" min="0" step="0.01">
+    </label>
+    <div class="modal-footer-btns">
+      <button onclick="confirmarFinalizarVendaParcela()">Registrar Pagamento</button>
+      <button onclick="fecharFinalizarVendaModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Editar OS -->
+<div id="editarOsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloEditarOs">
+  <div class="modal-content">
+    <span class="close-modal" onclick="fecharEditarOsModal()" aria-label="Fechar">&times;</span>
+    <h3 id="tituloEditarOs">✏️ Editar OS</h3>
+
+    <label class="field-group" for="editCliente">
+      <span>Cliente</span>
+      <input type="text" id="editCliente" placeholder="Cliente">
+    </label>
+    <label class="field-group" for="editModeloOs">
+      <span>Modelo</span>
+      <input type="text" id="editModeloOs" placeholder="Modelo">
+    </label>
+    <label class="field-group" for="editDefeito">
+      <span>Defeito</span>
+      <textarea id="editDefeito" rows="2" placeholder="Defeito"></textarea>
+    </label>
+    <label class="field-group" for="editValorTotal">
+      <span>Valor total (R$)</span>
+      <input type="number" id="editValorTotal" placeholder="0,00" min="0" step="0.01">
+    </label>
+    <label class="field-group" for="editValorPecaOs">
+      <span>Valor peça (R$)</span>
+      <input type="number" id="editValorPecaOs" placeholder="0,00" min="0" step="0.01">
+    </label>
+    <label class="field-group" for="editTipoPecaOs">
+      <span>Tipo de peça</span>
+      <input type="text" id="editTipoPecaOs" placeholder="Ex: Tela/LCD, Bateria, Conector, etc.">
+    </label>
+    <label class="field-group" for="editTempoGarantia">
+      <span>🛡️ Tempo de Garantia</span>
+      <select id="editTempoGarantia">
+        <option value="0">Sem garantia</option>
+        <option value="1">1 mês</option>
+        <option value="2">2 meses</option>
+        <option value="3">3 meses</option>
+      </select>
+    </label>
+    <div class="small-input-group">
+      <div class="field-group">
+        <label for="editValorEntradaOs">Valor entrada (R$)</label>
+        <input type="number" id="editValorEntradaOs" placeholder="0,00" min="0" step="0.01">
+      </div>
+      <div class="field-group">
+        <label for="editDataEntradaPag">Data Entrada Pag.</label>
+        <input type="date" id="editDataEntradaPag">
+      </div>
+    </div>
+    <div class="small-input-group">
+      <div class="field-group">
+        <label for="editValorParcelaRestante">Parcela restante (R$)</label>
+        <input type="number" id="editValorParcelaRestante" placeholder="0,00" min="0" step="0.01">
+      </div>
+      <div class="field-group">
+        <label for="editDataRestantePag">Data Restante Pag.</label>
+        <input type="date" id="editDataRestantePag">
+      </div>
+    </div>
+    <div class="modal-footer-btns">
+      <button onclick="confirmarEditarOs()">💾 Salvar Alterações</button>
+      <button onclick="fecharEditarOsModal()" style="background:var(--accent-red);">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Editar Venda Finalizada -->
+<div id="editarVendaFinalizadaModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloEditarVendaFin">
+  <div class="modal-content">
+    <span class="close-modal" onclick="fecharEditarVendaFinalizadaModal()" aria-label="Fechar">&times;</span>
+    <h3 id="tituloEditarVendaFin">✏️ Editar Venda Finalizada</h3>
+
+    <label class="field-group" for="editVendaModelo">
+      <span>Modelo</span>
+      <input type="text" id="editVendaModelo" placeholder="Modelo">
+    </label>
+    <label class="field-group" for="editVendaValor">
+      <span>Valor da venda (R$)</span>
+      <input type="number" id="editVendaValor" placeholder="0,00" min="0" step="0.01">
+    </label>
+    <label class="field-group" for="editVendaLucro">
+      <span>Lucro (R$)</span>
+      <input type="number" id="editVendaLucro" placeholder="0,00" step="0.01">
+    </label>
+    <label class="field-group" for="editVendaOrigem">
+      <span>Origem</span>
+      <select id="editVendaOrigem">
+        <option>Facebook</option>
+        <option>OLX</option>
+        <option>WhatsApp</option>
+        <option>Instagram</option>
+        <option>Assistência</option>
+      </select>
+    </label>
+    <div class="modal-footer-btns">
+      <button onclick="confirmarEditarVendaFinalizada()">💾 Salvar</button>
+      <button onclick="fecharEditarVendaFinalizadaModal()" style="background:var(--accent-red);">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Editar Venda Pendente (Parcelada) -->
+<div id="editarVendaPendenteModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloEditarVendaPend">
+  <div class="modal-content">
+    <span class="close-modal" onclick="fecharEditarVendaPendenteModal()" aria-label="Fechar">&times;</span>
+    <h3 id="tituloEditarVendaPend">✏️ Editar Venda Pendente</h3>
+
+    <label class="field-group" for="editVendaPendModelo">
+      <span>Modelo</span>
+      <input type="text" id="editVendaPendModelo">
+    </label>
+    <label class="field-group" for="editVendaPendValorTotal">
+      <span>Valor Total (R$)</span>
+      <input type="number" id="editVendaPendValorTotal" min="0" step="0.01">
+    </label>
+    <div class="small-input-group">
+      <div class="field-group">
+        <label for="editVendaPendValorEntrada">Valor Entrada (R$)</label>
+        <input type="number" id="editVendaPendValorEntrada" min="0" step="0.01">
+      </div>
+      <div class="field-group">
+        <label for="editVendaPendDataEntrada">Data Entrada</label>
+        <input type="date" id="editVendaPendDataEntrada">
+      </div>
+    </div>
+    <div class="small-input-group">
+      <div class="field-group">
+        <label for="editVendaPendValorParcela">Restante (R$)</label>
+        <input type="number" id="editVendaPendValorParcela" min="0" step="0.01">
+      </div>
+      <div class="field-group">
+        <label for="editVendaPendDataParcela">Vencimento</label>
+        <input type="date" id="editVendaPendDataParcela">
+      </div>
+    </div>
+    <div class="modal-footer-btns">
+      <button onclick="confirmarEditarVendaPendente()">💾 Salvar</button>
+      <button onclick="fecharEditarVendaPendenteModal()" style="background:var(--accent-red);">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+  'use strict';
+
+  /* ─────────────────────────────────────────
+     ESTADO GLOBAL
+  ───────────────────────────────────────── */
+  let consertos            = [];
+  let consertosFinalizados = [];
+  let aparelhos            = [];
+  let vendasRealizadas     = [];
+  let comprasPecas         = [];
+  let extrato              = [];
+  let estoquePecas         = [];
+  let capital              = 0;
+  let lucroTotal           = 0;
+  let historicoMensal      = [];
+  let ultimoMesFechado     = null; // Formato "MM/YYYY"
+  let mesNavegacaoAtual    = null; // Mês sendo visualizado no navegador
+
+  // IDs temporários para operações de edição/finalização
+  let consertoFinalizandoId    = null;
+  let vendaPendenteId          = null;
+  let editAparelhoId           = null;
+  let vendaParcelaFinalizandoId = null;
+  let editandoOsId             = null;
+  let editandoFinalizada       = false;
+  let editVendaId              = null;
+
+  /* ─────────────────────────────────────────
+     UTILITÁRIOS
+  ───────────────────────────────────────── */
+
+  /** Retorna o elemento pelo ID (atalho). */
+  const el = id => document.getElementById(id);
+
+  /** Formata um número como moeda BRL. */
+  const brl = v => `R$ ${Number(v).toFixed(2)}`;
+
+  /**
+   * Verifica se uma OS/venda está com pagamento atrasado.
+   * @param {string} dataVencimento - Data no formato ISO (YYYY-MM-DD).
+   * @param {number} saldoRestante  - Valor ainda em aberto.
+   * @returns {boolean}
+   */
+  function verificarAtraso(dataVencimento, saldoRestante) {
+    if (!dataVencimento || saldoRestante <= 0) return false;
+    const hoje      = new Date(); hoje.setHours(0, 0, 0, 0);
+    const vencimento = new Date(dataVencimento); vencimento.setHours(0, 0, 0, 0);
+    return vencimento < hoje;
+  }
+
+  /* ─────────────────────────────────────────
+     INICIALIZAÇÃO DE EVENTOS (DOMContentLoaded)
+  ───────────────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', () => {
+    // Exibir/ocultar campo de fornecedor e aviso de entrada (conserto)
+    document.querySelectorAll('input[name="origemCustoPeca"]').forEach(radio => {
+      radio.addEventListener('change', function () {
+        const fornecedorDiv  = el('fornecedorDiv');
+        const avisoEntradaDiv = el('avisoEntradaDiv');
+        fornecedorDiv.style.display  = this.value === 'fornecedor' ? 'block' : 'none';
+        avisoEntradaDiv.style.display = this.value === 'entrada'   ? 'block' : 'none';
+        if (this.value !== 'fornecedor') el('nomeFornecedor').value = '';
+      });
+    });
+
+    // Exibir/ocultar campo de fornecedor (venda)
+    document.querySelectorAll('input[name="origemCustoVenda"]').forEach(radio => {
+      radio.addEventListener('change', function () {
+        const fornecedorDiv = el('fornecedorVendaDiv');
+        fornecedorDiv.style.display = this.value === 'fornecedor' ? 'block' : 'none';
+        if (this.value !== 'fornecedor') el('nomeFornecedorVenda').value = '';
+      });
+    });
+
+    // Mostrar/ocultar campos de parcelamento na venda
+    const checkParcelado      = el('vendaParceladaCheckbox');
+    const camposParcelamento  = el('camposParcelamentoVenda');
+    if (checkParcelado) {
+      checkParcelado.addEventListener('change', function () {
+        camposParcelamento.style.display = this.checked ? 'block' : 'none';
+      });
+    }
+  });
+
+  /* ─────────────────────────────────────────
+     NAVEGAÇÃO ENTRE SEÇÕES
+  ───────────────────────────────────────── */
+
+  /** Mapa de seções para índice do nav-item correspondente. */
+  const SECTION_NAV_INDEX = {
+    consertos: 0, vendaAparelhos: 1, dashboard: 2, pendentesFinalizados: 3, extrato: 4
+  };
+
+  const ALL_SECTIONS = Object.keys(SECTION_NAV_INDEX);
+
+  function showSection(section) {
+    // Ocultar todas as seções
+    ALL_SECTIONS.forEach(s => { el(s + 'Section').style.display = 'none'; });
+
+    // Exibir a seção solicitada
+    el(section + 'Section').style.display = 'block';
+
+    // Atualizar estado ativo na navegação
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(n => n.classList.remove('active'));
+    const idx = SECTION_NAV_INDEX[section];
+    if (navItems[idx]) navItems[idx].classList.add('active');
+
+    // Ações específicas por seção
+    if (section === 'extrato')               atualizarExtratoDetalhado();
+    if (section === 'dashboard')             { switchSubDashTab('geral'); }
+    if (section === 'pendentesFinalizados')  { atualizarPendentesFinalizados(); switchSubPainelTab('andamento'); }
+    if (section === 'vendaAparelhos')        switchSubVendaTab('nova');
+    if (section === 'consertos')             switchSubConsertoTab('nova');
+  }
+
+  /* ─────────────────────────────────────────
+     SUB-TABS (helper genérico)
+  ───────────────────────────────────────── */
+
+  /**
+   * Alterna visibilidade de sub-tabs de forma genérica.
+   * @param {Object} tabMap  - { target: { tab: 'idDoPanel', btn: 'idDoBotao', onShow?: fn } }
+   * @param {string} target  - Chave do tab a ser exibido.
+   */
+  function _switchSubTab(tabMap, target) {
+    Object.values(tabMap).forEach(({ tab, btn }) => {
+      el(tab).style.display = 'none';
+      el(btn).classList.remove('active');
+    });
+    const selected = tabMap[target];
+    if (!selected) return;
+    el(selected.tab).style.display = 'block';
+    el(selected.btn).classList.add('active');
+    if (typeof selected.onShow === 'function') selected.onShow();
+  }
+
+  function switchSubPainelTab(target) {
+    _switchSubTab({
+      andamento:   { tab: 'subTabPainelAndamento',   btn: 'btnSubPainelAndamento' },
+      finalizados: { tab: 'subTabPainelFinalizados',  btn: 'btnSubPainelFinalizados' },
+      vendas_pend: { tab: 'subTabPainelVendasPend',   btn: 'btnSubPainelVendasPend' },
+      vendas_fin:  { tab: 'subTabPainelVendasFin',    btn: 'btnSubPainelVendasFin' },
+    }, target);
+  }
+
+  function switchSubConsertoTab(target) {
+    _switchSubTab({
+      nova:        { tab: 'subTabNovaOs',              btn: 'btnSubNovaOs' },
+      andamento:   { tab: 'subTabAndamento',           btn: 'btnSubAndamento',           onShow: atualizarConsertosLista },
+      finalizados: { tab: 'subTabFinalizadosConserto', btn: 'btnSubFinalizadosConserto',  onShow: atualizarConsertosFinalizados },
+    }, target);
+  }
+
+  function switchSubVendaTab(target) {
+    _switchSubTab({
+      nova:            { tab: 'subTabNovaVenda',       btn: 'btnSubNovaVenda' },
+      disponiveis:     { tab: 'subTabDisponiveis',     btn: 'btnSubDisponiveis',     onShow: atualizarAparelhosLista },
+      vendas_andamento:{ tab: 'subTabVendasAndamento', btn: 'btnSubVendasAndamento', onShow: atualizarVendasAndamentoLista },
+      finalizados:     { tab: 'subTabFinalizados',     btn: 'btnSubFinalizados',     onShow: atualizarVendasRealizadas },
+    }, target);
+  }
+
+  function switchSubDashTab(target) {
+    _switchSubTab({
+      geral:           { tab: 'subTabDashGeral',           btn: 'btnSubDashGeral',           onShow: () => { atualizarResumo(); atualizarRelatorios(); } },
+      mensal:          { tab: 'subTabDashMensal',          btn: 'btnSubDashMensal',          onShow: () => { atualizarNavegadorMensal(); } },
+      historico_os:    { tab: 'subTabDashHistoricoOs',     btn: 'btnSubDashHistoricoOs',     onShow: () => { atualizarHistoricoOs(); } },
+      historico_vendas:{ tab: 'subTabDashHistoricoVendas', btn: 'btnSubDashHistoricoVendas', onShow: () => { atualizarHistoricoVendas(); } },
+    }, target);
+  }
+
+  /* ─────────────────────────────────────────
+     PERSISTÊNCIA (localStorage)
+  ───────────────────────────────────────── */
+
+  const STORAGE_KEY = 'meuCaixaPRO';
+
+  /** Serializa o estado completo e salva no localStorage. */
+  function salvarDados() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      consertos, consertosFinalizados, aparelhos, vendasRealizadas,
+      comprasPecas, capital, lucroTotal, extrato, estoquePecas,
+      historicoMensal, ultimoMesFechado
+    }));
+  }
+
+  /** Carrega o estado do localStorage e atualiza a UI. */
+  function carregarDados() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const p = JSON.parse(raw);
+      // Garantir que a verificação de fechamento ocorra após carregar os dados
+      // mas antes de atualizar a UI.
+      consertos            = p.consertos            || [];
+      consertosFinalizados = p.consertosFinalizados || [];
+      aparelhos            = p.aparelhos            || [];
+      vendasRealizadas     = p.vendasRealizadas     || [];
+      comprasPecas         = p.comprasPecas         || [];
+      capital              = p.capital              || 0;
+      lucroTotal           = p.lucroTotal           || 0;
+      extrato              = p.extrato              || [];
+      estoquePecas         = p.estoquePecas         || [];
+      historicoMensal      = p.historicoMensal      || [];
+      ultimoMesFechado     = p.ultimoMesFechado     || null;
+      verificarFechamentoMensal();
+    } else {
+      inicializarExemplo();
+    }
+    atualizarDisplays();
+    atualizarTudo();
+  }
+
+  /** Popula dados de exemplo na primeira execução. */
+  function inicializarExemplo() {
+    extrato    = [];
+    capital    = 3500;
+    lucroTotal = 0;
+    adicionarExtrato('credito', 'Capital inicial (peças)', 3500);
+    salvarDados();
+  }
+
+  /* ─────────────────────────────────────────
+     BACKUP / RESTAURAÇÃO
+  ───────────────────────────────────────── */
+
+  function exportarDados() {
+    try {
+      const dataStr      = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas }, null, 2);
+      const blob         = new Blob([dataStr], { type: 'application/json;charset=utf-8' });
+      const dataAtual    = new Date().toISOString().split('T')[0];
+      const nomeArquivo  = `jefferson_cell_backup_${dataAtual}.json`;
+      const a            = document.createElement('a');
+      a.href             = URL.createObjectURL(blob);
+      a.download         = nomeArquivo;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+      el('backupCompletoModal').style.display = 'flex';
+      gerarBackupCopiaCola();
+    } catch {
+      alert('⚠️ O download direto falhou. Abrindo central de segurança em texto...');
+      el('backupCompletoModal').style.display = 'flex';
+      gerarBackupCopiaCola();
+    }
+  }
+
+  function gerarBackupCopiaCola() {
+    const dataStr   = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas });
+    const codificado = btoa(unescape(encodeURIComponent(dataStr)));
+    const txtEl      = el('txtCodigoBackup');
+    const btnEl      = el('btnCopiarCodigo');
+    txtEl.value          = codificado;
+    txtEl.style.display  = 'block';
+    btnEl.style.display  = 'block';
+  }
+
+  function copiarCodigoTexto() {
+    const copyText = el('txtCodigoBackup');
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(copyText.value);
+    alert('📋 Código de segurança copiado! Guarde-o em seu WhatsApp ou Bloco de Notas.');
+  }
+
+  function confirmarRestaurarTexto() {
+    const codigo = el('txtRestaurarCodigo').value.trim();
+    if (!codigo) { alert('Cole o código primeiro!'); return; }
+    try {
+      const decodificado = decodeURIComponent(escape(atob(codigo)));
+      restaurarBancoDadosIntegro(JSON.parse(decodificado));
+      fecharBackupModal();
+    } catch {
+      alert('❌ Código inválido ou corrompido! Verifique se copiou o texto inteiro.');
+    }
+  }
+
+  function restaurarBancoDadosIntegro(data) {
+    consertos            = data.consertos            || [];
+    consertosFinalizados = data.consertosFinalizados || [];
+    aparelhos            = data.aparelhos            || [];
+    vendasRealizadas     = data.vendasRealizadas     || [];
+    comprasPecas         = data.comprasPecas         || [];
+    capital              = data.capital              || 0;
+    lucroTotal           = data.lucroTotal           || 0;
+    extrato              = data.extrato              || [];
+    estoquePecas         = data.estoquePecas         || [];
+    salvarDados();
+    atualizarTudo();
+    alert('✅ Todos os dados da Jefferson Cell foram recuperados com sucesso!');
+  }
+
+  function fecharBackupModal() {
+    el('backupCompletoModal').style.display  = 'none';
+    el('txtCodigoBackup').style.display      = 'none';
+    el('btnCopiarCodigo').style.display      = 'none';
+    el('txtRestaurarCodigo').value           = '';
+  }
+
+  function importarDados() {
+    const input    = document.createElement('input');
+    input.type     = 'file';
+    input.accept   = 'application/json';
+    input.onchange = e => {
+      const file   = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = ev => {
+        try {
+          restaurarBancoDadosIntegro(JSON.parse(ev.target.result));
+        } catch {
+          alert('❌ Arquivo inválido. Tentando abrir recuperação por texto...');
+          el('backupCompletoModal').style.display = 'flex';
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  }
+
+  /* ─────────────────────────────────────────
+     EXTRATO
+  ───────────────────────────────────────── */
+
+  function adicionarExtrato(tipo, desc, valor) {
+    extrato.unshift({ id: Date.now(), tipo, descricao: desc, valor, data: new Date().toLocaleString() });
+    salvarDados();
+  }
+
+  function excluirExtrato(id) {
+    if (!confirm('Remover este lançamento do extrato?')) return;
+    extrato = extrato.filter(e => e.id !== id);
+    salvarDados();
+    atualizarExtratoDetalhado();
+  }
+
+  /* ─────────────────────────────────────────
+     DISPLAYS / KPIs
+  ───────────────────────────────────────── */
+
+  function atualizarDisplays() {
+    el('capitalDisponivel').textContent = brl(capital);
+
+    const dividaConsertos   = consertos.reduce((s, c) => s + (c.origemCustoPeca === 'fornecedor' ? (c.valorPeca || 0) : 0), 0);
+    const dividaVendas      = aparelhos.reduce((s, a) => {
+      let d = 0;
+      if (a.origemCompra === 'fornecedor') d += (Number(a.valorCompra) || 0);
+      if (a.origemPeca === 'fornecedor')   d += (Number(a.valorPecaUtilizada) || 0);
+      // Compatibilidade antiga
+      if (!a.origemCompra && a.origemCustoVenda === 'fornecedor') d += (Number(a.valorCompra) || 0) + (Number(a.valorPecaUtilizada) || 0);
+      return s + d;
+    }, 0);
+    const dividaPecasCompras = comprasPecas.reduce((s, c) => s + (c.status !== 'pago' ? (c.valorTotal || 0) : 0), 0);
+    el('lucroAcumulado').textContent = brl(dividaConsertos + dividaVendas + dividaPecasCompras);
+
+    const lucroConsertosFinalizados = consertosFinalizados.reduce((s, c) => s + (c.lucro || 0), 0);
+    const lucroVendasRealizadas    = vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0);
+
+    const lucroPendenteConsertos = consertos.reduce((s, c) => s + (c.lucroImediato || 0), 0);
+    const lucroPendenteVendas    = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.lucroImediato || 0), 0);
+
+    // O usuário deseja que o lucro pendente (já contabilizado no extrato/capital) seja exibido como parte do lucro total nos cards
+    const lucroVendasTotal    = lucroVendasRealizadas + lucroPendenteVendas;
+    const lucroConsertosTotal = lucroConsertosFinalizados + lucroPendenteConsertos;
+
+    el('lucroVendasValor').textContent   = brl(lucroVendasTotal);
+    el('lucroConsertosValor').textContent = brl(lucroConsertosTotal);
+
+    el('lucroPendenteVendasInfo').textContent    = '';
+    el('lucroPendenteConsertosInfo').textContent = '';
+  }
+
+  /* ─────────────────────────────────────────
+     CAPITAL
+  ───────────────────────────────────────── */
+
+  function creditarCapital(val, desc) {
+    capital += val;
+    adicionarExtrato('credito', desc, val);
+    atualizarDisplays();
+  }
+
+  function debitarCapital(val, desc) {
+    if (capital < val) {
+      alert(`❌ Saldo insuficiente no CAPITAL! Você tem ${brl(capital)}`);
+      return false;
+    }
+    capital -= val;
+    adicionarExtrato('debito', desc, val);
+    atualizarDisplays();
+    return true;
+  }
+
+  function adicionarCapital()       { el('capitalModal').style.display = 'flex'; }
+  function fecharModalCapital()     { el('capitalModal').style.display = 'none'; }
+
+  function confirmarAdicionarCapital() {
+    const v = parseFloat(el('valorCapital').value);
+    if (v > 0) creditarCapital(v, el('descricaoCapital').value || 'Aporte Manual');
+    fecharModalCapital();
+    atualizarTudo();
+    if (el('extratoSection').style.display === 'block') atualizarExtratoDetalhado();
+  }
+
+  function editarCapital() {
+    el('editarCapitalModal').style.display = 'flex';
+    el('novoCapital').value = capital;
+  }
+
+  function fecharEditarCapitalModal() { el('editarCapitalModal').style.display = 'none'; }
+
+  function confirmarEditarCapital() {
+    const novo   = parseFloat(el('novoCapital').value);
+    const motivo = el('motivoEdicao').value;
+    if (!isNaN(novo)) {
+      const dif = novo - capital;
+      if      (dif > 0) creditarCapital( dif, motivo + ' (Ajuste)');
+      else if (dif < 0) debitarCapital(-dif, motivo + ' (Ajuste)');
+    }
+    fecharEditarCapitalModal();
+    atualizarTudo();
+    if (el('extratoSection').style.display === 'block') atualizarExtratoDetalhado();
+  }
+
+  /* ─────────────────────────────────────────
+     CONSERTOS
+  ───────────────────────────────────────── */
+
+  function salvarConserto() {
+    const cliente       = el('clienteConserto').value;
+    const modelo        = el('modeloConserto').value;
+    const defeito       = el('defeitoConserto').value;
+    const valorConsertoRaw = el('valorConserto').value;
+    const valorPeca     = el('valorPeca').value === '' ? 0 : Number(el('valorPeca').value);
+    const origenCusto   = document.querySelector('input[name="origemCustoPeca"]:checked').value;
+    const fornecedorNome = el('nomeFornecedor').value.trim();
+
+    if (!cliente || !modelo || !defeito || valorConsertoRaw === '') {
+      alert('Preencha os campos obrigatórios');
+      return;
+    }
+
+    const valorConserto    = Number(valorConsertoRaw);
+    const valorEntrada     = Number(el('valorEntrada').value) || 0;
+    const dataEntradaPag   = el('dataEntradaPagamento').value;
+    let   parcelaRestante  = Number(el('valorParcela').value) || 0;
+
+    if (valorEntrada === 0 && parcelaRestante === 0) parcelaRestante = valorConserto;
+
+    const isAVista = (valorEntrada === valorConserto && parcelaRestante === 0);
+
+    if (valorEntrada + parcelaRestante !== valorConserto) {
+      alert(`A soma da entrada (${brl(valorEntrada)}) + parcela (${brl(parcelaRestante)}) deve ser igual ao valor total (${brl(valorConserto)})`);
+      return;
+    }
+
+    let lucroImediato = 0;
+    let pecaPaga      = false;
+
+    if (isAVista) {
+      if (valorPeca > 0 && origenCusto === 'capital') {
+        if (!debitarCapital(valorPeca, `Peça p/ ${modelo} (OS à vista)`)) return;
+        creditarCapital(valorPeca, `🔁 Reembolso peça - OS ${modelo}`);
+        lucroImediato = valorConserto - valorPeca;
+        pecaPaga = true;
+      } else if (valorPeca > 0 && origenCusto === 'fornecedor') {
+        adicionarExtrato('debito', `Peça (${fornecedorNome || 'N/I'}) p/ ${modelo} - Fornecedor (dívida)`, valorPeca);
+        lucroImediato = valorConserto;
+      } else if (valorPeca > 0 && origenCusto === 'entrada') {
+        lucroImediato = valorConserto - valorPeca;
+      } else {
+        lucroImediato = valorConserto;
+      }
+    } else if (valorEntrada > 0) {
+      if (valorPeca > 0 && origenCusto === 'capital') {
+        if (!debitarCapital(valorPeca, `Peça p/ ${modelo} (OS)`)) return;
+        creditarCapital(valorPeca, `🔁 Reembolso peça (entrada) - OS ${modelo}`);
+        lucroImediato = valorEntrada - valorPeca;
+        pecaPaga = true;
+      } else if (valorPeca > 0 && origenCusto === 'fornecedor') {
+        adicionarExtrato('debito', `Peça (${fornecedorNome || 'N/I'}) p/ ${modelo} - Fornecedor (dívida)`, valorPeca);
+        lucroImediato = valorEntrada;
+      } else if (valorPeca > 0 && origenCusto === 'entrada') {
+        lucroImediato = valorEntrada - valorPeca;
+      } else {
+        lucroImediato = valorEntrada;
+      }
+    } else {
+      if (valorPeca > 0 && origenCusto === 'capital') {
+        if (!debitarCapital(valorPeca, `Peça p/ ${modelo} (OS - sem entrada)`)) return;
+      } else if (valorPeca > 0 && origenCusto === 'fornecedor') {
+        adicionarExtrato('debito', `Peça (${fornecedorNome || 'N/I'}) p/ ${modelo} - Fornecedor (dívida)`, valorPeca);
+      }
+      lucroImediato = 0;
+    }
+
+    if (lucroImediato > 0) {
+      lucroTotal += lucroImediato;
+      adicionarExtrato('credito', `💰 LUCRO - Conserto ${modelo}`, lucroImediato);
+    } else if (lucroImediato < 0) {
+      lucroTotal += lucroImediato;
+      adicionarExtrato('debito', `⚠️ PREJUÍZO - Conserto ${modelo}`, Math.abs(lucroImediato));
+    }
+    atualizarDisplays();
+
+    const mesesGarantia = parseInt(el('tempoGarantia').value) || 0;
+    const novaOS = {
+      id: Date.now(), cliente, modelo, defeito, valorConserto, valorPeca,
+      tipoPeca: el('tipoPeca').value,
+      dataEntrada: el('dataEntrada').value || new Date().toISOString().split('T')[0],
+      dataVencimento: el('dataVencimento').value,
+      status: isAVista ? 'finalizado' : 'em_andamento',
+      tempoGarantia: mesesGarantia,
+      valorEntrada, dataEntradaPagamento: dataEntradaPag,
+      valorParcelaRestante: isAVista ? 0 : parcelaRestante,
+      dataRestantePagamento: el('dataRestantePagamento').value,
+      origemCustoPeca: origenCusto,
+      fornecedor: origenCusto === 'fornecedor' ? fornecedorNome : null,
+      lucroImediato, pecaPaga
+    };
+
+    if (isAVista) {
+      novaOS.lucro           = lucroImediato;
+      novaOS.valorRecebido   = valorConserto;
+      novaOS.formaPagamento  = 'À vista';
+      novaOS.dataFinalizacao = new Date().toISOString();
+      if (mesesGarantia > 0) {
+        const dtFim = new Date();
+        dtFim.setMonth(dtFim.getMonth() + mesesGarantia);
+        novaOS.dataFimGarantia = dtFim.toISOString().split('T')[0];
+      }
+      consertosFinalizados.unshift(novaOS);
+    } else {
+      consertos.push(novaOS);
+    }
+
+    salvarDados();
+    atualizarTudo();
+
+    // Limpar formulário
+    ['clienteConserto','modeloConserto','defeitoConserto','valorConserto',
+     'valorPeca','valorEntrada','valorParcela','nomeFornecedor'].forEach(id => { el(id).value = ''; });
+    el('tempoGarantia').value = '0';
+    el('fornecedorDiv').style.display  = 'none';
+    el('avisoEntradaDiv').style.display = 'none';
+    document.querySelector('input[name="origemCustoPeca"][value="capital"]').checked = true;
+
+    let msg = `✅ OS CRIADA!\n📱 ${modelo} - ${cliente}\n💰 Total: ${brl(valorConserto)} | Peça: ${brl(valorPeca)}\n💵 Entrada: ${brl(valorEntrada)} | Restante: ${brl(isAVista ? 0 : parcelaRestante)}`;
+    if (isAVista)            msg += `\n🎉 À VISTA - Lucro: ${brl(lucroImediato)}`;
+    else if (lucroImediato > 0) msg += `\n🎉 LUCRO IMEDIATO: ${brl(lucroImediato)}`;
+    if (!isAVista && parcelaRestante > 0) msg += `\n📌 FALTA RECEBER: ${brl(parcelaRestante)} (lucro pendente)`;
+    alert(msg);
+
+    switchSubConsertoTab(isAVista ? 'finalizados' : 'andamento');
+  }
+
+  function finalizarConserto(id) {
+    consertoFinalizandoId = id;
+    const c = consertos.find(x => x.id === id);
+    if (c) {
+      el('valorRecebido').value = c.valorParcelaRestante || 0;
+      el('finalizarInfo').innerHTML = `Restante a receber: <strong>${brl(c.valorParcelaRestante)}</strong> | Lucro já contabilizado: <strong>${brl(c.lucroImediato || 0)}</strong>`;
+    }
+    el('finalizarModal').style.display = 'flex';
+  }
+
+  function confirmarFinalizar() {
+    const valorRecebido = Number(el('valorRecebido').value);
+    const forma         = el('formaPagamento').value;
+    const idx           = consertos.findIndex(c => c.id === consertoFinalizandoId);
+    if (idx === -1) return;
+    const c = consertos[idx];
+
+    if (valorRecebido < 0) { alert('Valor inválido'); return; }
+    if (valorRecebido > c.valorParcelaRestante) {
+      alert(`O valor máximo a receber é ${brl(c.valorParcelaRestante)}`);
+      return;
+    }
+
+    // Lucro Total Real da OS = Valor Total - Custo da Peça
+    const lucroTotalOS = c.valorConserto - (c.valorPeca || 0);
+    
+    // Lucro que falta registrar = Lucro Total - Lucro Imediato (já registrado na entrada)
+    const lucroRestante = lucroTotalOS - (c.lucroImediato || 0);
+
+    if (lucroRestante > 0) {
+      lucroTotal += lucroRestante;
+      adicionarExtrato('credito', `💰 LUCRO (restante) - Conserto ${c.modelo}`, lucroRestante);
+      atualizarDisplays();
+    } else if (lucroRestante < 0) {
+      lucroTotal += lucroRestante;
+      adicionarExtrato('debito', `⚠️ AJUSTE PREJUÍZO - Conserto ${c.modelo}`, Math.abs(lucroRestante));
+      atualizarDisplays();
+    }
+
+    if (!c.pecaPaga && c.valorPeca > 0 && c.origemCustoPeca === 'capital') {
+      creditarCapital(c.valorPeca, `Reembolso peça ${c.modelo} (finalização)`);
+    }
+
+    const finalizada = { ...c, valorRecebido, formaPagamento: forma, lucro: lucroTotalOS, dataFinalizacao: new Date().toISOString() };
+    if ((c.tempoGarantia || 0) > 0 && !finalizada.dataFimGarantia) {
+      const dtFim = new Date();
+      dtFim.setMonth(dtFim.getMonth() + c.tempoGarantia);
+      finalizada.dataFimGarantia = dtFim.toISOString().split('T')[0];
+    }
+    consertosFinalizados.unshift(finalizada);
+    consertos.splice(idx, 1);
+    salvarDados();
+    fecharFinalizarModal();
+    atualizarTudo();
+    alert(`✅ Conserto finalizado!\n💰 Recebido: ${brl(valorRecebido)}\n📈 Lucro total: ${brl(lucroTotalOS)}`);
+    mostrarRecibo(finalizada);
+    switchSubConsertoTab('finalizados');
+  }
+
+  /* ─────────────────────────────────────────
+     VENDAS
+  ───────────────────────────────────────── */
+
+  function salvarAparelhoDetalhado() {
+    const modelo           = el('modelo').value.trim();
+    const compraRaw        = el('valorCompra').value;
+    const vendaRaw         = el('valorVenda').value;
+    if (!modelo || compraRaw === '' || vendaRaw === '') { alert('Preencha modelo, compra e venda'); return; }
+    const compra           = Number(compraRaw);
+    const venda            = Number(vendaRaw);
+    const pecaUtilizada    = el('pecaUtilizada').value.trim();
+    const valorPecaUtilizada = Number(el('valorPecaUtilizada').value) || 0;
+    
+    const origemCompra     = el('origemCompraAparelho').value;
+    const origemPeca       = el('origemPecaAparelho').value;
+    const fornecedorNome   = el('nomeFornecedorVenda').value.trim();
+    const custoTotal       = compra + valorPecaUtilizada;
+
+    // Processar Custo da Compra
+    if (compra > 0) {
+      if (origemCompra === 'capital') {
+        if (!debitarCapital(compra, `Compra ${modelo}`)) return;
+      } else {
+        adicionarExtrato('debito', `Compra ${modelo} (${fornecedorNome || 'N/I'}) - Fornecedor`, compra);
+      }
+    }
+
+    // Processar Custo da Peça
+    if (valorPecaUtilizada > 0) {
+      if (origemPeca === 'capital') {
+        if (!debitarCapital(valorPecaUtilizada, `Peça p/ ${modelo}`)) return;
+      } else {
+        adicionarExtrato('debito', `Peça ${modelo} (${fornecedorNome || 'N/I'}) - Fornecedor`, valorPecaUtilizada);
+      }
+    }
+
+    aparelhos.push({
+      id: Date.now(), modelo, valorCompra: compra, valorVenda: venda,
+      condicao: el('condicaoAparelho').value,
+      acessorios: el('acessoriosInclusos').value,
+      pecaUtilizada: pecaUtilizada || 'Nenhuma',
+      valorPecaUtilizada,
+      dataEntrada: new Date().toISOString().split('T')[0],
+      status: 'disponivel',
+      origemCompra,
+      origemPeca,
+      fornecedorVenda: (origemCompra === 'fornecedor' || origemPeca === 'fornecedor') ? fornecedorNome : null,
+      custoTotal, custoJaDebitado: true,
+      valorEntrada: 0, dataEntradaPagamento: '',
+      valorParcelaRestante: 0, dataRestantePagamento: '',
+      lucroImediato: 0
+    });
+
+    salvarDados();
+    atualizarTudo();
+
+    ['modelo','valorCompra','valorVenda','pecaUtilizada','valorPecaUtilizada','nomeFornecedorVenda'].forEach(id => { el(id).value = ''; });
+    el('fornecedorVendaDiv').style.display = 'none';
+    document.querySelector('input[name="origemCustoVenda"][value="capital"]').checked = true;
+
+    alert(`✅ Aparelho adicionado! Custo: ${brl(custoTotal)} | Venda: ${brl(venda)} | Lucro estimado: ${brl(venda - custoTotal)}`);
+    switchSubVendaTab('disponiveis');
+  }
+
+  function confirmarVendaComOrigem() {
+    const origem = el('origemVenda').value;
+    if (!origem) { alert('Selecione a origem!'); return; }
+    const ap = aparelhos.find(a => a.id === vendaPendenteId);
+    if (!ap) { fecharVendaOrigemModal(); return; }
+
+    const isParcelada = el('vendaParceladaCheckbox').checked;
+    // RECALCULAR CUSTO TOTAL DINAMICAMENTE PARA EVITAR ERROS EM DADOS ANTIGOS
+    const custoTotal  = (Number(ap.valorCompra) || 0) + (Number(ap.valorPecaUtilizada) || 0);
+
+    if (isParcelada) {
+      const valorEntrada        = Number(el('vendaValorEntrada').value) || 0;
+      const dataEntradaPag      = el('vendaDataEntradaPagamento').value;
+      const valorParcelaRestante = Number(el('vendaValorParcela').value) || 0;
+      const dataRestantePag     = el('vendaDataRestantePagamento').value;
+
+      if (valorEntrada <= 0 || valorParcelaRestante <= 0) { alert('Informe os valores de parcelamento!'); return; }
+      if (valorEntrada + valorParcelaRestante !== ap.valorVenda) { alert(`A soma deve dar ${brl(ap.valorVenda)}`); return; }
+
+      let lucroImediato = 0;
+      // Reembolsar apenas o que foi pago com CAPITAL
+      // COMPATIBILIDADE: Se não existir origemCompra/Peca (aparelhos antigos), assume CAPITAL.
+      let reembolsoCapital = 0;
+      const oC = ap.origemCompra || 'capital';
+      const oP = ap.origemPeca   || 'capital';
+      
+      if (oC === 'capital') reembolsoCapital += Number(ap.valorCompra) || 0;
+      if (oP === 'capital') reembolsoCapital += Number(ap.valorPecaUtilizada) || 0;
+
+      if (reembolsoCapital > 0) {
+        creditarCapital(reembolsoCapital, `🔁 Reembolso custo (entrada) - Venda ${ap.modelo}`);
+      }
+      
+      // Lucro Imediato = Entrada - Custo que saiu do Capital
+      lucroImediato = valorEntrada - reembolsoCapital;
+
+      if (lucroImediato > 0) {
+        lucroTotal += lucroImediato;
+        adicionarExtrato('credito', `💰 LUCRO IMEDIATO (entrada) - Venda ${ap.modelo}`, lucroImediato);
+      } else if (lucroImediato < 0) {
+        lucroTotal += lucroImediato;
+        adicionarExtrato('debito', `⚠️ PREJUÍZO PARCIAL (entrada) - Venda ${ap.modelo}`, Math.abs(lucroImediato));
+      }
+      atualizarDisplays();
+
+      ap.valorEntrada          = valorEntrada;
+      ap.dataEntradaPagamento  = dataEntradaPag;
+      ap.valorParcelaRestante  = valorParcelaRestante;
+      ap.dataRestantePagamento = dataRestantePag;
+      ap.status                = 'parcelado';
+      ap.origemVendaLocal      = origem;
+      ap.lucroImediato         = lucroImediato;
+      salvarDados();
+
+      let msg = `✅ Venda parcelada!\n📱 ${ap.modelo}\n💰 Entrada: ${brl(valorEntrada)} | Restante: ${brl(valorParcelaRestante)}`;
+      if (lucroImediato > 0) msg += `\n🎉 LUCRO IMEDIATO: ${brl(lucroImediato)}`;
+      alert(msg);
+
+      atualizarTudo();
+      fecharVendaOrigemModal();
+      switchSubVendaTab('vendas_andamento');
+      return;
+    }
+
+    // Venda à vista
+    // COMPATIBILIDADE: Se não existir origemCompra/Peca (aparelhos antigos), assume CAPITAL.
+    let reembolsoCapital = 0;
+    const oC = ap.origemCompra || 'capital';
+    const oP = ap.origemPeca   || 'capital';
+
+    if (oC === 'capital') reembolsoCapital += Number(ap.valorCompra) || 0;
+    if (oP === 'capital') reembolsoCapital += Number(ap.valorPecaUtilizada) || 0;
+
+    if (reembolsoCapital > 0) {
+      creditarCapital(reembolsoCapital, `🔁 Reembolso custo - Venda ${ap.modelo}`);
+    }
+
+    const lucro = Number(ap.valorVenda || 0) - custoTotal;
+    lucroTotal += lucro;
+    adicionarExtrato(lucro >= 0 ? 'credito' : 'debito', `${lucro >= 0 ? '📈 LUCRO' : '📉 PREJUÍZO'} Venda ${ap.modelo}`, Math.abs(lucro));
+    atualizarDisplays();
+
+    vendasRealizadas.unshift({
+      id: Date.now(), modelo: ap.modelo, valorVenda: ap.valorVenda, custoTotal, lucro,
+      data: new Date().toLocaleString(), condicao: ap.condicao, acessorios: ap.acessorios,
+      pecaUtilizada: ap.pecaUtilizada, valorPecaUtilizada: ap.valorPecaUtilizada,
+      origem, valorEntrada: 0, valorParcelaRestante: 0
+    });
+
+    aparelhos = aparelhos.filter(a => a.id !== vendaPendenteId);
+    salvarDados();
+    atualizarTudo();
+    fecharVendaOrigemModal();
+    alert(`✅ Vendido à vista!\n📱 ${ap.modelo} - ${brl(ap.valorVenda)}\n📈 Lucro: ${brl(lucro)}`);
+    switchSubVendaTab('finalizados');
+  }
+
+  function confirmarFinalizarVendaParcela() {
+    const valorRecebido = Number(el('vendaValorRecebido').value);
+    if (!valorRecebido && valorRecebido !== 0) { alert('Digite o valor recebido'); return; }
+    const ap = aparelhos.find(a => a.id === vendaParcelaFinalizandoId);
+    if (!ap) return;
+
+    if (valorRecebido >= ap.valorParcelaRestante) {
+      // RECALCULAR CUSTO TOTAL DINAMICAMENTE PARA EVITAR ERROS EM DADOS ANTIGOS
+      const custoT = (Number(ap.valorCompra) || 0) + (Number(ap.valorPecaUtilizada) || 0);
+      const lucroFinal = Number(ap.valorVenda || 0) - custoT;
+      
+      if (valorRecebido > 0) {
+        lucroTotal += valorRecebido;
+        adicionarExtrato('credito', `💰 LUCRO (restante) - Venda ${ap.modelo}`, valorRecebido);
+      }
+      atualizarDisplays();
+
+      vendasRealizadas.unshift({
+        id: Date.now(), modelo: ap.modelo, valorVenda: ap.valorVenda, custoTotal: custoT, lucro: lucroFinal,
+        data: new Date().toLocaleString(), condicao: ap.condicao, acessorios: ap.acessorios,
+        pecaUtilizada: ap.pecaUtilizada, valorPecaUtilizada: ap.valorPecaUtilizada,
+        origem: ap.origemVendaLocal, valorEntrada: ap.valorEntrada, valorParcelaRestante: 0
+      });
+
+      aparelhos = aparelhos.filter(a => a.id !== vendaParcelaFinalizandoId);
+      salvarDados();
+      atualizarTudo();
+      alert(`✅ Venda concluída!\n💰 Recebido: ${brl(valorRecebido)}\n📈 Lucro total: ${brl(lucroFinal)}`);
+      fecharFinalizarVendaModal();
+      switchSubVendaTab('finalizados');
+    } else {
+      ap.valorParcelaRestante -= valorRecebido;
+      lucroTotal += valorRecebido;
+      adicionarExtrato('credito', `💰 PARCELA - Venda ${ap.modelo}`, valorRecebido);
+      atualizarDisplays();
+      alert(`✅ Parcela registrada! Faltam: ${brl(ap.valorParcelaRestante)}`);
+      fecharFinalizarVendaModal();
+      switchSubVendaTab('vendas_andamento');
+    }
+    salvarDados();
+    atualizarTudo();
+  }
+
+  /* ─────────────────────────────────────────
+     EDIÇÃO / EXCLUSÃO
+  ───────────────────────────────────────── */
+
+  function abrirEditarOs(id, isFinalizada = false) {
+    const os = isFinalizada
+      ? consertosFinalizados.find(c => c.id === id)
+      : consertos.find(c => c.id === id);
+    if (!os) return;
+
+    editandoOsId       = id;
+    editandoFinalizada = isFinalizada;
+
+    el('editCliente').value              = os.cliente              || '';
+    el('editModeloOs').value             = os.modelo               || '';
+    el('editDefeito').value              = os.defeito              || '';
+    el('editValorTotal').value           = os.valorConserto        || 0;
+    el('editValorPecaOs').value          = os.valorPeca            || 0;
+    el('editTipoPecaOs').value           = os.tipoPeca             || '';
+    el('editValorEntradaOs').value       = os.valorEntrada         || 0;
+    el('editDataEntradaPag').value       = os.dataEntradaPagamento || '';
+    el('editValorParcelaRestante').value = os.valorParcelaRestante || 0;
+    el('editDataRestantePag').value      = os.dataRestantePagamento || '';
+    el('editTempoGarantia').value        = os.tempoGarantia || 0;
+
+    el('editarOsModal').style.display = 'flex';
+  }
+
+  function confirmarEditarOs() {
+    if (!editandoOsId) return;
+    const cliente              = el('editCliente').value;
+    const modelo               = el('editModeloOs').value;
+    const defeito              = el('editDefeito').value;
+    const valorConsertoRaw     = el('editValorTotal').value;
+    const valorPeca            = el('editValorPecaOs').value === '' ? 0 : Number(el('editValorPecaOs').value);
+    const tipoPeca             = el('editTipoPecaOs').value;
+    const valorEntrada         = Number(el('editValorEntradaOs').value) || 0;
+    const dataEntradaPagamento = el('editDataEntradaPag').value;
+    const valorParcelaRestante = Number(el('editValorParcelaRestante').value) || 0;
+    const dataRestantePagamento = el('editDataRestantePag').value;
+    const tempoGarantia        = parseInt(el('editTempoGarantia').value) || 0;
+
+    if (!cliente || !modelo || !defeito || valorConsertoRaw === '') { alert('Preencha os campos obrigatórios!'); return; }
+    const valorConserto = Number(valorConsertoRaw);
+    const updated = { cliente, modelo, defeito, valorConserto, valorPeca, tipoPeca, valorEntrada, dataEntradaPagamento, valorParcelaRestante, dataRestantePagamento, tempoGarantia };
+
+    if (editandoFinalizada) {
+      const idx = consertosFinalizados.findIndex(c => c.id === editandoOsId);
+      if (idx !== -1) {
+        const osOriginal = consertosFinalizados[idx];
+        const novaOS = { ...osOriginal, ...updated };
+        
+        // Se o tempo de garantia mudou ou foi adicionado, recalcula a data de fim
+        if (tempoGarantia > 0) {
+          // Usa a data de finalização original para o cálculo
+          const baseDate = osOriginal.dataFinalizacao ? new Date(osOriginal.dataFinalizacao) : new Date();
+          const dtFim = new Date(baseDate);
+          dtFim.setMonth(dtFim.getMonth() + tempoGarantia);
+          novaOS.dataFimGarantia = dtFim.toISOString().split('T')[0];
+          delete novaOS.garantiaExpirada;
+        } else {
+          novaOS.dataFimGarantia = null;
+        }
+        consertosFinalizados[idx] = novaOS;
+      }
+    } else {
+      const idx = consertos.findIndex(c => c.id === editandoOsId);
+      if (idx !== -1) consertos[idx] = { ...consertos[idx], ...updated };
+    }
+
+    salvarDados();
+    atualizarTudo();
+    fecharEditarOsModal();
+    alert('OS editada!');
+    switchSubConsertoTab(editandoFinalizada ? 'finalizados' : 'andamento');
+  }
+
+  function fecharEditarOsModal() {
+    el('editarOsModal').style.display = 'none';
+    editandoOsId       = null;
+    editandoFinalizada = false;
+  }
+
+  function deletarConserto(id) {
+    const idx = consertos.findIndex(c => c.id === id);
+    if (idx !== -1 && confirm('Excluir OS?')) {
+      const c = consertos[idx];
+      if (c.valorPeca > 0 && c.origemCustoPeca === 'capital' && !c.pecaPaga) {
+        creditarCapital(c.valorPeca, `Estorno peça OS ${c.modelo}`);
+      }
+      if (c.lucroImediato && c.lucroImediato > 0) lucroTotal -= c.lucroImediato;
+      consertos.splice(idx, 1);
+      salvarDados();
+      atualizarTudo();
+      switchSubConsertoTab('andamento');
+    }
+  }
+
+  function editarAparelho(id) {
+    const ap = aparelhos.find(a => a.id === id);
+    if (!ap) return;
+    editAparelhoId = id;
+    el('editModelo').value              = ap.modelo;
+    el('editValorCompra').value         = ap.valorCompra;
+    el('editValorVenda').value          = ap.valorVenda;
+    el('editCondicao').value            = ap.condicao;
+    el('editAcessorios').value          = ap.acessorios || '';
+    el('editPecaUtilizada').value       = ap.pecaUtilizada !== 'Nenhuma' ? ap.pecaUtilizada : '';
+    el('editValorPecaUtilizada').value  = ap.valorPecaUtilizada || 0;
+    el('editOrigemCompraAparelho').value = ap.origemCompra || 'capital';
+    el('editOrigemPecaAparelho').value   = ap.origemPeca   || 'capital';
+
+    el('editarAparelhoModal').style.display = 'flex';
+  }
+
+  function confirmarEditarAparelho() {
+    const ap = aparelhos.find(a => a.id === editAparelhoId);
+    if (!ap) return;
+    
+    const nCompra      = Number(el('editValorCompra').value);
+    const nPeca        = Number(el('editValorPecaUtilizada').value) || 0;
+    const nOrigemC     = el('editOrigemCompraAparelho').value;
+    const nOrigemP     = el('editOrigemPecaAparelho').value;
+
+    // AJUSTE FINANCEIRO COMPRA
+    if (nOrigemC === 'capital') {
+      if (ap.origemCompra === 'capital') {
+        const diff = nCompra - (ap.valorCompra || 0);
+        if (diff > 0 && !debitarCapital(diff, `Ajuste compra ${ap.modelo}`)) return;
+        else if (diff < 0) creditarCapital(-diff, `Estorno compra ${ap.modelo}`);
+      } else {
+        if (!debitarCapital(nCompra, `Compra ${ap.modelo} (Mudança p/ Capital)`)) return;
+      }
+    } else if (ap.origemCompra === 'capital') {
+      creditarCapital(ap.valorCompra, `Estorno compra ${ap.modelo} (Mudança p/ Fornecedor)`);
+    }
+
+    // AJUSTE FINANCEIRO PEÇA
+    if (nOrigemP === 'capital') {
+      if (ap.origemPeca === 'capital') {
+        const diff = nPeca - (ap.valorPecaUtilizada || 0);
+        if (diff > 0 && !debitarCapital(diff, `Ajuste peça ${ap.modelo}`)) return;
+        else if (diff < 0) creditarCapital(-diff, `Estorno peça ${ap.modelo}`);
+      } else {
+        if (!debitarCapital(nPeca, `Peça ${ap.modelo} (Mudança p/ Capital)`)) return;
+      }
+    } else if (ap.origemPeca === 'capital') {
+      creditarCapital(ap.valorPecaUtilizada, `Estorno peça ${ap.modelo} (Mudança p/ Fornecedor)`);
+    }
+
+    ap.modelo              = el('editModelo').value;
+    ap.valorCompra         = nCompra;
+    ap.valorVenda          = Number(el('editValorVenda').value);
+    ap.condicao            = el('editCondicao').value;
+    ap.acessorios          = el('editAcessorios').value;
+    ap.pecaUtilizada       = el('editPecaUtilizada').value.trim() || 'Nenhuma';
+    ap.valorPecaUtilizada  = nPeca;
+    ap.custoTotal          = nCompra + nPeca;
+    ap.origemCompra        = nOrigemC;
+    ap.origemPeca          = nOrigemP;
+
+    salvarDados();
+    atualizarTudo();
+    fecharEditarAparelhoModal();
+    switchSubVendaTab('disponiveis');
+  }
+
+  function fecharEditarAparelhoModal()    { el('editarAparelhoModal').style.display = 'none'; editAparelhoId = null; }
+  function fecharVendaOrigemModal()       { el('vendaOrigemModal').style.display    = 'none'; vendaPendenteId = null; }
+  function fecharFinalizarVendaModal()    { el('finalizarVendaModal').style.display = 'none'; vendaParcelaFinalizandoId = null; el('vendaValorRecebido').value = ''; }
+  function fecharFinalizarModal()         { el('finalizarModal').style.display      = 'none'; consertoFinalizandoId = null; }
+  function fecharDetalheModal()           { el('detalheOsModal').style.display      = 'none'; }
+  function fecharReciboModal()            { el('reciboModal').style.display         = 'none'; }
+
+  function deletarAparelho(id) {
+    const a = aparelhos.find(x => x.id === id);
+    if (a && confirm(`Excluir ${a.modelo}?`)) {
+      const totalEstorno = a.custoTotal || (a.valorCompra + a.valorPecaUtilizada);
+      if (a.origemCustoVenda === 'capital' && a.custoJaDebitado && totalEstorno > 0 && a.status === 'disponivel') {
+        creditarCapital(totalEstorno, `Estorno ${a.modelo}`);
+      }
+      if (a.lucroImediato && a.lucroImediato > 0) lucroTotal -= a.lucroImediato;
+      aparelhos = aparelhos.filter(x => x.id !== id);
+      salvarDados();
+      atualizarTudo();
+      switchSubVendaTab(a.status === 'parcelado' ? 'vendas_andamento' : 'disponiveis');
+    }
+  }
+
+  function editarVendaFinalizada(id) {
+    const venda = vendasRealizadas.find(v => v.id === id);
+    if (!venda) return;
+    editVendaId = id;
+    el('editVendaModelo').value  = venda.modelo;
+    el('editVendaValor').value   = venda.valorVenda;
+    el('editVendaLucro').value   = venda.lucro;
+    el('editVendaOrigem').value  = venda.origem || 'Assistência';
+    el('editarVendaFinalizadaModal').style.display = 'flex';
+  }
+
+  function confirmarEditarVendaFinalizada() {
+    if (!editVendaId) return;
+    const venda = vendasRealizadas.find(v => v.id === editVendaId);
+    if (!venda) return;
+    const oldLucro  = venda.lucro;
+    const newLucro  = Number(el('editVendaLucro').value);
+    const diffLucro = newLucro - oldLucro;
+    venda.modelo    = el('editVendaModelo').value;
+    venda.valorVenda = Number(el('editVendaValor').value);
+    venda.lucro     = newLucro;
+    venda.origem    = el('editVendaOrigem').value;
+    if (diffLucro !== 0) {
+      lucroTotal += diffLucro;
+      adicionarExtrato(diffLucro > 0 ? 'credito' : 'debito', `Ajuste lucro ${venda.modelo}`, Math.abs(diffLucro));
+      atualizarDisplays();
+    }
+    salvarDados();
+    atualizarTudo();
+    fecharEditarVendaFinalizadaModal();
+    switchSubVendaTab('finalizados');
+  }
+
+  function fecharEditarVendaFinalizadaModal() { el('editarVendaFinalizadaModal').style.display = 'none'; editVendaId = null; }
+
+  let editVendaPendenteId = null;
+  function abrirEditarVendaPendente(id) {
+    const ap = aparelhos.find(a => a.id === id);
+    if (!ap) return;
+    editVendaPendenteId = id;
+    el('editVendaPendModelo').value       = ap.modelo;
+    el('editVendaPendValorTotal').value   = ap.valorVenda;
+    el('editVendaPendValorEntrada').value = ap.valorEntrada;
+    el('editVendaPendDataEntrada').value  = ap.dataEntradaPagamento || '';
+    el('editVendaPendValorParcela').value = ap.valorParcelaRestante;
+    el('editVendaPendDataParcela').value  = ap.dataRestantePagamento || '';
+    el('editarVendaPendenteModal').style.display = 'flex';
+  }
+
+  function confirmarEditarVendaPendente() {
+    const ap = aparelhos.find(a => a.id === editVendaPendenteId);
+    if (!ap) return;
+    
+    const novoValorVenda = Number(el('editVendaPendValorTotal').value);
+    const novoEntrada    = Number(el('editVendaPendValorEntrada').value);
+    const novoParcela    = Number(el('editVendaPendValorParcela').value);
+
+    if (novoEntrada + novoParcela !== novoValorVenda) {
+      alert(`A soma da entrada + restante deve ser igual ao valor total (${brl(novoValorVenda)})`);
+      return;
+    }
+
+    // Recalcular lucro imediato se a entrada mudou
+    // Lucro Imediato = entrada - custo (se origem for capital)
+    const custoTotal = ap.custoTotal || (ap.valorCompra + ap.valorPecaUtilizada);
+    let novoLucroImediato = 0;
+    if (ap.origemCustoVenda === 'capital') {
+      novoLucroImediato = novoEntrada - custoTotal;
+    } else {
+      novoLucroImediato = novoEntrada;
+    }
+
+    const diffLucro = novoLucroImediato - (ap.lucroImediato || 0);
+    if (diffLucro !== 0) {
+      lucroTotal += diffLucro;
+      adicionarExtrato(diffLucro > 0 ? 'credito' : 'debito', `Ajuste lucro entrada ${ap.modelo}`, Math.abs(diffLucro));
+    }
+
+    ap.modelo               = el('editVendaPendModelo').value;
+    ap.valorVenda           = novoValorVenda;
+    ap.valorEntrada         = novoEntrada;
+    ap.dataEntradaPagamento = el('editVendaPendDataEntrada').value;
+    ap.valorParcelaRestante = novoParcela;
+    ap.dataRestantePagamento = el('editVendaPendDataParcela').value;
+    ap.lucroImediato        = novoLucroImediato;
+
+    salvarDados();
+    atualizarTudo();
+    fecharEditarVendaPendenteModal();
+    alert('Venda pendente atualizada!');
+  }
+
+  function fecharEditarVendaPendenteModal() { el('editarVendaPendenteModal').style.display = 'none'; editVendaPendenteId = null; }
+
+  /* ─────────────────────────────────────────
+     RECIBO
+  ───────────────────────────────────────── */
+
+  function gerarRecibo(os) {
+    const lucroReal = os.lucro || 0;
+    return [
+      '================================================',
+      '       JEFFERSON CELL - ASSISTÊNCIA TÉCNICA',
+      '================================================',
+      '',
+      `ORDEM Nº: ${os.id}`,
+      `CLIENTE: ${os.cliente}`,
+      `MODELO: ${os.modelo}`,
+      `DEFEITO: ${os.defeito}`,
+      `VALOR TOTAL: ${brl(os.valorConserto)}`,
+      `ENTRADA: ${brl(os.valorEntrada || 0)}`,
+      `RESTANTE: ${brl(os.valorParcelaRestante || 0)}`,
+      `CUSTO PEÇA: ${brl(os.valorPeca || 0)}`,
+      `LUCRO REAL: ${brl(lucroReal)}`,
+      '================================================'
+    ].join('\n');
+  }
+
+  function mostrarRecibo(os) {
+    el('reciboConteudo').innerHTML = `<pre>${gerarRecibo(os)}</pre>`;
+    el('reciboModal').style.display = 'flex';
+  }
+
+  function imprimirRecibo() {
+    const conteudo = el('reciboConteudo').innerText;
+    const win = window.open('', '_blank');
+    win.document.write(`<html><head><title>Recibo</title></head><body><pre>${conteudo}</pre></body></html>`);
+    win.document.close();
+    win.print();
+  }
+
+  /* ─────────────────────────────────────────
+     DETALHES DA OS
+  ───────────────────────────────────────── */
+
+  function verDetalhesOS(os) {
+    const lucroReal = os.lucro || 0;
+    el('detalheTitulo').innerHTML = `🔍 OS - ${os.modelo}`;
+    el('detalheConteudo').innerHTML = `
+      <p><strong>Cliente:</strong> ${os.cliente}</p>
+      <p><strong>Defeito:</strong> ${os.defeito}</p>
+      <p><strong>Valor serviço:</strong> ${brl(os.valorConserto)}</p>
+      <p><strong>Entrada:</strong> ${brl(os.valorEntrada || 0)}</p>
+      <p><strong>Restante:</strong> ${brl(os.valorParcelaRestante || 0)}</p>
+      <p><strong>Peça:</strong> ${os.tipoPeca || 'Nenhuma'} | Custo: ${brl(os.valorPeca || 0)}</p>
+      <p><strong style="color:#30d5c8;">📈 LUCRO TOTAL: ${brl(lucroReal)}</strong></p>
+      <br>
+      <button onclick='mostrarRecibo(${JSON.stringify(os).replace(/"/g, '&quot;')})'
+        style="background:#30d5c8;color:#02040a;padding:8px 14px;border-radius:10px;font-weight:700;border:none;cursor:pointer;">
+        🧾 Recibo
+      </button>`;
+    el('detalheOsModal').style.display = 'flex';
+  }
+
+  /* ─────────────────────────────────────────
+     RENDERIZAÇÃO DE LISTAS
+  ───────────────────────────────────────── */
+
+  function atualizarConsertosLista() {
+    const div = el('consertosLista');
+    if (!div) return;
+    if (consertos.length === 0) {
+      div.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">Nenhuma OS com pagamento pendente.</p>';
+      return;
+    }
+    div.innerHTML = consertos.map(c => {
+      const temPendencia = (c.valorParcelaRestante || 0) > 0;
+      const atrasado     = temPendencia && verificarAtraso(c.dataRestantePagamento, c.valorParcelaRestante);
+      const lucroParcial = c.lucroImediato || 0;
+      return `
+        <div class="item ${atrasado ? 'item-atrasado' : ''}">
+          <h3>🔧 ${c.modelo} - ${c.cliente}${atrasado ? ' <span class="atrasado-badge">ATRASADO</span>' : ''}</h3>
+          <p>Valor total: ${brl(c.valorConserto)} | Restante: ${brl(c.valorParcelaRestante || 0)}</p>
+          <p>Custo peça: ${brl(c.valorPeca || 0)} | <span class="lucro-parcial-badge">💰 Lucro já contabilizado: ${brl(lucroParcial)}</span></p>
+          <div class="item-actions">
+            <button class="ver-detalhes" onclick='verDetalhesOS(${JSON.stringify(c).replace(/"/g, '&quot;')})'>📄 Detalhes</button>
+            <button class="btn-editar"   onclick="abrirEditarOs(${c.id}, false)">
+✏️ Editar</button>
+            <button class="btn-finalizar" onclick="finalizarConserto(${c.id})">✅ Finalizar</button>
+            <button class="btn-deletar"   onclick="deletarConserto(${c.id})">🗑️</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function atualizarConsertosFinalizados() {
+    const div = el('consertosFinalizadosLista');
+    if (!div) return;
+    if (consertosFinalizados.length === 0) {
+      div.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">Nenhum conserto finalizado.</p>';
+      return;
+    }
+    div.innerHTML = consertosFinalizados.slice(0, 10).map(f => `
+      <div class="item">
+        <h3>✅ ${f.modelo} - ${f.cliente}</h3>
+        <p>Total: ${brl(f.valorConserto)} | Peça: ${brl(f.valorPeca || 0)} | Lucro: ${brl(f.lucro || 0)}</p>
+        <div class="item-actions">
+          <button class="ver-detalhes" onclick='verDetalhesOS(${JSON.stringify(f).replace(/"/g, '&quot;')})'>🔍 Ver</button>
+          <button class="btn-editar"   onclick="abrirEditarOs(${f.id}, true)">✏️ Editar</button>
+        </div>
+      </div>`).join('');
+  }
+
+  function atualizarAparelhosLista() {
+    const div = el('aparelhosLista');
+    if (!div) return;
+    const disponiveis = aparelhos.filter(a => a.status === 'disponivel');
+    if (disponiveis.length === 0) {
+      div.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">📭 Nenhum aparelho em estoque disponível.</p>';
+      return;
+    }
+    div.innerHTML = disponiveis.map(a => {
+      const vCompra = Number(a.valorCompra) || 0;
+      const vPeca   = Number(a.valorPecaUtilizada) || 0;
+      const cTotal  = vCompra + vPeca;
+      const lucroE  = (Number(a.valorVenda) || 0) - cTotal;
+      
+      const oC = a.origemCompra || 'capital';
+      const oP = a.origemPeca   || 'capital';
+      const tagC = oC === 'capital' ? '💰 Cap' : '🏭 Forn';
+      const tagP = oP === 'capital' ? '💰 Cap' : '🏭 Forn';
+
+      return `
+        <div class="item">
+          <h3>📱 ${a.modelo}</h3>
+          <p>Venda: ${brl(a.valorVenda)} | Custo Total: ${brl(cTotal)} | Lucro: ${brl(lucroE)}</p>
+          <p><small>Compra: ${brl(vCompra)} (${tagC}) | Peça: ${brl(vPeca)} (${tagP})</small></p>
+          <p>Condição: ${a.condicao}</p>
+          <div class="item-actions">
+            <button class="btn-editar"   onclick="editarAparelho(${a.id})">✏️ Editar</button>
+            <button class="btn-finalizar" onclick="iniciarVendaAparelho(${a.id})">💰 Vender</button>
+            <button class="btn-deletar"  onclick="deletarAparelho(${a.id})">🗑️</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function atualizarVendasAndamentoLista() {
+    const div = el('vendasAndamentoLista');
+    if (!div) return;
+    const emAndamento = aparelhos.filter(a => a.status === 'parcelado');
+    if (emAndamento.length === 0) {
+      div.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">⏳ Nenhuma venda parcelada em andamento.</p>';
+      return;
+    }
+    div.innerHTML = emAndamento.map(a => {
+      const atrasado   = verificarAtraso(a.dataRestantePagamento, a.valorParcelaRestante);
+      const vCompra = Number(a.valorCompra) || 0;
+      const vPeca   = Number(a.valorPecaUtilizada) || 0;
+      const cTotal  = vCompra + vPeca;
+      const lucroParcial = a.lucroImediato || 0;
+      
+      const oC = a.origemCompra || 'capital';
+      const oP = a.origemPeca   || 'capital';
+      const tagC = oC === 'capital' ? '💰 Cap' : '🏭 Forn';
+      const tagP = oP === 'capital' ? '💰 Cap' : '🏭 Forn';
+
+      return `
+        <div class="item ${atrasado ? 'item-atrasado' : ''}">
+          <h3>📱 ${a.modelo}${atrasado ? ' <span class="atrasado-badge">ATRASADO</span>' : ''}</h3>
+          <p>Valor Total: ${brl(a.valorVenda)} | Custo Total: ${brl(cTotal)}</p>
+          <p><small>Compra: ${brl(vCompra)} (${tagC}) | Peça: ${brl(vPeca)} (${tagP})</small></p>
+          <p>💰 Entrada: ${brl(a.valorEntrada)} | Resta: ${brl(a.valorParcelaRestante)}</p>
+          <p><span class="lucro-parcial-badge">💰 Lucro já contabilizado: ${brl(lucroParcial)}</span></p>
+          <p><small style="color:var(--text-muted);">Vencimento: ${a.dataRestantePagamento || 'N/I'}</small></p>
+          <div class="item-actions">
+            <button class="btn-editar"    onclick="abrirEditarVendaPendente(${a.id})">✏️ Editar</button>
+            <button class="btn-finalizar" onclick="iniciarVendaAparelho(${a.id})">💵 Receber Parcela</button>
+            <button class="btn-deletar"   onclick="deletarAparelho(${a.id})">🗑️ Deletar</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function atualizarVendasRealizadas() {
+    const div = el('vendasRealizadasLista');
+    if (!div) return;
+    if (vendasRealizadas.length === 0) {
+      div.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">Nenhuma venda finalizada.</p>';
+      return;
+    }
+    div.innerHTML = vendasRealizadas.map(v => `
+      <div class="item">
+        <h3>✅ ${v.modelo} <span class="origem-badge">📍 ${v.origem || 'N/I'}</span></h3>
+        <p>Vendido por: ${brl(v.valorVenda)} | Custo: ${brl(v.custoTotal || 0)} | Lucro: ${brl(v.lucro || 0)}</p>
+        <div class="item-actions">
+          <button class="btn-editar" onclick="editarVendaFinalizada(${v.id})">✏️ Editar</button>
+        </div>
+      </div>`).join('');
+  }
+
+  /* ─────────────────────────────────────────
+     INICIAR VENDA DE APARELHO
+  ───────────────────────────────────────── */
+
+  function iniciarVendaAparelho(id) {
+    vendaPendenteId = id;
+    const ap = aparelhos.find(a => a.id === id);
+    if (ap && ap.valorParcelaRestante > 0) {
+      vendaParcelaFinalizandoId = id;
+      const custoTotal = ap.custoTotal || (ap.valorCompra + ap.valorPecaUtilizada);
+      el('vendaParcelaInfo').innerHTML = `
+        Aparelho: <strong>${ap.modelo}</strong><br>
+        Valor total: ${brl(ap.valorVenda)}<br>
+        Custo total: ${brl(custoTotal)}<br>
+        Entrada já paga: ${brl(ap.valorEntrada)}<br>
+        Saldo devedor: <strong>${brl(ap.valorParcelaRestante)}</strong><br>
+        Lucro já contabilizado: <strong>${brl(ap.lucroImediato || 0)}</strong>`;
+      el('finalizarVendaModal').style.display = 'flex';
+    } else {
+      el('vendaParceladaCheckbox').checked          = false;
+      el('camposParcelamentoVenda').style.display   = 'none';
+      el('vendaValorEntrada').value                 = '';
+      el('vendaValorParcela').value                 = '';
+      el('vendaOrigemModal').style.display          = 'flex';
+    }
+  }
+
+  /* ─────────────────────────────────────────
+     DASHBOARD / RELATÓRIOS
+  ───────────────────────────────────────── */
+
+  function atualizarResumo() {
+    const div = el('resumoFinanceiro');
+    if (!div) return;
+    const dividaConsertos   = consertos.reduce((s, c) => s + (c.origemCustoPeca === 'fornecedor' ? (c.valorPeca || 0) : 0), 0);
+    const dividaVendas      = aparelhos.reduce((s, a) => {
+      let d = 0;
+      if (a.origemCompra === 'fornecedor') d += (Number(a.valorCompra) || 0);
+      if (a.origemPeca === 'fornecedor')   d += (Number(a.valorPecaUtilizada) || 0);
+      if (!a.origemCompra && a.origemCustoVenda === 'fornecedor') d += (Number(a.valorCompra) || 0) + (Number(a.valorPecaUtilizada) || 0);
+      return s + d;
+    }, 0);
+    const totalPecasPendentes = dividaConsertos + dividaVendas;
+    const lucroPendenteConsertos = consertos.reduce((s, c) => s + (c.lucroImediato || 0), 0);
+    const lucroPendenteVendas    = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.lucroImediato || 0), 0);
+    const lucroTotalReal    = consertosFinalizados.reduce((s, c) => s + (c.lucro || 0), 0)
+                            + vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0)
+                            + lucroPendenteConsertos + lucroPendenteVendas;
+    div.innerHTML = `
+      <div style="line-height:1.8; font-size:14px;">
+        <p>📌 OS pendentes: <strong>${consertos.length}</strong></p>
+        <p>✅ Consertos concluídos: <strong>${consertosFinalizados.length}</strong></p>
+        <p>📱 Aparelhos vendidos: <strong>${vendasRealizadas.length}</strong></p>
+        <p>💼 Capital: <strong>${brl(capital)}</strong></p>
+        <p>🚨 Contas pendentes: <strong style="color:var(--accent-red);">${brl(totalPecasPendentes)}</strong></p>
+        <p>📈 LUCRO TOTAL: <strong style="color:var(--accent-green);">${brl(lucroTotalReal)}</strong></p>
+      </div>`;
+  }
+
+  function atualizarLucroMensal() {
+    const lucroPorMes = {};
+
+    // 1. Processar dados do mês atual (que ainda não foram fechados)
+    const dataAtual = new Date();
+    const mesAnoAtual = `${(dataAtual.getMonth() + 1).toString().padStart(2, '0')}/${dataAtual.getFullYear()}`;
+    
+    // Incluir lucros pendentes (já contabilizados) e faturamento no mês atual
+    const lPendenteC = consertos.reduce((s, c) => s + (c.lucroImediato || 0), 0);
+    const fPendenteC = consertos.reduce((s, c) => s + (c.valorEntrada || 0), 0); // Faturamento parcial (entradas)
+
+    const lPendenteV = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.lucroImediato || 0), 0);
+    const fPendenteV = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.valorEntrada || 0), 0); // Faturamento parcial
+
+    lucroPorMes[mesAnoAtual] = { 
+      consertosLucro: lPendenteC, 
+      consertosFat: fPendenteC,
+      vendasLucro: lPendenteV, 
+      vendasFat: fPendenteV,
+      totalLucro: lPendenteC + lPendenteV,
+      totalFat: fPendenteC + fPendenteV,
+      status: 'Aberto (Mês Atual)'
+    };
+
+    consertosFinalizados.forEach(c => {
+      if (c.dataFinalizacao && c.lucro) {
+        const d = new Date(c.dataFinalizacao);
+        if (!isNaN(d.getTime())) {
+          const m = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+          if (!lucroPorMes[m]) lucroPorMes[m] = { consertosLucro: 0, consertosFat: 0, vendasLucro: 0, vendasFat: 0, totalLucro: 0, totalFat: 0, status: 'Em andamento' };
+          lucroPorMes[m].consertosLucro += c.lucro;
+          // CORREÇÃO: faturamento total = entrada já paga + valor recebido na finalização.
+          // Para OS à vista: valorEntrada=0 e valorRecebido=valorConserto (correto).
+          // Para OS parceladas: valorEntrada + valorRecebido = total faturado.
+          lucroPorMes[m].consertosFat   += (c.valorEntrada || 0) + (c.valorRecebido || 0);
+          lucroPorMes[m].totalLucro     += c.lucro;
+          lucroPorMes[m].totalFat       += (c.valorEntrada || 0) + (c.valorRecebido || 0);
+        }
+      }
+    });
+
+    vendasRealizadas.forEach(v => {
+      if (v.data && v.lucro) {
+        let d = new Date(v.data);
+        if (isNaN(d.getTime())) {
+          const partes = v.data.split(/[\/\s,:]/);
+          if (partes.length >= 3) d = new Date(partes[2], partes[1] - 1, partes[0]);
+        }
+        if (!isNaN(d.getTime())) {
+          const m = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+          if (!lucroPorMes[m]) lucroPorMes[m] = { consertosLucro: 0, consertosFat: 0, vendasLucro: 0, vendasFat: 0, totalLucro: 0, totalFat: 0, status: 'Em andamento' };
+          lucroPorMes[m].vendasLucro += v.lucro;
+          lucroPorMes[m].vendasFat   += (v.valorVenda || 0);
+          lucroPorMes[m].totalLucro  += v.lucro;
+          lucroPorMes[m].totalFat    += (v.valorVenda || 0);
+        }
+      }
+    });
+
+    // 2. Adicionar dados do Histórico de Fechamentos (meses passados)
+    historicoMensal.forEach(h => {
+      if (!lucroPorMes[h.mes]) {
+        lucroPorMes[h.mes] = { 
+          consertosLucro: h.lucroConsertos, 
+          consertosFat: h.faturamentoConsertos || 0,
+          vendasLucro: h.lucroVendas, 
+          vendasFat: h.faturamentoVendas || 0,
+          totalLucro: h.lucroTotal,
+          totalFat: h.faturamentoTotal || 0,
+          status: 'Fechado'
+        };
+      }
+    });
+
+    const meses = Object.keys(lucroPorMes).sort((a, b) => {
+      const [mA, aA] = a.split('/');
+      const [mB, aB] = b.split('/');
+      return new Date(aB, mB - 1) - new Date(aA, mA - 1);
+    });
+
+    const container = el('lucroMensalLista');
+    if (!container) return;
+
+    if (meses.length === 0) {
+      container.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">Sem dados mensais.</p>';
+      return;
+    }
+
+    container.innerHTML = meses.map(m => {
+      const d = lucroPorMes[m];
+      const isAberto = d.status === 'Aberto (Mês Atual)';
+      return `
+        <div class="monthly-profit-item" style="${isAberto ? 'border-left: 4px solid var(--accent-indigo);' : ''}">
+          <div class="monthly-profit-header">
+            📅 ${m} 
+            <span style="font-size:10px; margin-left:8px; padding:2px 6px; border-radius:4px; background:${isAberto ? 'rgba(99,102,241,0.2)' : 'rgba(16,185,129,0.1)'}; color:${isAberto ? 'var(--accent-indigo-light)' : 'var(--accent-emerald-light)'};">
+              ${d.status || 'Finalizado'}
+            </span>
+          </div>
+          <div class="monthly-profit-details">
+            <div style="flex:1; min-width:140px;">
+              <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:4px;">🔧 Consertos</p>
+              <span class="profit-consertos" style="display:block; margin-bottom:4px;">Faturado: ${brl(d.consertosFat)}</span>
+              <span class="profit-consertos" style="display:block; background:rgba(16,185,129,0.1); color:var(--accent-emerald-light);">Lucro: ${brl(d.consertosLucro)}</span>
+            </div>
+            <div style="flex:1; min-width:140px;">
+              <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:4px;">📱 Vendas</p>
+              <span class="profit-vendas" style="display:block; margin-bottom:4px;">Faturado: ${brl(d.vendasFat)}</span>
+              <span class="profit-vendas" style="display:block; background:rgba(16,185,129,0.1); color:var(--accent-emerald-light);">Lucro: ${brl(d.vendasLucro)}</span>
+            </div>
+            <div style="flex:1; min-width:140px; border-top:1px solid var(--border-color); padding-top:8px; margin-top:4px;">
+              <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:4px;">💰 Total Mensal</p>
+              <span class="profit-total" style="display:block; margin-bottom:4px; background:rgba(99,102,241,0.1); color:var(--accent-indigo-light);">Faturado: ${brl(d.totalFat)}</span>
+              <span class="profit-total" style="display:block; background:rgba(16,185,129,0.2); color:var(--accent-emerald-light); font-weight:800;">Lucro: ${brl(d.totalLucro)}</span>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function navegarMes(direcao) {
+    if (!mesNavegacaoAtual) {
+      const d = new Date();
+      mesNavegacaoAtual = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+    }
+
+    const [m, a] = mesNavegacaoAtual.split('/').map(Number);
+    let novoM = m + direcao;
+    let novoA = a;
+
+    if (novoM > 12) { novoM = 1; novoA++; }
+    if (novoM < 1)  { novoM = 12; novoA--; }
+
+    mesNavegacaoAtual = `${novoM.toString().padStart(2, '0')}/${novoA}`;
+    atualizarNavegadorMensal();
+  }
+
+  function atualizarNavegadorMensal() {
+    if (!mesNavegacaoAtual) {
+      const d = new Date();
+      mesNavegacaoAtual = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+    }
+
+    el('nomeMesNavegacao').textContent = mesNavegacaoAtual;
+    const container = el('detalheMesNavegacao');
+    
+    // Buscar dados do mês (ou no histórico ou no atual)
+    let dados = null;
+    const dataAtual = new Date();
+    const mesAnoHoje = `${(dataAtual.getMonth() + 1).toString().padStart(2, '0')}/${dataAtual.getFullYear()}`;
+
+    if (mesNavegacaoAtual === mesAnoHoje) {
+      const lPendenteC = consertos.reduce((s, c) => s + (c.lucroImediato || 0), 0);
+      // CORREÇÃO: faturamento de OS pendentes usa apenas a entrada já recebida (valorEntrada).
+      // O valorRecebido das finalizadas já inclui a entrada + restante, então não há dupla contagem.
+      const fPendenteC = consertos.reduce((s, c) => s + (c.valorEntrada || 0), 0);
+      const lFinalizadoC = consertosFinalizados.reduce((s, c) => s + (c.lucro || 0), 0);
+      // CORREÇÃO: para OS finalizadas que vieram de pendentes (com entrada), o valorRecebido
+      // é apenas o restante pago na finalização. O total faturado = valorEntrada + valorRecebido.
+      // Para OS finalizadas à vista (criadas direto), valorRecebido = valorConserto (correto).
+      const fFinalizadoC = consertosFinalizados.reduce((s, c) => s + (c.valorEntrada || 0) + (c.valorRecebido || 0), 0);
+
+      const lPendenteV = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.lucroImediato || 0), 0);
+      const fPendenteV = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.valorEntrada || 0), 0);
+      const lRealizadoV = vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0);
+      const fRealizadoV = vendasRealizadas.reduce((s, v) => s + (v.valorVenda || 0), 0);
+
+      dados = {
+        cL: lPendenteC + lFinalizadoC,
+        cF: fPendenteC + fFinalizadoC,
+        vL: lPendenteV + lRealizadoV,
+        vF: fPendenteV + fRealizadoV,
+        status: 'Aberto'
+      };
+    } else {
+      const h = historicoMensal.find(x => x.mes === mesNavegacaoAtual);
+      if (h) {
+        dados = {
+          cL: h.lucroConsertos,
+          cF: h.faturamentoConsertos,
+          vL: h.lucroVendas,
+          vF: h.faturamentoVendas,
+          status: 'Fechado'
+        };
+      }
+    }
+
+    if (!dados) {
+      container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px;">Sem registros para este período.</p>`;
+      return;
+    }
+
+    container.innerHTML = `
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+        <div class="item" style="margin-top:0; border-left-color: var(--accent-indigo);">
+          <h4 style="font-size:12px; color:var(--text-muted); text-transform:uppercase; margin-bottom:10px;">🔧 Consertos</h4>
+          <p style="font-size:13px;">Faturado: <strong style="color:var(--accent-indigo-light);">${brl(dados.cF)}</strong></p>
+          <p style="font-size:13px;">Lucro: <strong style="color:var(--accent-emerald-light);">${brl(dados.cL)}</strong></p>
+        </div>
+        <div class="item" style="margin-top:0; border-left-color: var(--accent-cyan);">
+          <h4 style="font-size:12px; color:var(--text-muted); text-transform:uppercase; margin-bottom:10px;">📱 Vendas</h4>
+          <p style="font-size:13px;">Faturado: <strong style="color:var(--accent-cyan);">${brl(dados.vF)}</strong></p>
+          <p style="font-size:13px;">Lucro: <strong style="color:var(--accent-emerald-light);">${brl(dados.vL)}</strong></p>
+        </div>
+      </div>
+      <div class="item" style="margin-top:15px; border-left-color: var(--accent-emerald); background: rgba(16, 185, 129, 0.1);">
+        <h4 style="font-size:12px; color:var(--text-muted); text-transform:uppercase; margin-bottom:5px;">💰 Resultado Total</h4>
+        <p style="font-size:14px;">Faturamento: <strong>${brl(dados.cF + dados.vF)}</strong></p>
+        <p style="font-size:18px; color:var(--accent-emerald-light);">Lucro Líquido: <strong>${brl(dados.cL + dados.vL)}</strong></p>
+        <span style="font-size:10px; margin-top:5px; display:block; color:var(--text-dim);">Status: ${dados.status}</span>
+      </div>
+    `;
+  }
+
+  function atualizarRelatorios() {
+    const div = el('relatoriosLista');
+    if (!div) return;
+    const lPendenteC = consertos.reduce((s, c) => s + (c.lucroImediato || 0), 0);
+    const lPendenteV = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.lucroImediato || 0), 0);
+    const lC = consertosFinalizados.reduce((s, c) => s + (c.lucro || 0), 0) + lPendenteC;
+    const lV = vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0) + lPendenteV;
+    div.innerHTML = `
+      <div class="item">
+        <p>📈 LUCRO Consertos: <strong style="color:var(--accent-green);">${brl(lC)}</strong></p>
+        <p>📈 LUCRO Vendas: <strong style="color:var(--accent-green);">${brl(lV)}</strong></p>
+        <p style="margin-top:5px;">💰 LUCRO TOTAL: <strong style="color:var(--accent-green); font-size:16px;">${brl(lC + lV)}</strong></p>
+      </div>`;
+    atualizarLucroMensal();
+  }
+
+  /* ─────────────────────────────────────────
+     HISTÓRICO DE OS FINALIZADAS (DASHBOARD)
+  ───────────────────────────────────────── */
+
+  let mesHistoricoOsAtual = null; // Formato "MM/YYYY"
+
+  function navegarMesHistoricoOs(direcao) {
+    if (!mesHistoricoOsAtual) {
+      const d = new Date();
+      mesHistoricoOsAtual = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+    }
+    const [m, a] = mesHistoricoOsAtual.split('/').map(Number);
+    let novoM = m + direcao;
+    let novoA = a;
+    if (novoM > 12) { novoM = 1; novoA++; }
+    if (novoM < 1)  { novoM = 12; novoA--; }
+    mesHistoricoOsAtual = `${novoM.toString().padStart(2, '0')}/${novoA}`;
+    atualizarHistoricoOs();
+  }
+
+  function atualizarHistoricoOs() {
+    if (!mesHistoricoOsAtual) {
+      const d = new Date();
+      mesHistoricoOsAtual = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+    }
+
+    el('nomeHistoricoOsMes').textContent = mesHistoricoOsAtual;
+    const [mesAtual, anoAtual] = mesHistoricoOsAtual.split('/').map(Number);
+
+    // Filtrar OS finalizadas do mês selecionado
+    const osMes = consertosFinalizados.filter(os => {
+      if (!os.dataFinalizacao) return false;
+      const d = new Date(os.dataFinalizacao);
+      if (isNaN(d.getTime())) return false;
+      return (d.getMonth() + 1) === mesAtual && d.getFullYear() === anoAtual;
+    });
+
+    // Ordenar por data de finalização (mais recente primeiro)
+    osMes.sort((a, b) => new Date(b.dataFinalizacao) - new Date(a.dataFinalizacao));
+
+    // Resumo do mês
+    const totalLucro   = osMes.reduce((s, os) => s + (os.lucro || 0), 0);
+    const totalFat     = osMes.reduce((s, os) => s + (os.valorConserto || 0), 0);
+    const totalOs      = osMes.length;
+    const resumoDiv    = el('historicoOsResumo');
+    const listaDiv     = el('historicoOsLista');
+
+    if (totalOs === 0) {
+      resumoDiv.innerHTML = '';
+      listaDiv.innerHTML  = `<p style="color:var(--text-muted); font-size:14px; text-align:center; padding:20px 0;">Nenhuma OS finalizada em ${mesHistoricoOsAtual}.</p>`;
+      return;
+    }
+
+    // Card de resumo do mês
+    resumoDiv.innerHTML = `
+      <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-bottom:4px;">
+        <div style="background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.2); border-radius:var(--radius-md); padding:12px; text-align:center;">
+          <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:6px;">🔧 OS Finalizadas</p>
+          <p style="font-size:22px; font-weight:800; color:var(--accent-indigo-light);">${totalOs}</p>
+        </div>
+        <div style="background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.2); border-radius:var(--radius-md); padding:12px; text-align:center;">
+          <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:6px;">💵 Faturamento</p>
+          <p style="font-size:14px; font-weight:800; color:var(--accent-cyan);">${brl(totalFat)}</p>
+        </div>
+        <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2); border-radius:var(--radius-md); padding:12px; text-align:center;">
+          <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:6px;">📈 Lucro Total</p>
+          <p style="font-size:14px; font-weight:800; color:var(--accent-emerald-light);">${brl(totalLucro)}</p>
+        </div>
+      </div>`;
+
+    // Lista de OS do mês
+    listaDiv.innerHTML = osMes.map(os => {
+      const dataFin = os.dataFinalizacao ? new Date(os.dataFinalizacao) : null;
+      const dataFormatada = dataFin && !isNaN(dataFin.getTime())
+        ? dataFin.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+        : 'Data não registrada';
+      const lucroOS = os.lucro || 0;
+      const pecaInfo = os.tipoPeca ? `${os.tipoPeca} (${brl(os.valorPeca || 0)})` : 'Sem peça';
+      const formaPag = os.formaPagamento || 'Não informado';
+      return `
+        <div class="item" style="border-left-color: var(--accent-emerald);">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:6px;">
+            <h3 style="margin-bottom:4px;">✅ ${os.modelo} — ${os.cliente}</h3>
+            <span style="background:rgba(16,185,129,0.15); color:var(--accent-emerald-light); padding:3px 10px; border-radius:var(--radius-xs); font-size:10px; font-weight:800; white-space:nowrap;">📅 ${dataFormatada}</span>
+          </div>
+          <p style="margin-bottom:3px;">Defeito: ${os.defeito || 'Não informado'}</p>
+          <p style="margin-bottom:3px;">Peça: ${pecaInfo} &nbsp;|&nbsp; Pagamento: ${formaPag}</p>
+          <p>Total: <strong style="color:var(--accent-cyan);">${brl(os.valorConserto)}</strong> &nbsp;|&nbsp; Lucro: <strong style="color:var(--accent-emerald-light);">${brl(lucroOS)}</strong></p>
+          <div class="item-actions">
+            <button class="ver-detalhes" onclick='verDetalhesOS(${JSON.stringify(os).replace(/"/g, '&quot;')})'>🔍 Detalhes</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  /* ─────────────────────────────────────────
+     HISTÓRICO DE VENDAS REALIZADAS (DASHBOARD)
+  ───────────────────────────────────────── */
+
+  let mesHistoricoVendasAtual = null; // Formato "MM/YYYY"
+
+  function navegarMesHistoricoVendas(direcao) {
+    if (!mesHistoricoVendasAtual) {
+      const d = new Date();
+      mesHistoricoVendasAtual = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+    }
+    const [m, a] = mesHistoricoVendasAtual.split('/').map(Number);
+    let novoM = m + direcao;
+    let novoA = a;
+    if (novoM > 12) { novoM = 1; novoA++; }
+    if (novoM < 1)  { novoM = 12; novoA--; }
+    mesHistoricoVendasAtual = `${novoM.toString().padStart(2, '0')}/${novoA}`;
+    atualizarHistoricoVendas();
+  }
+
+  function atualizarHistoricoVendas() {
+    if (!mesHistoricoVendasAtual) {
+      const d = new Date();
+      mesHistoricoVendasAtual = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+    }
+
+    el('nomeHistoricoVendasMes').textContent = mesHistoricoVendasAtual;
+    const [mesAtual, anoAtual] = mesHistoricoVendasAtual.split('/').map(Number);
+
+    // Filtrar vendas realizadas do mês selecionado
+    const vendasMes = vendasRealizadas.filter(v => {
+      if (!v.data) return false;
+      let d = new Date(v.data);
+      if (isNaN(d.getTime())) {
+        const partes = v.data.split(/[\/\s,:]/);
+        if (partes.length >= 3) d = new Date(partes[2], partes[1] - 1, partes[0]);
+      }
+      if (isNaN(d.getTime())) return false;
+      return (d.getMonth() + 1) === mesAtual && d.getFullYear() === anoAtual;
+    });
+
+    // Ordenar por data (mais recente primeiro)
+    vendasMes.sort((a, b) => {
+      let dA = new Date(a.data);
+      let dB = new Date(b.data);
+      if (isNaN(dA.getTime())) {
+        const pA = a.data.split(/[\/\s,:]/);
+        if (pA.length >= 3) dA = new Date(pA[2], pA[1] - 1, pA[0]);
+      }
+      if (isNaN(dB.getTime())) {
+        const pB = b.data.split(/[\/\s,:]/);
+        if (pB.length >= 3) dB = new Date(pB[2], pB[1] - 1, pB[0]);
+      }
+      return dB - dA;
+    });
+
+    // Resumo do mês
+    const totalLucro      = vendasMes.reduce((s, v) => s + (v.lucro || 0), 0);
+    const totalFat        = vendasMes.reduce((s, v) => s + (v.valorVenda || 0), 0);
+    const totalVendas     = vendasMes.length;
+    const resumoDiv       = el('historicoVendasResumo');
+    const listaDiv        = el('historicoVendasLista');
+
+    if (totalVendas === 0) {
+      resumoDiv.innerHTML = '';
+      listaDiv.innerHTML  = `<p style="color:var(--text-muted); font-size:14px; text-align:center; padding:20px 0;">Nenhuma venda realizada em ${mesHistoricoVendasAtual}.</p>`;
+      return;
+    }
+
+    // Card de resumo do mês
+    resumoDiv.innerHTML = `
+      <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-bottom:4px;">
+        <div style="background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.2); border-radius:var(--radius-md); padding:12px; text-align:center;">
+          <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:6px;">📱 Vendas Realizadas</p>
+          <p style="font-size:22px; font-weight:800; color:var(--accent-indigo-light);">${totalVendas}</p>
+        </div>
+        <div style="background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.2); border-radius:var(--radius-md); padding:12px; text-align:center;">
+          <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:6px;">💵 Faturamento</p>
+          <p style="font-size:14px; font-weight:800; color:var(--accent-cyan);">${brl(totalFat)}</p>
+        </div>
+        <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2); border-radius:var(--radius-md); padding:12px; text-align:center;">
+          <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:6px;">📈 Lucro Total</p>
+          <p style="font-size:14px; font-weight:800; color:var(--accent-emerald-light);">${brl(totalLucro)}</p>
+        </div>
+      </div>`;
+
+    // Lista de Vendas do mês
+    listaDiv.innerHTML = vendasMes.map(v => {
+      const dataVenda = v.data;
+      const lucroVenda = v.lucro || 0;
+      const origemVenda = v.origem || 'Não informada';
+      const condicao = v.condicao || 'N/I';
+      return `
+        <div class="item" style="border-left-color: var(--accent-cyan);">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:6px;">
+            <h3 style="margin-bottom:4px;">📱 ${v.modelo}</h3>
+            <span style="background:rgba(6,182,212,0.15); color:var(--accent-cyan); padding:3px 10px; border-radius:var(--radius-xs); font-size:10px; font-weight:800; white-space:nowrap;">📅 ${dataVenda}</span>
+          </div>
+          <p style="margin-bottom:3px;">Condição: ${condicao} &nbsp;|&nbsp; Origem: ${origemVenda}</p>
+          <p>Venda: <strong style="color:var(--accent-cyan);">${brl(v.valorVenda)}</strong> &nbsp;|&nbsp; Lucro: <strong style="color:var(--accent-emerald-light);">${brl(lucroVenda)}</strong></p>
+          <div class="item-actions">
+            <button class="btn-editar" onclick="editarVendaFinalizada(${v.id})">✏️ Editar</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  /* ─────────────────────────────────────────
+     HISTÓRICO DE GARANTIA
+  ───────────────────────────────────────── */
+
+  /**
+   * Verifica se a garantia de um conserto ainda está válida.
+   * @param {string} dataFimGarantia - Data no formato YYYY-MM-DD.
+   * @returns {boolean}
+   */
+  function garantiaAtiva(dataFimGarantia) {
+    if (!dataFimGarantia) return false;
+    const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+    const fim  = new Date(dataFimGarantia); fim.setHours(0, 0, 0, 0);
+    return fim >= hoje;
+  }
+
+  /**
+   * Formata uma data ISO (YYYY-MM-DD) para o formato brasileiro DD/MM/AAAA.
+   */
+  function formatarDataBR(dataIso) {
+    if (!dataIso) return 'N/I';
+    const [y, m, d] = dataIso.split('-');
+    return `${d}/${m}/${y}`;
+  }
+
+  /**
+   * Calcula quantos dias faltam (ou já passaram) para o fim da garantia.
+   */
+  function diasParaFimGarantia(dataFimGarantia) {
+    const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+    const fim  = new Date(dataFimGarantia); fim.setHours(0, 0, 0, 0);
+    return Math.round((fim - hoje) / (1000 * 60 * 60 * 24));
+  }
+
+  /**
+   * Remove do histórico de garantia os consertos cuja garantia já expirou.
+   * Apenas marca o campo dataFimGarantia como nulo — não remove o conserto
+   * das outras abas (finalizados, dashboard, extrato, etc.).
+   */
+  function limparGarantiasExpiradas() {
+    let alterou = false;
+    consertosFinalizados = consertosFinalizados.map(c => {
+      if (c.dataFimGarantia && !garantiaAtiva(c.dataFimGarantia)) {
+        alterou = true;
+        return { ...c, dataFimGarantia: null, garantiaExpirada: true };
+      }
+      return c;
+    });
+    if (alterou) salvarDados();
+  }
+
+  function atualizarPendentesFinalizados() {
+    // Remover garantias expiradas antes de renderizar
+    limparGarantiasExpiradas();
+
+    const garantiaDiv = el('garantiaLista');
+    if (!garantiaDiv) return;
+
+    // Filtrar apenas consertos finalizados com garantia ainda ativa
+    const comGarantia = consertosFinalizados.filter(c => c.dataFimGarantia && garantiaAtiva(c.dataFimGarantia));
+
+    if (comGarantia.length === 0) {
+      garantiaDiv.innerHTML = `
+        <div style="text-align:center; padding:40px 20px;">
+          <div style="font-size:48px; margin-bottom:16px;">🛡️</div>
+          <p style="color:var(--text-muted); font-size:14px; font-weight:600;">Nenhum conserto com garantia ativa no momento.</p>
+          <p style="color:var(--text-dim); font-size:12px; margin-top:8px;">As garantias aparecem aqui após a finalização do conserto e são removidas automaticamente ao expirar.</p>
+        </div>`;
+      return;
+    }
+
+    garantiaDiv.innerHTML = comGarantia.map(c => {
+      const dias        = diasParaFimGarantia(c.dataFimGarantia);
+      const meses       = c.tempoGarantia || 0;
+      const dataFimFmt  = formatarDataBR(c.dataFimGarantia);
+      const urgente     = dias <= 7;
+      const cor         = urgente ? 'var(--accent-orange)' : 'var(--accent-emerald)';
+      const borderColor = urgente ? 'var(--accent-orange)' : 'var(--accent-emerald)';
+      const bgColor     = urgente ? 'rgba(249,115,22,0.06)' : 'rgba(16,185,129,0.06)';
+      const badgeBg     = urgente ? 'rgba(249,115,22,0.15)' : 'rgba(16,185,129,0.15)';
+      const diasTexto   = dias === 0 ? 'Expira hoje!' : dias === 1 ? '1 dia restante' : `${dias} dias restantes`;
+      const dataFin     = c.dataFinalizacao ? formatarDataBR(c.dataFinalizacao.split('T')[0]) : 'N/I';
+
+      return `
+        <div class="item" style="border-left-color:${borderColor}; background:${bgColor};">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:6px;">
+            <h3 style="margin-bottom:4px;">🔧 ${c.modelo} — ${c.cliente}</h3>
+            <span style="background:${badgeBg}; color:${cor}; padding:3px 10px; border-radius:var(--radius-xs); font-size:10px; font-weight:800; white-space:nowrap;">🛡️ ${meses} ${meses === 1 ? 'mês' : 'meses'}</span>
+          </div>
+          <p style="margin-bottom:3px;">Defeito: ${c.defeito}</p>
+          <p style="margin-bottom:3px;">Finalizado: ${dataFin} &nbsp;|&nbsp; Valor: <strong>${brl(c.valorConserto)}</strong></p>
+          <div style="margin-top:10px; padding:8px 12px; border-radius:var(--radius-sm); background:${badgeBg}; border:1px solid ${urgente ? 'rgba(249,115,22,0.3)' : 'rgba(16,185,129,0.3)'}; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+            <span style="font-size:12px; font-weight:700; color:${cor};">📅 Garantia válida até: ${dataFimFmt}</span>
+            <span style="font-size:11px; font-weight:800; color:${cor};">${diasTexto}</span>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  /* ─────────────────────────────────────────
+     EXTRATO DETALHADO
+  ───────────────────────────────────────── */
+
+  function atualizarExtratoDetalhado() {
+    const div = el('extratoLista');
+    if (!div) return;
+    if (extrato.length === 0) {
+      div.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">Sem movimentações.</p>';
+      return;
+    }
+    div.innerHTML = extrato.slice(0, 40).map(e => `
+      <div class="extrato-item-detalhado ${e.tipo}">
+        <div>
+          <strong>📌 ${e.descricao}</strong><br>
+          <small>${e.data}</small>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; font-weight:700;">
+          ${brl(e.valor)}
+          <button class="btn-deletar" style="padding:4px 8px; border-radius:6px; font-size:11px;"
+            onclick="excluirExtrato(${e.id})">🗑️</button>
+        </div>
+      </div>`).join('');
+  }
+
+  /* ─────────────────────────────────────────
+     ATUALIZAÇÃO GERAL
+  ───────────────────────────────────────── */
+
+  function atualizarTudo() {
+    verificarFechamentoMensal();
+    atualizarDisplays();
+    salvarDados();
+  }
+
+  /* ─────────────────────────────────────────
+     LÓGICA DE FECHAMENTO MENSAL
+  ───────────────────────────────────────── */
+
+  /**
+   * Verifica se o mês mudou e realiza o fechamento se necessário.
+   */
+  function verificarFechamentoMensal() {
+    const dataAtual = new Date();
+    const mesAnoAtual = `${(dataAtual.getMonth() + 1).toString().padStart(2, '0')}/${dataAtual.getFullYear()}`;
+
+    // Se não houver registro de último mês, define como o atual e sai
+    if (!ultimoMesFechado) {
+      ultimoMesFechado = mesAnoAtual;
+      return;
+    }
+
+    // Se o mês atual for diferente do último mês fechado, realiza o fechamento
+    if (mesAnoAtual !== ultimoMesFechado) {
+      realizarFechamentoMensal(ultimoMesFechado);
+      ultimoMesFechado = mesAnoAtual;
+      salvarDados();
+    }
+  }
+
+  /**
+   * Arquiva os lucros do mês anterior e limpa as listas para o novo mês.
+   */
+  function realizarFechamentoMensal(mesReferencia) {
+    const lucroC = consertosFinalizados.reduce((s, c) => s + (c.lucro || 0), 0);
+    const fatC   = consertosFinalizados.reduce((s, c) => s + (c.valorRecebido || 0), 0);
+    
+    const lucroV = vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0);
+    const fatV   = vendasRealizadas.reduce((s, v) => s + (v.valorVenda || 0), 0);
+    
+    const totalLucro = lucroC + lucroV;
+    const totalFat   = fatC + fatV;
+
+    // Adiciona ao histórico
+    historicoMensal.unshift({
+      mes: mesReferencia,
+      lucroConsertos: lucroC,
+      faturamentoConsertos: fatC,
+      lucroVendas: lucroV,
+      faturamentoVendas: fatV,
+      lucroTotal: totalLucro,
+      faturamentoTotal: totalFat,
+      dataFechamento: new Date().toLocaleString()
+    });
+
+    // Limpa as listas de finalizados para o novo mês
+    consertosFinalizados = [];
+    vendasRealizadas     = [];
+    
+    // O lucroTotal global também pode ser zerado ou mantido como acumulado histórico.
+    // Conforme pedido: "comece a contar os novos lucros", vamos zerar.
+    lucroTotal = 0;
+
+    console.log(`✅ Fechamento mensal realizado: ${mesReferencia}`);
+  }
+
+  /**
+   * Renderiza o histórico de fechamentos na aba Painel.
+   */
+  function atualizarHistoricoPainel() {
+    const container = el('historicoMensalPainel');
+    if (!container) return;
+
+    if (historicoMensal.length === 0) {
+      container.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhum fechamento realizado ainda.</p>';
+      return;
+    }
+
+    container.innerHTML = historicoMensal.map(h => `
+      <div class="item" style="border-left-color: var(--accent-emerald);">
+        <h3>📅 Fechamento: ${h.mes}</h3>
+        <p>🔧 Lucro Consertos: <strong>${brl(h.lucroConsertos)}</strong></p>
+        <p>📱 Lucro Vendas: <strong>${brl(h.lucroVendas)}</strong></p>
+        <p style="margin-top:5px; font-size:15px; color:var(--accent-emerald-light);">💰 Total: <strong>${brl(h.lucroTotal)}</strong></p>
+        <small style="color:var(--text-dim); font-size:10px;">Fechado em: ${h.dataFechamento}</small>
+      </div>
+    `).join('');
+  }
+
+  /* ─────────────────────────────────────────
+     FECHAR MODAL AO CLICAR NO FUNDO
+  ───────────────────────────────────────── */
+  window.addEventListener('click', e => {
+    if (e.target.classList.contains('modal')) e.target.style.display = 'none';
+  });
+
+  /* ─────────────────────────────────────────
+     ALTERNÂNCIA DE TEMA
+  ───────────────────────────────────────── */
+  function toggleTheme() {
+    const body = document.body;
+    const themeIcon = el('themeIcon');
+    const themeLabel = el('themeLabel');
+    const isLightTheme = body.classList.contains('light-theme');
+
+    if (isLightTheme) {
+      body.classList.remove('light-theme');
+      themeIcon.textContent = '🌙';
+      themeLabel.textContent = 'Light';
+      localStorage.setItem('theme', 'dark');
+    } else {
+      body.classList.add('light-theme');
+      themeIcon.textContent = '☀️';
+      themeLabel.textContent = 'Dark';
+      localStorage.setItem('theme', 'light');
+    }
+  }
+
+  function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    const body = document.body;
+    const themeIcon = el('themeIcon');
+    const themeLabel = el('themeLabel');
+
+    if (savedTheme === 'light') {
+      body.classList.add('light-theme');
+      themeIcon.textContent = '☀️';
+      themeLabel.textContent = 'Dark';
+    } else {
+      body.classList.remove('light-theme');
+      themeIcon.textContent = '🌙';
+      themeLabel.textContent = 'Light';
+    }
+  }
+
+  /* ─────────────────────────────────────────
+     INICIALIZAÇÃO
+  ───────────────────────────────────────── */
+  initTheme();
+  carregarDados();
+  showSection('consertos');
+</script>
+</body>
+</html>
