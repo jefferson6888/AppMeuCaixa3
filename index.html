@@ -2647,6 +2647,13 @@
       }
     } else if (ap.origemPeca === 'capital') {
       creditarCapital(ap.valorPecaUtilizada, `Estorno peça ${ap.modelo} (Mudança p/ Fornecedor)`);
+      adicionarExtrato('debito', `Peça ${ap.modelo} (Dívida Fornecedor)`, nPeca);
+    } else {
+      // Se já era fornecedor e o valor mudou, apenas registra o ajuste no extrato para controle
+      const diff = nPeca - (ap.valorPecaUtilizada || 0);
+      if (diff !== 0) {
+        adicionarExtrato('debito', `Ajuste dívida peça ${ap.modelo} (Fornecedor)`, Math.abs(diff));
+      }
     }
 
     ap.modelo              = el('editModelo').value;
