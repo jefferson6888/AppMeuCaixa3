@@ -1516,28 +1516,19 @@
     <span class="close-modal" onclick="fecharEditarAparelhoModal()" aria-label="Fechar">&times;</span>
     <h3 id="tituloEditarAparelho">✏️ Editar Aparelho</h3>
 
-    <label class="field-group" for="editModelo">
-      <span>Modelo</span>
-      <input type="text" id="editModelo">
-    </label>
-    <div class="small-input-group">
-      <div class="field-group">
-        <label for="editValorCompra">Valor de compra (R$)</label>
-        <input type="number" id="editValorCompra" min="0" step="0.01">
-      </div>
-      <div class="field-group">
-        <label>Origem Compra</label>
-        <select id="editOrigemCompraAparelho">
-          <option value="capital">💰 Capital</option>
-          <option value="fornecedor">🏭 Fornecedor</option>
-        </select>
-      </div>
+    <div style="background: rgba(99, 102, 241, 0.1); padding: 12px; border-radius: 10px; margin-bottom: 15px; border: 1px solid rgba(99, 102, 241, 0.2);">
+      <p style="margin: 0; font-size: 14px; color: var(--accent-indigo-light);"><strong>📱 Aparelho:</strong> <span id="editModeloDisplay"></span></p>
+      <p style="margin: 5px 0 0; font-size: 13px; color: var(--text-muted);">Preço Venda: <span id="editVendaDisplay"></span> | Compra: <span id="editCompraDisplay"></span></p>
     </div>
 
-    <label class="field-group" for="editValorVenda">
-      <span>Valor de venda (R$)</span>
-      <input type="number" id="editValorVenda" min="0" step="0.01">
-    </label>
+    <!-- Campos ocultos para manter a lógica original -->
+    <input type="hidden" id="editModelo">
+    <input type="hidden" id="editValorCompra">
+    <input type="hidden" id="editOrigemCompraAparelho">
+    <input type="hidden" id="editValorVenda">
+    <input type="hidden" id="editPecaUtilizada">
+    <input type="hidden" id="editCondicao">
+    <input type="hidden" id="editAcessorios">
 
     <div class="small-input-group">
       <div class="field-group">
@@ -1552,25 +1543,6 @@
         </select>
       </div>
     </div>
-
-    <label class="field-group" for="editPecaUtilizada">
-      <span>Peça utilizada</span>
-      <input type="text" id="editPecaUtilizada">
-    </label>
-
-    <label class="field-group" for="editCondicao">
-      <span>Condição</span>
-      <select id="editCondicao">
-        <option>Novo</option>
-        <option>Usado - Ótimo</option>
-        <option>Usado - Bom</option>
-        <option>Com defeito leve</option>
-      </select>
-    </label>
-    <label class="field-group" for="editAcessorios">
-      <span>Acessórios</span>
-      <input type="text" id="editAcessorios">
-    </label>
 
     <div class="modal-footer-btns">
       <button onclick="confirmarEditarAparelho()">Salvar</button>
@@ -2621,14 +2593,22 @@
     const ap = aparelhos.find(a => a.id === id);
     if (!ap) return;
     editAparelhoId = id;
+    // Preencher displays visuais
+    el('editModeloDisplay').textContent = ap.modelo;
+    el('editVendaDisplay').textContent  = brl(ap.valorVenda);
+    el('editCompraDisplay').textContent = brl(ap.valorCompra);
+
+    // Preencher campos ocultos para manter compatibilidade com confirmarEditarAparelho()
     el('editModelo').value              = ap.modelo;
     el('editValorCompra').value         = ap.valorCompra;
     el('editValorVenda').value          = ap.valorVenda;
     el('editCondicao').value            = ap.condicao;
     el('editAcessorios').value          = ap.acessorios || '';
     el('editPecaUtilizada').value       = ap.pecaUtilizada !== 'Nenhuma' ? ap.pecaUtilizada : '';
-    el('editValorPecaUtilizada').value  = ap.valorPecaUtilizada || 0;
     el('editOrigemCompraAparelho').value = ap.origemCompra || 'capital';
+
+    // Campo editável
+    el('editValorPecaUtilizada').value  = ap.valorPecaUtilizada || 0;
     el('editOrigemPecaAparelho').value   = ap.origemPeca   || 'capital';
 
     el('editarAparelhoModal').style.display = 'flex';
