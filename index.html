@@ -34,8 +34,6 @@
       --accent-orange:  #f97316;
       --accent-red:     #ef4444;
       --accent-yellow:  #eab308;
-      --accent-green:   #10b981;
-      --accent-purple:  #8b5cf6;
 
       --shadow-sm:      0 1px 2px rgba(0, 0, 0, 0.05);
       --shadow-md:      0 4px 6px rgba(0, 0, 0, 0.1);
@@ -81,8 +79,6 @@
       --accent-orange:  #d97706;
       --accent-red:     #dc2626;
       --accent-yellow:  #ca8a04;
-      --accent-green:   #059669;
-      --accent-purple:  #7c3aed;
 
       --shadow-sm:      0 1px 2px rgba(0, 0, 0, 0.05);
       --shadow-md:      0 4px 6px rgba(0, 0, 0, 0.07);
@@ -533,11 +529,6 @@
       justify-content: center;
       align-items: center;
       padding: 16px;
-    }
-
-    .modal[style*="display: flex"],
-    .modal[style*="display:flex"] {
-      display: flex !important;
     }
 
     .modal-content {
@@ -1216,6 +1207,12 @@
           <button class="sub-tab-btn" id="btnSubDashMensal"
             role="tab" aria-selected="false" aria-controls="subTabDashMensal"
             onclick="switchSubDashTab('mensal')">📅 Mensal</button>
+          <button class="sub-tab-btn" id="btnSubDashHistoricoOs"
+            role="tab" aria-selected="false" aria-controls="subTabDashHistoricoOs"
+            onclick="switchSubDashTab('historico_os')">🗂️ Hist. OS</button>
+          <button class="sub-tab-btn" id="btnSubDashHistoricoVendas"
+            role="tab" aria-selected="false" aria-controls="subTabDashHistoricoVendas"
+            onclick="switchSubDashTab('historico_vendas')">💰 Hist. Vendas</button>
         </div>
 
         <!-- Sub-aba: Geral -->
@@ -1237,6 +1234,34 @@
               <button class="kpi-btn" style="max-width: 50px;" onclick="navegarMes(1)">▶</button>
             </div>
             <div id="detalheMesNavegacao" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <!-- Sub-aba: Histórico de OS -->
+        <div id="subTabDashHistoricoOs" style="display:none;" role="tabpanel" aria-labelledby="btnSubDashHistoricoOs">
+          <div class="sub-section-title" style="margin-top:0;">🗂️ Histórico de OS Finalizadas</div>
+          <div class="card" style="padding: 20px; background: rgba(26, 31, 46, 0.4); border: 1px solid var(--border-color);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <button class="kpi-btn" style="max-width: 50px;" onclick="navegarMesHistoricoOs(-1)">◀</button>
+              <h3 id="nomeHistoricoOsMes" style="margin: 0; font-size: 18px; color: var(--accent-indigo-light);">Mês/Ano</h3>
+              <button class="kpi-btn" style="max-width: 50px;" onclick="navegarMesHistoricoOs(1)">▶</button>
+            </div>
+            <div id="historicoOsResumo" style="margin-bottom: 16px;" aria-live="polite"></div>
+            <div id="historicoOsLista" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <!-- Sub-aba: Histórico de Vendas -->
+        <div id="subTabDashHistoricoVendas" style="display:none;" role="tabpanel" aria-labelledby="btnSubDashHistoricoVendas">
+          <div class="sub-section-title" style="margin-top:0;">💰 Histórico de Vendas Realizadas</div>
+          <div class="card" style="padding: 20px; background: rgba(26, 31, 46, 0.4); border: 1px solid var(--border-color);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <button class="kpi-btn" style="max-width: 50px;" onclick="navegarMesHistoricoVendas(-1)">◀</button>
+              <h3 id="nomeHistoricoVendasMes" style="margin: 0; font-size: 18px; color: var(--accent-indigo-light);">Mês/Ano</h3>
+              <button class="kpi-btn" style="max-width: 50px;" onclick="navegarMesHistoricoVendas(1)">▶</button>
+            </div>
+            <div id="historicoVendasResumo" style="margin-bottom: 16px;" aria-live="polite"></div>
+            <div id="historicoVendasLista" aria-live="polite"></div>
           </div>
         </div>
       </section>
@@ -1279,9 +1304,6 @@
           <div class="sub-section-title" style="margin-top:0;">💰 Vendas Finalizadas</div>
           <div id="finalizadasVendasLista" aria-live="polite"></div>
         </div>
-
-        <div class="sub-section-title" style="margin-top:24px;">📅 Histórico de Fechamentos Mensais</div>
-        <div id="historicoMensalPainel" aria-live="polite"></div>
       </section>
 
       <!-- EXTRATO -->
@@ -1383,7 +1405,7 @@
     <h2 id="tituloRecibo">🧾 RECIBO</h2>
     <div id="reciboConteudo" class="recibo" style="margin:15px 0;"></div>
     <button onclick="imprimirRecibo()"
-      style="width:100%; background:var(--accent-cyan); padding:12px; border:none; border-radius:12px; color:#02040a; font-weight:700; cursor:pointer;">
+      style="width:100%; background:var(--accent-blue); padding:12px; border:none; border-radius:12px; color:#02040a; font-weight:700; cursor:pointer;">
       🖨️ Imprimir Recibo
     </button>
   </div>
@@ -1399,7 +1421,7 @@
     </p>
 
     <button onclick="gerarBackupCopiaCola()"
-      style="width:100%; background:var(--accent-indigo); color:#fff; padding:10px; border:none; border-radius:10px; font-weight:700; cursor:pointer; margin-bottom:10px;">
+      style="width:100%; background:var(--accent-purple); color:#fff; padding:10px; border:none; border-radius:10px; font-weight:700; cursor:pointer; margin-bottom:10px;">
       ✨ 1. Gerar Código Texto (Copia e Cola)
     </button>
 
@@ -1423,7 +1445,7 @@
       <textarea id="txtRestaurarCodigo" rows="3" placeholder="Cole o código criptografado aqui..."></textarea>
     </label>
     <button onclick="confirmarRestaurarTexto()"
-      style="width:100%; background:var(--accent-emerald); color:#fff; padding:12px; border:none; border-radius:12px; font-weight:700; cursor:pointer;">
+      style="width:100%; background:var(--accent-green); color:#02040a; padding:12px; border:none; border-radius:12px; font-weight:700; cursor:pointer;">
       ⚡ Restaurar via Código
     </button>
   </div>
@@ -1743,7 +1765,7 @@
   const el = id => document.getElementById(id);
 
   /** Formata um número como moeda BRL. */
-  const brl = v => `R$ ${Number(v || 0).toFixed(2).replace('.', ',')}`;
+  const brl = v => `R$ ${Number(v).toFixed(2)}`;
 
   /**
    * Verifica se uma OS/venda está com pagamento atrasado.
@@ -1754,9 +1776,7 @@
   function verificarAtraso(dataVencimento, saldoRestante) {
     if (!dataVencimento || saldoRestante <= 0) return false;
     const hoje      = new Date(); hoje.setHours(0, 0, 0, 0);
-    // Adiciona T00:00:00 para evitar interpretação UTC que causa erro de 1 dia
-    const vencimento = new Date(dataVencimento.includes('T') ? dataVencimento : dataVencimento + 'T00:00:00');
-    vencimento.setHours(0, 0, 0, 0);
+    const vencimento = new Date(dataVencimento); vencimento.setHours(0, 0, 0, 0);
     return vencimento < hoje;
   }
 
@@ -1775,18 +1795,14 @@
       });
     });
 
-    // Exibir/ocultar campo de fornecedor (venda) — via select
-    const origemCompraSelect = el('origemCompraAparelho');
-    const origemPecaSelect   = el('origemPecaAparelho');
-    function atualizarFornecedorVenda() {
-      const mostrar = (origemCompraSelect && origemCompraSelect.value === 'fornecedor') ||
-                      (origemPecaSelect   && origemPecaSelect.value   === 'fornecedor');
-      const div = el('fornecedorVendaDiv');
-      if (div) div.style.display = mostrar ? 'block' : 'none';
-      if (!mostrar && el('nomeFornecedorVenda')) el('nomeFornecedorVenda').value = '';
-    }
-    if (origemCompraSelect) origemCompraSelect.addEventListener('change', atualizarFornecedorVenda);
-    if (origemPecaSelect)   origemPecaSelect.addEventListener('change', atualizarFornecedorVenda);
+    // Exibir/ocultar campo de fornecedor (venda)
+    document.querySelectorAll('input[name="origemCustoVenda"]').forEach(radio => {
+      radio.addEventListener('change', function () {
+        const fornecedorDiv = el('fornecedorVendaDiv');
+        fornecedorDiv.style.display = this.value === 'fornecedor' ? 'block' : 'none';
+        if (this.value !== 'fornecedor') el('nomeFornecedorVenda').value = '';
+      });
+    });
 
     // Mostrar/ocultar campos de parcelamento na venda
     const checkParcelado      = el('vendaParceladaCheckbox');
@@ -1879,8 +1895,10 @@
 
   function switchSubDashTab(target) {
     _switchSubTab({
-      geral:  { tab: 'subTabDashGeral',  btn: 'btnSubDashGeral',  onShow: () => { atualizarResumo(); atualizarRelatorios(); } },
-      mensal: { tab: 'subTabDashMensal', btn: 'btnSubDashMensal', onShow: () => { atualizarNavegadorMensal(); } },
+      geral:           { tab: 'subTabDashGeral',           btn: 'btnSubDashGeral',           onShow: () => { atualizarResumo(); atualizarRelatorios(); } },
+      mensal:          { tab: 'subTabDashMensal',          btn: 'btnSubDashMensal',          onShow: () => { atualizarNavegadorMensal(); } },
+      historico_os:    { tab: 'subTabDashHistoricoOs',     btn: 'btnSubDashHistoricoOs',     onShow: () => { atualizarHistoricoOs(); } },
+      historico_vendas:{ tab: 'subTabDashHistoricoVendas', btn: 'btnSubDashHistoricoVendas', onShow: () => { atualizarHistoricoVendas(); } },
     }, target);
   }
 
@@ -1940,7 +1958,7 @@
 
   function exportarDados() {
     try {
-      const dataStr      = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas, historicoMensal, ultimoMesFechado }, null, 2);
+      const dataStr      = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas }, null, 2);
       const blob         = new Blob([dataStr], { type: 'application/json;charset=utf-8' });
       const dataAtual    = new Date().toISOString().split('T')[0];
       const nomeArquivo  = `jefferson_cell_backup_${dataAtual}.json`;
@@ -1961,7 +1979,7 @@
   }
 
   function gerarBackupCopiaCola() {
-    const dataStr   = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas, historicoMensal, ultimoMesFechado });
+    const dataStr   = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas });
     const codificado = btoa(unescape(encodeURIComponent(dataStr)));
     const txtEl      = el('txtCodigoBackup');
     const btnEl      = el('btnCopiarCodigo');
@@ -2000,8 +2018,6 @@
     lucroTotal           = data.lucroTotal           || 0;
     extrato              = data.extrato              || [];
     estoquePecas         = data.estoquePecas         || [];
-    historicoMensal      = data.historicoMensal      || [];
-    ultimoMesFechado     = data.ultimoMesFechado     || null;
     salvarDados();
     atualizarTudo();
     alert('✅ Todos os dados da Jefferson Cell foram recuperados com sucesso!');
@@ -2082,8 +2098,8 @@
     el('lucroVendasValor').textContent   = brl(lucroVendasTotal);
     el('lucroConsertosValor').textContent = brl(lucroConsertosTotal);
 
-    el('lucroPendenteVendasInfo').textContent    = lucroPendenteVendas > 0 ? `(+${brl(lucroPendenteVendas)} a receber)` : '';
-    el('lucroPendenteConsertosInfo').textContent = lucroPendenteConsertos > 0 ? `(+${brl(lucroPendenteConsertos)} a receber)` : '';
+    el('lucroPendenteVendasInfo').textContent    = '';
+    el('lucroPendenteConsertosInfo').textContent = '';
   }
 
   /* ─────────────────────────────────────────
@@ -2165,7 +2181,7 @@
 
     const isAVista = (valorEntrada === valorConserto && parcelaRestante === 0);
 
-    if (Math.abs((valorEntrada + parcelaRestante) - valorConserto) > 0.01) {
+    if (valorEntrada + parcelaRestante !== valorConserto) {
       alert(`A soma da entrada (${brl(valorEntrada)}) + parcela (${brl(parcelaRestante)}) deve ser igual ao valor total (${brl(valorConserto)})`);
       return;
     }
@@ -2280,7 +2296,7 @@
     const c = consertos[idx];
 
     if (valorRecebido < 0) { alert('Valor inválido'); return; }
-    if (valorRecebido > c.valorParcelaRestante + 0.01) {
+    if (valorRecebido > c.valorParcelaRestante) {
       alert(`O valor máximo a receber é ${brl(c.valorParcelaRestante)}`);
       return;
     }
@@ -2324,7 +2340,7 @@
     const modelo           = el('modelo').value.trim();
     const compraRaw        = el('valorCompra').value;
     const vendaRaw         = el('valorVenda').value;
-    if (!modelo || vendaRaw === '') { alert('Preencha modelo e valor de venda'); return; }
+    if (!modelo || compraRaw === '' || vendaRaw === '') { alert('Preencha modelo, compra e venda'); return; }
     const compra           = Number(compraRaw);
     const venda            = Number(vendaRaw);
     const pecaUtilizada    = el('pecaUtilizada').value.trim();
@@ -2373,10 +2389,9 @@
     salvarDados();
     atualizarTudo();
 
-    ['modelo','valorCompra','valorVenda','pecaUtilizada','valorPecaUtilizada','nomeFornecedorVenda'].forEach(id => { if (el(id)) el(id).value = ''; });
-    if (el('fornecedorVendaDiv')) el('fornecedorVendaDiv').style.display = 'none';
-    if (el('origemCompraAparelho')) el('origemCompraAparelho').value = 'capital';
-    if (el('origemPecaAparelho'))   el('origemPecaAparelho').value   = 'capital';
+    ['modelo','valorCompra','valorVenda','pecaUtilizada','valorPecaUtilizada','nomeFornecedorVenda'].forEach(id => { el(id).value = ''; });
+    el('fornecedorVendaDiv').style.display = 'none';
+    document.querySelector('input[name="origemCustoVenda"][value="capital"]').checked = true;
 
     alert(`✅ Aparelho adicionado! Custo: ${brl(custoTotal)} | Venda: ${brl(venda)} | Lucro estimado: ${brl(venda - custoTotal)}`);
     switchSubVendaTab('disponiveis');
@@ -2399,7 +2414,7 @@
       const dataRestantePag     = el('vendaDataRestantePagamento').value;
 
       if (valorEntrada <= 0 || valorParcelaRestante <= 0) { alert('Informe os valores de parcelamento!'); return; }
-      if (Math.abs((valorEntrada + valorParcelaRestante) - ap.valorVenda) > 0.01) { alert(`A soma deve dar ${brl(ap.valorVenda)}`); return; }
+      if (valorEntrada + valorParcelaRestante !== ap.valorVenda) { alert(`A soma deve dar ${brl(ap.valorVenda)}`); return; }
 
       let lucroImediato = 0;
       // Reembolsar apenas o que foi pago com CAPITAL
@@ -2485,19 +2500,14 @@
     const ap = aparelhos.find(a => a.id === vendaParcelaFinalizandoId);
     if (!ap) return;
 
-    if (valorRecebido >= ap.valorParcelaRestante - 0.01) {
+    if (valorRecebido >= ap.valorParcelaRestante) {
       // RECALCULAR CUSTO TOTAL DINAMICAMENTE PARA EVITAR ERROS EM DADOS ANTIGOS
       const custoT = (Number(ap.valorCompra) || 0) + (Number(ap.valorPecaUtilizada) || 0);
       const lucroFinal = Number(ap.valorVenda || 0) - custoT;
-      // O lucro restante é o lucro total menos o que já foi contabilizado na entrada
-      const lucroRestante = lucroFinal - (ap.lucroImediato || 0);
       
-      if (lucroRestante > 0) {
-        lucroTotal += lucroRestante;
-        adicionarExtrato('credito', `💰 LUCRO (restante) - Venda ${ap.modelo}`, lucroRestante);
-      } else if (lucroRestante < 0) {
-        lucroTotal += lucroRestante;
-        adicionarExtrato('debito', `⚠️ AJUSTE PREJUÍZO - Venda ${ap.modelo}`, Math.abs(lucroRestante));
+      if (valorRecebido > 0) {
+        lucroTotal += valorRecebido;
+        adicionarExtrato('credito', `💰 LUCRO (restante) - Venda ${ap.modelo}`, valorRecebido);
       }
       atualizarDisplays();
 
@@ -2687,7 +2697,7 @@
     const a = aparelhos.find(x => x.id === id);
     if (a && confirm(`Excluir ${a.modelo}?`)) {
       const totalEstorno = a.custoTotal || (a.valorCompra + a.valorPecaUtilizada);
-      if ((a.origemCompra === 'capital' || a.origemCustoVenda === 'capital') && a.custoJaDebitado && totalEstorno > 0 && a.status === 'disponivel') {
+      if (a.origemCustoVenda === 'capital' && a.custoJaDebitado && totalEstorno > 0 && a.status === 'disponivel') {
         creditarCapital(totalEstorno, `Estorno ${a.modelo}`);
       }
       if (a.lucroImediato && a.lucroImediato > 0) lucroTotal -= a.lucroImediato;
@@ -2755,7 +2765,7 @@
     const novoEntrada    = Number(el('editVendaPendValorEntrada').value);
     const novoParcela    = Number(el('editVendaPendValorParcela').value);
 
-    if (Math.abs((novoEntrada + novoParcela) - novoValorVenda) > 0.01) {
+    if (novoEntrada + novoParcela !== novoValorVenda) {
       alert(`A soma da entrada + restante deve ser igual ao valor total (${brl(novoValorVenda)})`);
       return;
     }
@@ -2764,12 +2774,11 @@
     // Lucro Imediato = entrada - custo (se origem for capital)
     const custoTotal = ap.custoTotal || (ap.valorCompra + ap.valorPecaUtilizada);
     let novoLucroImediato = 0;
-    const origemC = ap.origemCompra || ap.origemCustoVenda || 'capital';
-    const origemP = ap.origemPeca || 'capital';
-    let custoCapital = 0;
-    if (origemC === 'capital') custoCapital += Number(ap.valorCompra) || 0;
-    if (origemP === 'capital') custoCapital += Number(ap.valorPecaUtilizada) || 0;
-    novoLucroImediato = novoEntrada - custoCapital;
+    if (ap.origemCustoVenda === 'capital') {
+      novoLucroImediato = novoEntrada - custoTotal;
+    } else {
+      novoLucroImediato = novoEntrada;
+    }
 
     const diffLucro = novoLucroImediato - (ap.lucroImediato || 0);
     if (diffLucro !== 0) {
@@ -2875,7 +2884,8 @@
           <p>Custo peça: ${brl(c.valorPeca || 0)} | <span class="lucro-parcial-badge">💰 Lucro já contabilizado: ${brl(lucroParcial)}</span></p>
           <div class="item-actions">
             <button class="ver-detalhes" onclick='verDetalhesOS(${JSON.stringify(c).replace(/"/g, '&quot;')})'>📄 Detalhes</button>
-            <button class="btn-editar"   onclick="abrirEditarOs(${c.id}, false)">✏️ Editar</button>
+            <button class="btn-editar"   onclick="abrirEditarOs(${c.id}, false)">
+✏️ Editar</button>
             <button class="btn-finalizar" onclick="finalizarConserto(${c.id})">✅ Finalizar</button>
             <button class="btn-deletar"   onclick="deletarConserto(${c.id})">🗑️</button>
           </div>
@@ -3044,7 +3054,7 @@
         <p>📱 Aparelhos vendidos: <strong>${vendasRealizadas.length}</strong></p>
         <p>💼 Capital: <strong>${brl(capital)}</strong></p>
         <p>🚨 Contas pendentes: <strong style="color:var(--accent-red);">${brl(totalPecasPendentes)}</strong></p>
-        <p>📈 LUCRO TOTAL: <strong style="color:var(--accent-emerald-light);">${brl(lucroTotalReal)}</strong></p>
+        <p>📈 LUCRO TOTAL: <strong style="color:var(--accent-green);">${brl(lucroTotalReal)}</strong></p>
       </div>`;
   }
 
@@ -3271,11 +3281,213 @@
     const lV = vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0) + lPendenteV;
     div.innerHTML = `
       <div class="item">
-        <p>📈 LUCRO Consertos: <strong style="color:var(--accent-emerald-light);">${brl(lC)}</strong></p>
-        <p>📈 LUCRO Vendas: <strong style="color:var(--accent-emerald-light);">${brl(lV)}</strong></p>
-        <p style="margin-top:5px;">💰 LUCRO TOTAL: <strong style="color:var(--accent-emerald-light); font-size:16px;">${brl(lC + lV)}</strong></p>
+        <p>📈 LUCRO Consertos: <strong style="color:var(--accent-green);">${brl(lC)}</strong></p>
+        <p>📈 LUCRO Vendas: <strong style="color:var(--accent-green);">${brl(lV)}</strong></p>
+        <p style="margin-top:5px;">💰 LUCRO TOTAL: <strong style="color:var(--accent-green); font-size:16px;">${brl(lC + lV)}</strong></p>
       </div>`;
     atualizarLucroMensal();
+  }
+
+  /* ─────────────────────────────────────────
+     HISTÓRICO DE OS FINALIZADAS (DASHBOARD)
+  ───────────────────────────────────────── */
+
+  let mesHistoricoOsAtual = null; // Formato "MM/YYYY"
+
+  function navegarMesHistoricoOs(direcao) {
+    if (!mesHistoricoOsAtual) {
+      const d = new Date();
+      mesHistoricoOsAtual = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+    }
+    const [m, a] = mesHistoricoOsAtual.split('/').map(Number);
+    let novoM = m + direcao;
+    let novoA = a;
+    if (novoM > 12) { novoM = 1; novoA++; }
+    if (novoM < 1)  { novoM = 12; novoA--; }
+    mesHistoricoOsAtual = `${novoM.toString().padStart(2, '0')}/${novoA}`;
+    atualizarHistoricoOs();
+  }
+
+  function atualizarHistoricoOs() {
+    if (!mesHistoricoOsAtual) {
+      const d = new Date();
+      mesHistoricoOsAtual = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+    }
+
+    el('nomeHistoricoOsMes').textContent = mesHistoricoOsAtual;
+    const [mesAtual, anoAtual] = mesHistoricoOsAtual.split('/').map(Number);
+
+    // Filtrar OS finalizadas do mês selecionado
+    const osMes = consertosFinalizados.filter(os => {
+      if (!os.dataFinalizacao) return false;
+      const d = new Date(os.dataFinalizacao);
+      if (isNaN(d.getTime())) return false;
+      return (d.getMonth() + 1) === mesAtual && d.getFullYear() === anoAtual;
+    });
+
+    // Ordenar por data de finalização (mais recente primeiro)
+    osMes.sort((a, b) => new Date(b.dataFinalizacao) - new Date(a.dataFinalizacao));
+
+    // Resumo do mês
+    const totalLucro   = osMes.reduce((s, os) => s + (os.lucro || 0), 0);
+    const totalFat     = osMes.reduce((s, os) => s + (os.valorConserto || 0), 0);
+    const totalOs      = osMes.length;
+    const resumoDiv    = el('historicoOsResumo');
+    const listaDiv     = el('historicoOsLista');
+
+    if (totalOs === 0) {
+      resumoDiv.innerHTML = '';
+      listaDiv.innerHTML  = `<p style="color:var(--text-muted); font-size:14px; text-align:center; padding:20px 0;">Nenhuma OS finalizada em ${mesHistoricoOsAtual}.</p>`;
+      return;
+    }
+
+    // Card de resumo do mês
+    resumoDiv.innerHTML = `
+      <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-bottom:4px;">
+        <div style="background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.2); border-radius:var(--radius-md); padding:12px; text-align:center;">
+          <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:6px;">🔧 OS Finalizadas</p>
+          <p style="font-size:22px; font-weight:800; color:var(--accent-indigo-light);">${totalOs}</p>
+        </div>
+        <div style="background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.2); border-radius:var(--radius-md); padding:12px; text-align:center;">
+          <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:6px;">💵 Faturamento</p>
+          <p style="font-size:14px; font-weight:800; color:var(--accent-cyan);">${brl(totalFat)}</p>
+        </div>
+        <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2); border-radius:var(--radius-md); padding:12px; text-align:center;">
+          <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:6px;">📈 Lucro Total</p>
+          <p style="font-size:14px; font-weight:800; color:var(--accent-emerald-light);">${brl(totalLucro)}</p>
+        </div>
+      </div>`;
+
+    // Lista de OS do mês
+    listaDiv.innerHTML = osMes.map(os => {
+      const dataFin = os.dataFinalizacao ? new Date(os.dataFinalizacao) : null;
+      const dataFormatada = dataFin && !isNaN(dataFin.getTime())
+        ? dataFin.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+        : 'Data não registrada';
+      const lucroOS = os.lucro || 0;
+      const pecaInfo = os.tipoPeca ? `${os.tipoPeca} (${brl(os.valorPeca || 0)})` : 'Sem peça';
+      const formaPag = os.formaPagamento || 'Não informado';
+      return `
+        <div class="item" style="border-left-color: var(--accent-emerald);">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:6px;">
+            <h3 style="margin-bottom:4px;">✅ ${os.modelo} — ${os.cliente}</h3>
+            <span style="background:rgba(16,185,129,0.15); color:var(--accent-emerald-light); padding:3px 10px; border-radius:var(--radius-xs); font-size:10px; font-weight:800; white-space:nowrap;">📅 ${dataFormatada}</span>
+          </div>
+          <p style="margin-bottom:3px;">Defeito: ${os.defeito || 'Não informado'}</p>
+          <p style="margin-bottom:3px;">Peça: ${pecaInfo} &nbsp;|&nbsp; Pagamento: ${formaPag}</p>
+          <p>Total: <strong style="color:var(--accent-cyan);">${brl(os.valorConserto)}</strong> &nbsp;|&nbsp; Lucro: <strong style="color:var(--accent-emerald-light);">${brl(lucroOS)}</strong></p>
+          <div class="item-actions">
+            <button class="ver-detalhes" onclick='verDetalhesOS(${JSON.stringify(os).replace(/"/g, '&quot;')})'>🔍 Detalhes</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  /* ─────────────────────────────────────────
+     HISTÓRICO DE VENDAS REALIZADAS (DASHBOARD)
+  ───────────────────────────────────────── */
+
+  let mesHistoricoVendasAtual = null; // Formato "MM/YYYY"
+
+  function navegarMesHistoricoVendas(direcao) {
+    if (!mesHistoricoVendasAtual) {
+      const d = new Date();
+      mesHistoricoVendasAtual = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+    }
+    const [m, a] = mesHistoricoVendasAtual.split('/').map(Number);
+    let novoM = m + direcao;
+    let novoA = a;
+    if (novoM > 12) { novoM = 1; novoA++; }
+    if (novoM < 1)  { novoM = 12; novoA--; }
+    mesHistoricoVendasAtual = `${novoM.toString().padStart(2, '0')}/${novoA}`;
+    atualizarHistoricoVendas();
+  }
+
+  function atualizarHistoricoVendas() {
+    if (!mesHistoricoVendasAtual) {
+      const d = new Date();
+      mesHistoricoVendasAtual = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+    }
+
+    el('nomeHistoricoVendasMes').textContent = mesHistoricoVendasAtual;
+    const [mesAtual, anoAtual] = mesHistoricoVendasAtual.split('/').map(Number);
+
+    // Filtrar vendas realizadas do mês selecionado
+    const vendasMes = vendasRealizadas.filter(v => {
+      if (!v.data) return false;
+      let d = new Date(v.data);
+      if (isNaN(d.getTime())) {
+        const partes = v.data.split(/[\/\s,:]/);
+        if (partes.length >= 3) d = new Date(partes[2], partes[1] - 1, partes[0]);
+      }
+      if (isNaN(d.getTime())) return false;
+      return (d.getMonth() + 1) === mesAtual && d.getFullYear() === anoAtual;
+    });
+
+    // Ordenar por data (mais recente primeiro)
+    vendasMes.sort((a, b) => {
+      let dA = new Date(a.data);
+      let dB = new Date(b.data);
+      if (isNaN(dA.getTime())) {
+        const pA = a.data.split(/[\/\s,:]/);
+        if (pA.length >= 3) dA = new Date(pA[2], pA[1] - 1, pA[0]);
+      }
+      if (isNaN(dB.getTime())) {
+        const pB = b.data.split(/[\/\s,:]/);
+        if (pB.length >= 3) dB = new Date(pB[2], pB[1] - 1, pB[0]);
+      }
+      return dB - dA;
+    });
+
+    // Resumo do mês
+    const totalLucro      = vendasMes.reduce((s, v) => s + (v.lucro || 0), 0);
+    const totalFat        = vendasMes.reduce((s, v) => s + (v.valorVenda || 0), 0);
+    const totalVendas     = vendasMes.length;
+    const resumoDiv       = el('historicoVendasResumo');
+    const listaDiv        = el('historicoVendasLista');
+
+    if (totalVendas === 0) {
+      resumoDiv.innerHTML = '';
+      listaDiv.innerHTML  = `<p style="color:var(--text-muted); font-size:14px; text-align:center; padding:20px 0;">Nenhuma venda realizada em ${mesHistoricoVendasAtual}.</p>`;
+      return;
+    }
+
+    // Card de resumo do mês
+    resumoDiv.innerHTML = `
+      <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-bottom:4px;">
+        <div style="background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.2); border-radius:var(--radius-md); padding:12px; text-align:center;">
+          <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:6px;">📱 Vendas Realizadas</p>
+          <p style="font-size:22px; font-weight:800; color:var(--accent-indigo-light);">${totalVendas}</p>
+        </div>
+        <div style="background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.2); border-radius:var(--radius-md); padding:12px; text-align:center;">
+          <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:6px;">💵 Faturamento</p>
+          <p style="font-size:14px; font-weight:800; color:var(--accent-cyan);">${brl(totalFat)}</p>
+        </div>
+        <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2); border-radius:var(--radius-md); padding:12px; text-align:center;">
+          <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:6px;">📈 Lucro Total</p>
+          <p style="font-size:14px; font-weight:800; color:var(--accent-emerald-light);">${brl(totalLucro)}</p>
+        </div>
+      </div>`;
+
+    // Lista de Vendas do mês
+    listaDiv.innerHTML = vendasMes.map(v => {
+      const dataVenda = v.data;
+      const lucroVenda = v.lucro || 0;
+      const origemVenda = v.origem || 'Não informada';
+      const condicao = v.condicao || 'N/I';
+      return `
+        <div class="item" style="border-left-color: var(--accent-cyan);">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:6px;">
+            <h3 style="margin-bottom:4px;">📱 ${v.modelo}</h3>
+            <span style="background:rgba(6,182,212,0.15); color:var(--accent-cyan); padding:3px 10px; border-radius:var(--radius-xs); font-size:10px; font-weight:800; white-space:nowrap;">📅 ${dataVenda}</span>
+          </div>
+          <p style="margin-bottom:3px;">Condição: ${condicao} &nbsp;|&nbsp; Origem: ${origemVenda}</p>
+          <p>Venda: <strong style="color:var(--accent-cyan);">${brl(v.valorVenda)}</strong> &nbsp;|&nbsp; Lucro: <strong style="color:var(--accent-emerald-light);">${brl(lucroVenda)}</strong></p>
+          <div class="item-actions">
+            <button class="btn-editar" onclick="editarVendaFinalizada(${v.id})">✏️ Editar</button>
+          </div>
+        </div>`;
+    }).join('');
   }
 
   /* ─────────────────────────────────────────
@@ -3349,8 +3561,6 @@
           </div>`).join('');
       }
     }
-
-    atualizarHistoricoPainel();
   }
 
   /* ─────────────────────────────────────────
@@ -3418,7 +3628,7 @@
    */
   function realizarFechamentoMensal(mesReferencia) {
     const lucroC = consertosFinalizados.reduce((s, c) => s + (c.lucro || 0), 0);
-    const fatC   = consertosFinalizados.reduce((s, c) => s + (c.valorEntrada || 0) + (c.valorRecebido || 0), 0);
+    const fatC   = consertosFinalizados.reduce((s, c) => s + (c.valorRecebido || 0), 0);
     
     const lucroV = vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0);
     const fatV   = vendasRealizadas.reduce((s, v) => s + (v.valorVenda || 0), 0);
