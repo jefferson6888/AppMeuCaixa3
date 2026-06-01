@@ -2675,29 +2675,42 @@
     const nOrigemC     = el('editOrigemCompraAparelho').value;
     const nOrigemP     = el('editOrigemPecaAparelho').value;
 
+    // COMPATIBILIDADE: Se for um aparelho antigo (sem origem definida), 
+    // assumimos que o custo já foi debitado do capital no momento do cadastro original.
+    const origemCompraAtual = ap.origemCompra || (ap.origemCustoVenda === 'capital' ? 'capital' : 'capital');
+    const origemPecaAtual   = ap.origemPeca   || (ap.origemCustoVenda === 'capital' ? 'capital' : 'capital');
+
     // AJUSTE FINANCEIRO COMPRA
     if (nOrigemC === 'capital') {
-      if (ap.origemCompra === 'capital') {
+      if (origemCompraAtual === 'capital') {
         const diff = nCompra - (ap.valorCompra || 0);
-        if (diff > 0 && !debitarCapital(diff, `Ajuste compra ${ap.modelo}`)) return;
-        else if (diff < 0) creditarCapital(-diff, `Estorno compra ${ap.modelo}`);
+        if (diff !== 0) {
+          if (diff > 0 && !debitarCapital(diff, `Ajuste compra ${ap.modelo}`)) return;
+          else if (diff < 0) creditarCapital(-diff, `Estorno compra ${ap.modelo}`);
+        }
       } else {
+        // Mudança de fornecedor para capital: debita o valor total
         if (!debitarCapital(nCompra, `Compra ${ap.modelo} (Mudança p/ Capital)`)) return;
       }
-    } else if (ap.origemCompra === 'capital') {
+    } else if (origemCompraAtual === 'capital') {
+      // Mudança de capital para fornecedor: estorna o valor que estava no capital
       creditarCapital(ap.valorCompra, `Estorno compra ${ap.modelo} (Mudança p/ Fornecedor)`);
     }
 
     // AJUSTE FINANCEIRO PEÇA
     if (nOrigemP === 'capital') {
-      if (ap.origemPeca === 'capital') {
+      if (origemPecaAtual === 'capital') {
         const diff = nPeca - (ap.valorPecaUtilizada || 0);
-        if (diff > 0 && !debitarCapital(diff, `Ajuste peça ${ap.modelo}`)) return;
-        else if (diff < 0) creditarCapital(-diff, `Estorno peça ${ap.modelo}`);
+        if (diff !== 0) {
+          if (diff > 0 && !debitarCapital(diff, `Ajuste peça ${ap.modelo}`)) return;
+          else if (diff < 0) creditarCapital(-diff, `Estorno peça ${ap.modelo}`);
+        }
       } else {
+        // Mudança de fornecedor para capital: debita o valor total
         if (!debitarCapital(nPeca, `Peça ${ap.modelo} (Mudança p/ Capital)`)) return;
       }
-    } else if (ap.origemPeca === 'capital') {
+    } else if (origemPecaAtual === 'capital') {
+      // Mudança de capital para fornecedor: estorna o valor que estava no capital
       creditarCapital(ap.valorPecaUtilizada, `Estorno peça ${ap.modelo} (Mudança p/ Fornecedor)`);
     }
 
@@ -2728,11 +2741,31 @@
   function deletarAparelho(id) {
     const a = aparelhos.find(x => x.id === id);
     if (a && confirm(`Excluir ${a.modelo}?`)) {
-      const totalEstorno = a.custoTotal || (a.valorCompra + a.valorPecaUtilizada);
-      if (a.origemCustoVenda === 'capital' && a.custoJaDebitado && totalEstorno > 0 && a.status === 'disponivel') {
-        creditarCapital(totalEstorno, `Estorno ${a.modelo}`);
+      // Estorno apenas para aparelhos que ainda não foram vendidos (status disponível)
+      if (a.status === 'disponivel') {
+        let valorParaEstornar = 0;
+        
+        // Determinar origem da compra (com suporte a aparelhos antigos)
+        const oC = a.origemCompra || (a.origemCustoVenda === 'capital' ? 'capital' : 'capital');
+        const oP = a.origemPeca   || (a.origemCustoVenda === 'capital' ? 'capital' : 'capital');
+        
+        // Estornar valor da compra se foi pago com capital
+        if (oC === 'capital' && a.valorCompra > 0) {
+          valorParaEstornar += Number(a.valorCompra);
+        }
+        
+        // Estornar valor da peça se foi pago com capital
+        if (oP === 'capital' && a.valorPecaUtilizada > 0) {
+          valorParaEstornar += Number(a.valorPecaUtilizada);
+        }
+
+        if (valorParaEstornar > 0) {
+          creditarCapital(valorParaEstornar, `Estorno exclusão ${a.modelo}`);
+        }
       }
+
       if (a.lucroImediato && a.lucroImediato > 0) lucroTotal -= a.lucroImediato;
+      
       aparelhos = aparelhos.filter(x => x.id !== id);
       salvarDados();
       atualizarTudo();
