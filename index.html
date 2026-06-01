@@ -1768,6 +1768,18 @@
   /** Formata um número como moeda BRL. */
   const brl = v => `R$ ${Number(v).toFixed(2)}`;
 
+  /** Formata data para o padrão brasileiro. */
+  function formatarDataHora(dataStr) {
+    if (!dataStr) return 'N/I';
+    let d = new Date(dataStr);
+    if (isNaN(d.getTime())) {
+      const partes = dataStr.split(/[\/\s,:]/);
+      if (partes.length >= 3) d = new Date(partes[2], partes[1] - 1, partes[0]);
+    }
+    if (isNaN(d.getTime())) return dataStr;
+    return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
   /**
    * Verifica se uma OS/venda está com pagamento atrasado.
    * @param {string} dataVencimento - Data no formato ISO (YYYY-MM-DD).
@@ -2493,12 +2505,12 @@
     adicionarExtrato(lucro >= 0 ? 'credito' : 'debito', `${lucro >= 0 ? '📈 LUCRO' : '📉 PREJUÍZO'} Venda ${ap.modelo}`, Math.abs(lucro));
     atualizarDisplays();
 
-    vendasRealizadas.unshift({
-      id: Date.now(), modelo: ap.modelo, valorVenda: ap.valorVenda, custoTotal, lucro,
-      data: new Date().toLocaleString(), condicao: ap.condicao, acessorios: ap.acessorios,
-      pecaUtilizada: ap.pecaUtilizada, valorPecaUtilizada: ap.valorPecaUtilizada,
-      origem, valorEntrada: 0, valorParcelaRestante: 0
-    });
+      vendasRealizadas.unshift({
+        id: Date.now(), modelo: ap.modelo, valorVenda: ap.valorVenda, custoTotal, lucro,
+        data: new Date().toISOString(), condicao: ap.condicao, acessorios: ap.acessorios,
+        pecaUtilizada: ap.pecaUtilizada, valorPecaUtilizada: ap.valorPecaUtilizada,
+        origem, valorEntrada: 0, valorParcelaRestante: 0
+      });
 
     aparelhos = aparelhos.filter(a => a.id !== vendaPendenteId);
     salvarDados();
@@ -2527,7 +2539,7 @@
 
       vendasRealizadas.unshift({
         id: Date.now(), modelo: ap.modelo, valorVenda: ap.valorVenda, custoTotal: custoT, lucro: lucroFinal,
-        data: new Date().toLocaleString(), condicao: ap.condicao, acessorios: ap.acessorios,
+        data: new Date().toISOString(), condicao: ap.condicao, acessorios: ap.acessorios,
         pecaUtilizada: ap.pecaUtilizada, valorPecaUtilizada: ap.valorPecaUtilizada,
         origem: ap.origemVendaLocal, valorEntrada: ap.valorEntrada, valorParcelaRestante: 0
       });
@@ -3056,7 +3068,10 @@
     }
     div.innerHTML = vendasRealizadas.map(v => `
       <div class="item">
-        <h3>✅ ${v.modelo} <span class="origem-badge">📍 ${v.origem || 'N/I'}</span></h3>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <h3>✅ ${v.modelo} <span class="origem-badge">📍 ${v.origem || 'N/I'}</span></h3>
+          <span style="font-size:10px; color:var(--text-muted);">${formatarDataHora(v.data)}</span>
+        </div>
         <p>Vendido por: ${brl(v.valorVenda)} | Custo: ${brl(v.custoTotal || 0)} | Lucro: ${brl(v.lucro || 0)}</p>
         <div class="item-actions">
           <button class="btn-editar" onclick="editarVendaFinalizada(${v.id})">✏️ Editar</button>
@@ -3165,7 +3180,7 @@
     });
 
     vendasRealizadas.forEach(v => {
-      if (v.data && v.lucro) {
+      if (v.data) {
         let d = new Date(v.data);
         if (isNaN(d.getTime())) {
           const partes = v.data.split(/[\/\s,:]/);
@@ -3174,9 +3189,9 @@
         if (!isNaN(d.getTime())) {
           const m = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
           if (!lucroPorMes[m]) lucroPorMes[m] = { consertosLucro: 0, consertosFat: 0, vendasLucro: 0, vendasFat: 0, totalLucro: 0, totalFat: 0, status: 'Em andamento' };
-          lucroPorMes[m].vendasLucro += v.lucro;
+          lucroPorMes[m].vendasLucro += (v.lucro || 0);
           lucroPorMes[m].vendasFat   += (v.valorVenda || 0);
-          lucroPorMes[m].totalLucro  += v.lucro;
+          lucroPorMes[m].totalLucro  += (v.lucro || 0);
           lucroPorMes[m].totalFat    += (v.valorVenda || 0);
         }
       }
@@ -3483,7 +3498,12 @@
       let d = new Date(v.data);
       if (isNaN(d.getTime())) {
         const partes = v.data.split(/[\/\s,:]/);
+        // Tenta formato DD/MM/YYYY
         if (partes.length >= 3) d = new Date(partes[2], partes[1] - 1, partes[0]);
+      }
+      // Fallback para o ID (Date.now()) se a data falhar
+      if (isNaN(d.getTime()) && v.id) {
+        d = new Date(v.id);
       }
       if (isNaN(d.getTime())) return false;
       return (d.getMonth() + 1) === mesAtual && d.getFullYear() === anoAtual;
@@ -3494,14 +3514,18 @@
       let dA = new Date(a.data);
       let dB = new Date(b.data);
       if (isNaN(dA.getTime())) {
-        const pA = a.data.split(/[\/\s,:]/);
+        const pA = (a.data || "").split(/[\/\s,:]/);
         if (pA.length >= 3) dA = new Date(pA[2], pA[1] - 1, pA[0]);
       }
+      if (isNaN(dA.getTime()) && a.id) dA = new Date(a.id);
+
       if (isNaN(dB.getTime())) {
-        const pB = b.data.split(/[\/\s,:]/);
+        const pB = (b.data || "").split(/[\/\s,:]/);
         if (pB.length >= 3) dB = new Date(pB[2], pB[1] - 1, pB[0]);
       }
-      return dB - dA;
+      if (isNaN(dB.getTime()) && b.id) dB = new Date(b.id);
+
+      return (dB.getTime() || 0) - (dA.getTime() || 0);
     });
 
     // Resumo do mês
@@ -3536,7 +3560,7 @@
 
     // Lista de Vendas do mês
     listaDiv.innerHTML = vendasMes.map(v => {
-      const dataVenda = v.data;
+      const dataVenda = formatarDataHora(v.data);
       const lucroVenda = v.lucro || 0;
       const origemVenda = v.origem || 'Não informada';
       const condicao = v.condicao || 'N/I';
