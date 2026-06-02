@@ -2123,31 +2123,12 @@
     const dividaPecasCompras = comprasPecas.reduce((s, c) => s + (c.status !== 'pago' ? (c.valorTotal || 0) : 0), 0);
     el('lucroAcumulado').textContent = brl(dividaConsertos + dividaVendas + dividaPecasCompras);
 
+    // Os cards de lucro devem mostrar somente o mês atual.
     const mesAnoAtual = obterMesAnoAtual();
+    const dadosMes = calcularDadosDoMes(mesAnoAtual);
 
-    // Os cards de lucro devem mostrar somente o mês atual. Assim, ao virar o mês,
-    // eles começam em R$ 0,00 sem apagar vendas, consertos, histórico ou extrato.
-    const lucroConsertosFinalizados = consertosFinalizados
-      .filter(c => dataPertenceAoMes(c.dataFinalizacao || c.dataEntrada, mesAnoAtual))
-      .reduce((s, c) => s + (c.lucro || 0), 0);
-
-    const lucroVendasRealizadas = vendasRealizadas
-      .filter(v => dataPertenceAoMes(v.data, mesAnoAtual))
-      .reduce((s, v) => s + (v.lucro || 0), 0);
-
-    const lucroPendenteConsertos = consertos
-      .filter(c => dataPertenceAoMes(c.dataEntradaPagamento || c.dataEntrada, mesAnoAtual))
-      .reduce((s, c) => s + (c.lucroImediato || 0), 0);
-
-    const lucroPendenteVendas = aparelhos
-      .filter(a => a.status === 'parcelado' && dataPertenceAoMes(a.dataEntradaPagamento || a.dataEntrada, mesAnoAtual))
-      .reduce((s, a) => s + (a.lucroImediato || 0), 0);
-
-    const lucroVendasTotal    = lucroVendasRealizadas + lucroPendenteVendas;
-    const lucroConsertosTotal = lucroConsertosFinalizados + lucroPendenteConsertos;
-
-    el('lucroVendasValor').textContent    = brl(lucroVendasTotal);
-    el('lucroConsertosValor').textContent = brl(lucroConsertosTotal);
+    el('lucroVendasValor').textContent    = brl(dadosMes.vL);
+    el('lucroConsertosValor').textContent = brl(dadosMes.cL);
 
     el('lucroPendenteVendasInfo').textContent    = '';
     el('lucroPendenteConsertosInfo').textContent = '';
@@ -2363,8 +2344,9 @@
     // Lucro Total Real da OS = Valor Total - Custo da Peça
     const lucroTotalOS = c.valorConserto - (c.valorPeca || 0);
     
-    // Lucro que falta registrar = Lucro Total - Lucro Imediato (já registrado na entrada)
-    const lucroRestante = lucroTotalOS - (c.lucroImediato || 0);
+    // Lucro que falta registrar = Valor da parcela restante
+    // A peça já foi descontada no lucro imediato (entrada), não descontar novamente
+    const lucroRestante = valorRecebido;
 
     if (lucroRestante > 0) {
       lucroTotal += lucroRestante;
@@ -2380,7 +2362,7 @@
       creditarCapital(c.valorPeca, `Reembolso peça ${c.modelo} (finalização)`);
     }
 
-    const finalizada = { ...c, valorRecebido, formaPagamento: forma, lucro: lucroTotalOS, dataFinalizacao: new Date().toISOString() };
+    const finalizada = { ...c, valorRecebido, formaPagamento: forma, lucro: lucroRestante, dataFinalizacao: new Date().toISOString(), dataRecebimentoRestante: new Date().toISOString() };
     if ((c.tempoGarantia || 0) > 0 && !finalizada.dataFimGarantia) {
       const dtFim = new Date();
       dtFim.setMonth(dtFim.getMonth() + c.tempoGarantia);
@@ -2579,7 +2561,8 @@
         id: Date.now(), modelo: ap.modelo, valorVenda: ap.valorVenda, custoTotal: custoT, lucro: lucroFinal,
         data: new Date().toISOString(), condicao: ap.condicao, acessorios: ap.acessorios,
         pecaUtilizada: ap.pecaUtilizada, valorPecaUtilizada: ap.valorPecaUtilizada,
-        origem: ap.origemVendaLocal, valorEntrada: ap.valorEntrada, valorParcelaRestante: 0
+        origem: ap.origemVendaLocal, valorEntrada: ap.valorEntrada, valorParcelaRestante: 0,
+        dataRecebimentoRestante: new Date().toISOString()
       });
 
       aparelhos = aparelhos.filter(a => a.id !== vendaParcelaFinalizandoId);
@@ -2590,6 +2573,7 @@
       switchSubVendaTab('finalizados');
     } else {
       ap.valorParcelaRestante -= valorRecebido;
+      ap.dataRecebimentoRestante = new Date().toISOString();
       lucroTotal += valorRecebido;
       adicionarExtrato('credito', `💰 PARCELA - Venda ${ap.modelo}`, valorRecebido);
       atualizarDisplays();
@@ -2991,7 +2975,10 @@
     div.innerHTML = consertos.map(c => {
       const temPendencia = (c.valorParcelaRestante || 0) > 0;
       const atrasado     = temPendencia && verificarAtraso(c.dataRestantePagamento, c.valorParcelaRestante);
-      const lucroParcial = c.lucroImediato || 0;
+      // Lucro a contabilizar: apenas o da parcela restante, não o imediato já contabilizado
+      const lucroTotalConserto = c.valorConserto - (c.valorPeca || 0);
+      const lucroJaContabilizadoConserto = c.lucroImediato || 0;
+      const lucroParcial = Math.max(0, lucroTotalConserto - lucroJaContabilizadoConserto);
       return `
         <div class="item ${atrasado ? 'item-atrasado' : ''}">
           <h3>🔧 ${c.modelo} - ${c.cliente}${atrasado ? ' <span class="atrasado-badge">ATRASADO</span>' : ''}</h3>
@@ -3073,7 +3060,11 @@
       const vCompra = Number(a.valorCompra) || 0;
       const vPeca   = Number(a.valorPecaUtilizada) || 0;
       const cTotal  = vCompra + vPeca;
-      const lucroParcial = a.lucroImediato || 0;
+      // Lucro a contabilizar: apenas o da parcela restante, não o imediato já contabilizado
+      const custoTotal = vCompra + vPeca;
+      const lucroTotalVenda = (Number(a.valorVenda) || 0) - custoTotal;
+      const lucroJaContabilizado = a.lucroImediato || 0;
+      const lucroParcial = Math.max(0, lucroTotalVenda - lucroJaContabilizado);
       
       const oC = a.origemCompra || 'capital';
       const oP = a.origemPeca   || 'capital';
