@@ -2083,6 +2083,31 @@
      DISPLAYS / KPIs
   ───────────────────────────────────────── */
 
+  function obterMesAnoAtual() {
+    const dataAtual = new Date();
+    return `${(dataAtual.getMonth() + 1).toString().padStart(2, '0')}/${dataAtual.getFullYear()}`;
+  }
+
+  function obterMesAnoDeData(valorData) {
+    if (!valorData) return null;
+
+    if (typeof valorData === 'string') {
+      const dataIso = valorData.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (dataIso) return `${dataIso[2]}/${dataIso[1]}`;
+
+      const dataBr = valorData.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+      if (dataBr) return `${dataBr[2]}/${dataBr[3]}`;
+    }
+
+    const data = new Date(valorData);
+    if (isNaN(data.getTime())) return null;
+    return `${(data.getMonth() + 1).toString().padStart(2, '0')}/${data.getFullYear()}`;
+  }
+
+  function dataPertenceAoMes(valorData, mesAno) {
+    return obterMesAnoDeData(valorData) === mesAno;
+  }
+
   function atualizarDisplays() {
     el('capitalDisponivel').textContent = brl(capital);
 
@@ -2098,17 +2123,30 @@
     const dividaPecasCompras = comprasPecas.reduce((s, c) => s + (c.status !== 'pago' ? (c.valorTotal || 0) : 0), 0);
     el('lucroAcumulado').textContent = brl(dividaConsertos + dividaVendas + dividaPecasCompras);
 
-    const lucroConsertosFinalizados = consertosFinalizados.reduce((s, c) => s + (c.lucro || 0), 0);
-    const lucroVendasRealizadas    = vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0);
+    const mesAnoAtual = obterMesAnoAtual();
 
-    const lucroPendenteConsertos = consertos.reduce((s, c) => s + (c.lucroImediato || 0), 0);
-    const lucroPendenteVendas    = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.lucroImediato || 0), 0);
+    // Os cards de lucro devem mostrar somente o mês atual. Assim, ao virar o mês,
+    // eles começam em R$ 0,00 sem apagar vendas, consertos, histórico ou extrato.
+    const lucroConsertosFinalizados = consertosFinalizados
+      .filter(c => dataPertenceAoMes(c.dataFinalizacao || c.dataEntrada, mesAnoAtual))
+      .reduce((s, c) => s + (c.lucro || 0), 0);
 
-    // O usuário deseja que o lucro pendente (já contabilizado no extrato/capital) seja exibido como parte do lucro total nos cards
+    const lucroVendasRealizadas = vendasRealizadas
+      .filter(v => dataPertenceAoMes(v.data, mesAnoAtual))
+      .reduce((s, v) => s + (v.lucro || 0), 0);
+
+    const lucroPendenteConsertos = consertos
+      .filter(c => dataPertenceAoMes(c.dataEntradaPagamento || c.dataEntrada, mesAnoAtual))
+      .reduce((s, c) => s + (c.lucroImediato || 0), 0);
+
+    const lucroPendenteVendas = aparelhos
+      .filter(a => a.status === 'parcelado' && dataPertenceAoMes(a.dataEntradaPagamento || a.dataEntrada, mesAnoAtual))
+      .reduce((s, a) => s + (a.lucroImediato || 0), 0);
+
     const lucroVendasTotal    = lucroVendasRealizadas + lucroPendenteVendas;
     const lucroConsertosTotal = lucroConsertosFinalizados + lucroPendenteConsertos;
 
-    el('lucroVendasValor').textContent   = brl(lucroVendasTotal);
+    el('lucroVendasValor').textContent    = brl(lucroVendasTotal);
     el('lucroConsertosValor').textContent = brl(lucroConsertosTotal);
 
     el('lucroPendenteVendasInfo').textContent    = '';
@@ -3113,6 +3151,9 @@
   function atualizarResumo() {
     const div = el('resumoFinanceiro');
     if (!div) return;
+    const mesAnoAtual = obterMesAnoAtual();
+    const d = calcularDadosDoMes(mesAnoAtual);
+
     const dividaConsertos   = consertos.reduce((s, c) => s + (c.origemCustoPeca === 'fornecedor' ? (c.valorPeca || 0) : 0), 0);
     const dividaVendas      = aparelhos.reduce((s, a) => {
       let d = 0;
@@ -3122,94 +3163,80 @@
       return s + d;
     }, 0);
     const totalPecasPendentes = dividaConsertos + dividaVendas;
-    const lucroPendenteConsertos = consertos.reduce((s, c) => s + (c.lucroImediato || 0), 0);
-    const lucroPendenteVendas    = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.lucroImediato || 0), 0);
-    const lucroTotalReal    = consertosFinalizados.reduce((s, c) => s + (c.lucro || 0), 0)
-                            + vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0)
-                            + lucroPendenteConsertos + lucroPendenteVendas;
+
     div.innerHTML = `
       <div style="line-height:1.8; font-size:14px;">
+        <p>📅 Resumo do Mês: <strong>${mesAnoAtual}</strong></p>
         <p>📌 OS pendentes: <strong>${consertos.length}</strong></p>
-        <p>✅ Consertos concluídos: <strong>${consertosFinalizados.length}</strong></p>
-        <p>📱 Aparelhos vendidos: <strong>${vendasRealizadas.length}</strong></p>
+        <p>✅ Consertos concluídos (mês): <strong>${consertosFinalizados.filter(c => dataPertenceAoMes(c.dataFinalizacao || c.dataEntrada, mesAnoAtual)).length}</strong></p>
+        <p>📱 Aparelhos vendidos (mês): <strong>${vendasRealizadas.filter(v => dataPertenceAoMes(v.data, mesAnoAtual)).length}</strong></p>
         <p>💼 Capital: <strong>${brl(capital)}</strong></p>
         <p>🚨 Contas pendentes: <strong style="color:var(--accent-red);">${brl(totalPecasPendentes)}</strong></p>
-        <p>📈 LUCRO TOTAL: <strong style="color:var(--accent-green);">${brl(lucroTotalReal)}</strong></p>
+        <p>📈 LUCRO MENSAL: <strong style="color:var(--accent-green);">${brl(d.cL + d.vL)}</strong></p>
       </div>`;
+  }
+
+  /**
+   * Função central para calcular os lucros de qualquer mês dinamicamente.
+   */
+  function calcularDadosDoMes(mesReferencia) {
+    const dataAtual = new Date();
+    const mesAnoHoje = `${(dataAtual.getMonth() + 1).toString().padStart(2, '0')}/${dataAtual.getFullYear()}`;
+    
+    // 1. Dados de itens finalizados (Consertos e Vendas)
+    const consertosDoMes = consertosFinalizados.filter(c => dataPertenceAoMes(c.dataFinalizacao || c.dataEntrada, mesReferencia));
+    const vendasDoMes = vendasRealizadas.filter(v => dataPertenceAoMes(v.data, mesReferencia));
+
+    let cL = consertosDoMes.reduce((s, c) => s + (c.lucro || 0), 0);
+    let cF = consertosDoMes.reduce((s, c) => s + ((c.valorEntrada || 0) + (c.valorRecebido || 0)), 0);
+    let vL = vendasDoMes.reduce((s, v) => s + (v.lucro || 0), 0);
+    let vF = vendasDoMes.reduce((s, v) => s + (v.valorVenda || 0), 0);
+
+    // 2. Se for o mês atual, incluir pendentes (entradas e lucro imediato)
+    if (mesReferencia === mesAnoHoje) {
+      cL += consertos.filter(c => dataPertenceAoMes(c.dataEntradaPagamento || c.dataEntrada, mesAnoHoje)).reduce((s, c) => s + (c.lucroImediato || 0), 0);
+      cF += consertos.filter(c => dataPertenceAoMes(c.dataEntradaPagamento || c.dataEntrada, mesAnoHoje)).reduce((s, c) => s + (c.valorEntrada || 0), 0);
+      vL += aparelhos.filter(a => a.status === 'parcelado' && dataPertenceAoMes(a.dataEntradaPagamento || a.dataEntrada, mesAnoHoje)).reduce((s, a) => s + (a.lucroImediato || 0), 0);
+      vF += aparelhos.filter(a => a.status === 'parcelado' && dataPertenceAoMes(a.dataEntradaPagamento || a.dataEntrada, mesAnoHoje)).reduce((s, a) => s + (a.valorEntrada || 0), 0);
+    }
+
+    // 3. Mesclar com o histórico (se existir registro salvo para este mês)
+    const h = historicoMensal.find(x => x.mes === mesReferencia);
+    if (h) {
+      // Priorizamos o histórico para meses passados se ele tiver valores maiores (proteção contra limpeza de listas)
+      cL = Math.max(cL, h.lucroConsertos || 0);
+      cF = Math.max(cF, h.faturamentoConsertos || 0);
+      vL = Math.max(vL, h.lucroVendas || 0);
+      vF = Math.max(vF, h.faturamentoVendas || 0);
+    }
+
+    return { cL, cF, vL, vF, status: mesReferencia === mesAnoHoje ? 'Aberto' : 'Fechado' };
   }
 
   function atualizarLucroMensal() {
     const lucroPorMes = {};
-
-    // 1. Processar dados do mês atual (que ainda não foram fechados)
     const dataAtual = new Date();
     const mesAnoAtual = `${(dataAtual.getMonth() + 1).toString().padStart(2, '0')}/${dataAtual.getFullYear()}`;
-    
-    // Incluir lucros pendentes (já contabilizados) e faturamento no mês atual
-    const lPendenteC = consertos.reduce((s, c) => s + (c.lucroImediato || 0), 0);
-    const fPendenteC = consertos.reduce((s, c) => s + (c.valorEntrada || 0), 0); // Faturamento parcial (entradas)
 
-    const lPendenteV = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.lucroImediato || 0), 0);
-    const fPendenteV = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.valorEntrada || 0), 0); // Faturamento parcial
+    // Coletar todos os meses que possuem dados (seja em listas ou no histórico)
+    const todosMeses = new Set();
+    todosMeses.add(mesAnoAtual);
+    historicoMensal.forEach(h => todosMeses.add(h.mes));
+    consertosFinalizados.forEach(c => todosMeses.add(obterMesAnoDeData(c.dataFinalizacao || c.dataEntrada)));
+    vendasRealizadas.forEach(v => todosMeses.add(obterMesAnoDeData(v.data)));
 
-    lucroPorMes[mesAnoAtual] = { 
-      consertosLucro: lPendenteC, 
-      consertosFat: fPendenteC,
-      vendasLucro: lPendenteV, 
-      vendasFat: fPendenteV,
-      totalLucro: lPendenteC + lPendenteV,
-      totalFat: fPendenteC + fPendenteV,
-      status: 'Aberto (Mês Atual)'
-    };
-
-    consertosFinalizados.forEach(c => {
-      if (c.dataFinalizacao && c.lucro) {
-        const d = new Date(c.dataFinalizacao);
-        if (!isNaN(d.getTime())) {
-          const m = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
-          if (!lucroPorMes[m]) lucroPorMes[m] = { consertosLucro: 0, consertosFat: 0, vendasLucro: 0, vendasFat: 0, totalLucro: 0, totalFat: 0, status: 'Em andamento' };
-          lucroPorMes[m].consertosLucro += c.lucro;
-          // CORREÇÃO: faturamento total = entrada já paga + valor recebido na finalização.
-          // Para OS à vista: valorEntrada=0 e valorRecebido=valorConserto (correto).
-          // Para OS parceladas: valorEntrada + valorRecebido = total faturado.
-          lucroPorMes[m].consertosFat   += (c.valorEntrada || 0) + (c.valorRecebido || 0);
-          lucroPorMes[m].totalLucro     += c.lucro;
-          lucroPorMes[m].totalFat       += (c.valorEntrada || 0) + (c.valorRecebido || 0);
-        }
-      }
-    });
-
-    vendasRealizadas.forEach(v => {
-      if (v.data) {
-        let d = new Date(v.data);
-        if (isNaN(d.getTime())) {
-          const partes = v.data.split(/[\/\s,:]/);
-          if (partes.length >= 3) d = new Date(partes[2], partes[1] - 1, partes[0]);
-        }
-        if (!isNaN(d.getTime())) {
-          const m = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
-          if (!lucroPorMes[m]) lucroPorMes[m] = { consertosLucro: 0, consertosFat: 0, vendasLucro: 0, vendasFat: 0, totalLucro: 0, totalFat: 0, status: 'Em andamento' };
-          lucroPorMes[m].vendasLucro += (v.lucro || 0);
-          lucroPorMes[m].vendasFat   += (v.valorVenda || 0);
-          lucroPorMes[m].totalLucro  += (v.lucro || 0);
-          lucroPorMes[m].totalFat    += (v.valorVenda || 0);
-        }
-      }
-    });
-
-    // 2. Adicionar dados do Histórico de Fechamentos (meses passados)
-    historicoMensal.forEach(h => {
-      if (!lucroPorMes[h.mes]) {
-        lucroPorMes[h.mes] = { 
-          consertosLucro: h.lucroConsertos, 
-          consertosFat: h.faturamentoConsertos || 0,
-          vendasLucro: h.lucroVendas, 
-          vendasFat: h.faturamentoVendas || 0,
-          totalLucro: h.lucroTotal,
-          totalFat: h.faturamentoTotal || 0,
-          status: 'Fechado'
-        };
-      }
+    todosMeses.forEach(m => {
+      if (!m) return;
+      const d = calcularDadosDoMes(m);
+      lucroPorMes[m] = {
+        consertosLucro: d.cL,
+        consertosFat: d.cF,
+        vendasLucro: d.vL,
+        vendasFat: d.vF,
+        totalLucro: d.cL + d.vL,
+        totalFat: d.cF + d.vF,
+        status: m === mesAnoAtual ? 'Aberto (Mês Atual)' : 'Fechado'
+      };
     });
 
     const meses = Object.keys(lucroPorMes).sort((a, b) => {
@@ -3284,46 +3311,8 @@
     el('nomeMesNavegacao').textContent = mesNavegacaoAtual;
     const container = el('detalheMesNavegacao');
     
-    // Buscar dados do mês (ou no histórico ou no atual)
-    let dados = null;
-    const dataAtual = new Date();
-    const mesAnoHoje = `${(dataAtual.getMonth() + 1).toString().padStart(2, '0')}/${dataAtual.getFullYear()}`;
-
-    if (mesNavegacaoAtual === mesAnoHoje) {
-      const lPendenteC = consertos.reduce((s, c) => s + (c.lucroImediato || 0), 0);
-      // CORREÇÃO: faturamento de OS pendentes usa apenas a entrada já recebida (valorEntrada).
-      // O valorRecebido das finalizadas já inclui a entrada + restante, então não há dupla contagem.
-      const fPendenteC = consertos.reduce((s, c) => s + (c.valorEntrada || 0), 0);
-      const lFinalizadoC = consertosFinalizados.reduce((s, c) => s + (c.lucro || 0), 0);
-      // CORREÇÃO: para OS finalizadas que vieram de pendentes (com entrada), o valorRecebido
-      // é apenas o restante pago na finalização. O total faturado = valorEntrada + valorRecebido.
-      // Para OS finalizadas à vista (criadas direto), valorRecebido = valorConserto (correto).
-      const fFinalizadoC = consertosFinalizados.reduce((s, c) => s + (c.valorEntrada || 0) + (c.valorRecebido || 0), 0);
-
-      const lPendenteV = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.lucroImediato || 0), 0);
-      const fPendenteV = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.valorEntrada || 0), 0);
-      const lRealizadoV = vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0);
-      const fRealizadoV = vendasRealizadas.reduce((s, v) => s + (v.valorVenda || 0), 0);
-
-      dados = {
-        cL: lPendenteC + lFinalizadoC,
-        cF: fPendenteC + fFinalizadoC,
-        vL: lPendenteV + lRealizadoV,
-        vF: fPendenteV + fRealizadoV,
-        status: 'Aberto'
-      };
-    } else {
-      const h = historicoMensal.find(x => x.mes === mesNavegacaoAtual);
-      if (h) {
-        dados = {
-          cL: h.lucroConsertos,
-          cF: h.faturamentoConsertos,
-          vL: h.lucroVendas,
-          vF: h.faturamentoVendas,
-          status: 'Fechado'
-        };
-      }
-    }
+    // Buscar dados do mês (calculados dinamicamente com suporte a histórico)
+    const dados = calcularDadosDoMes(mesNavegacaoAtual);
 
     if (!dados) {
       container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px;">Sem registros para este período.</p>`;
@@ -3355,16 +3344,18 @@
   function atualizarRelatorios() {
     const div = el('relatoriosLista');
     if (!div) return;
-    const lPendenteC = consertos.reduce((s, c) => s + (c.lucroImediato || 0), 0);
-    const lPendenteV = aparelhos.filter(a => a.status === 'parcelado').reduce((s, a) => s + (a.lucroImediato || 0), 0);
-    const lC = consertosFinalizados.reduce((s, c) => s + (c.lucro || 0), 0) + lPendenteC;
-    const lV = vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0) + lPendenteV;
+    const mesAnoAtual = obterMesAnoAtual();
+    const d = calcularDadosDoMes(mesAnoAtual);
+
     div.innerHTML = `
       <div class="item">
-        <p>📈 LUCRO Consertos: <strong style="color:var(--accent-green);">${brl(lC)}</strong></p>
-        <p>📈 LUCRO Vendas: <strong style="color:var(--accent-green);">${brl(lV)}</strong></p>
-        <p style="margin-top:5px;">💰 LUCRO TOTAL: <strong style="color:var(--accent-green); font-size:16px;">${brl(lC + lV)}</strong></p>
+        <p style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">📅 Lucro Consolidado de ${mesAnoAtual}</p>
+        <p>📈 LUCRO Consertos: <strong style="color:var(--accent-indigo-light);">${brl(d.cL)}</strong></p>
+        <p>📈 LUCRO Vendas: <strong style="color:var(--accent-cyan);">${brl(d.vL)}</strong></p>
+        <p style="margin-top:8px; padding-top:8px; border-top:1px solid var(--border-color);">💰 LUCRO TOTAL: <strong style="color:var(--accent-emerald-light); font-size:16px;">${brl(d.cL + d.vL)}</strong></p>
       </div>`;
+    
+    // Atualizar a aba de lucro mensal
     atualizarLucroMensal();
   }
 
@@ -3739,20 +3730,34 @@
   }
 
   /**
-   * Arquiva os lucros do mês anterior e limpa as listas para o novo mês.
+   * Arquiva os lucros do mês anterior sem apagar listas.
+   * O zeramento solicitado acontece somente nos cards, porque os cards filtram
+   * os lançamentos pelo mês atual em atualizarDisplays().
    */
   function realizarFechamentoMensal(mesReferencia) {
-    const lucroC = consertosFinalizados.reduce((s, c) => s + (c.lucro || 0), 0);
-    const fatC   = consertosFinalizados.reduce((s, c) => s + (c.valorRecebido || 0), 0);
+    // IMPORTANTE: Para evitar zerar o histórico se as listas forem limpas,
+    // só atualizamos o histórico se encontrarmos dados nas listas para o mês de referência.
+    const consertosDoMes = consertosFinalizados
+      .filter(c => dataPertenceAoMes(c.dataFinalizacao || c.dataEntrada, mesReferencia));
+
+    const vendasDoMes = vendasRealizadas
+      .filter(v => dataPertenceAoMes(v.data, mesReferencia));
+
+    if (consertosDoMes.length === 0 && vendasDoMes.length === 0) {
+      return; // Não há nada para fechar/atualizar neste mês nas listas
+    }
+
+    const lucroC = consertosDoMes.reduce((s, c) => s + (c.lucro || 0), 0);
+    const fatC   = consertosDoMes.reduce((s, c) => s + ((c.valorEntrada || 0) + (c.valorRecebido || 0)), 0);
     
-    const lucroV = vendasRealizadas.reduce((s, v) => s + (v.lucro || 0), 0);
-    const fatV   = vendasRealizadas.reduce((s, v) => s + (v.valorVenda || 0), 0);
+    const lucroV = vendasDoMes.reduce((s, v) => s + (v.lucro || 0), 0);
+    const fatV   = vendasDoMes.reduce((s, v) => s + (v.valorVenda || 0), 0);
     
     const totalLucro = lucroC + lucroV;
     const totalFat   = fatC + fatV;
 
-    // Adiciona ao histórico
-    historicoMensal.unshift({
+    const fechamentoExistente = historicoMensal.findIndex(h => h.mes === mesReferencia);
+    const fechamento = {
       mes: mesReferencia,
       lucroConsertos: lucroC,
       faturamentoConsertos: fatC,
@@ -3761,17 +3766,12 @@
       lucroTotal: totalLucro,
       faturamentoTotal: totalFat,
       dataFechamento: new Date().toLocaleString()
-    });
+    };
 
-    // Limpa as listas de finalizados para o novo mês
-    consertosFinalizados = [];
-    vendasRealizadas     = [];
-    
-    // O lucroTotal global também pode ser zerado ou mantido como acumulado histórico.
-    // Conforme pedido: "comece a contar os novos lucros", vamos zerar.
-    lucroTotal = 0;
+    if (fechamentoExistente >= 0) historicoMensal[fechamentoExistente] = fechamento;
+    else historicoMensal.unshift(fechamento);
 
-    console.log(`✅ Fechamento mensal realizado: ${mesReferencia}`);
+    console.log(`✅ Histórico atualizado para: ${mesReferencia}`);
   }
 
   /**
