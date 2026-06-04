@@ -1280,7 +1280,22 @@
       <section id="pendentesFinalizadosSection" class="card" style="display:none;" aria-label="Histórico de Garantia">
         <h2>🛡️ Histórico de Garantia</h2>
 
-        <div id="garantiaLista" aria-live="polite"></div>
+        <div class="sub-tabs-container" role="tablist" aria-label="Abas de garantia">
+          <button class="sub-tab-btn active" id="btnSubGarantiaOs"
+            role="tab" aria-selected="true"  aria-controls="subTabGarantiaOs"
+            onclick="switchSubGarantiaTab('os')">🔧 Serviços (OS)</button>
+          <button class="sub-tab-btn" id="btnSubGarantiaVendas"
+            role="tab" aria-selected="false" aria-controls="subTabGarantiaVendas"
+            onclick="switchSubGarantiaTab('vendas')">📱 Vendas</button>
+        </div>
+
+        <div id="subTabGarantiaOs" role="tabpanel" aria-labelledby="btnSubGarantiaOs">
+          <div id="garantiaListaOs" aria-live="polite"></div>
+        </div>
+
+        <div id="subTabGarantiaVendas" role="tabpanel" aria-labelledby="btnSubGarantiaVendas" style="display:none;">
+          <div id="garantiaListaVendas" aria-live="polite"></div>
+        </div>
 
         <!-- Containers ocultos mantidos para compatibilidade com outras abas -->
         <div id="pendentesConsertosLista" style="display:none;"></div>
@@ -1301,7 +1316,40 @@
       <!-- EXTRATO -->
       <section id="extratoSection" class="card" style="display:none;" aria-label="Extrato detalhado">
         <h2>📜 Extrato Detalhado</h2>
-        <div id="extratoLista" style="max-height:450px; overflow-y:auto;" aria-live="polite"></div>
+        
+        <!-- Navegador de Mês do Extrato -->
+        <div style="background:rgba(26,31,46,0.4); border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:16px; margin-bottom:20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <button class="kpi-btn" style="max-width:46px; padding:8px;" onclick="navegarMesExtrato(-1)" aria-label="Mês anterior">◀</button>
+            <div style="text-align:center;">
+              <div id="nomeMesExtratoNav" style="font-size:18px; font-weight:800; color:var(--accent-indigo-light);">--/----</div>
+              <div id="statusMesExtrato" style="font-size:10px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-top:2px;"></div>
+            </div>
+            <button class="kpi-btn" style="max-width:46px; padding:8px;" onclick="navegarMesExtrato(1)" aria-label="Próximo mês">▶</button>
+          </div>
+          <!-- Resumo rápido do mês selecionado -->
+          <div id="resumoMesExtrato" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"></div>
+        </div>
+        
+        <!-- Sub-abas: Receitas e Despesas -->
+        <div class="sub-tabs-container" role="tablist" aria-label="Abas de extrato">
+          <button class="sub-tab-btn active" id="btnSubExtratoReceitas"
+            role="tab" aria-selected="true"  aria-controls="subTabExtratoReceitas"
+            onclick="switchSubExtratoTab('receitas')">💰 Receitas</button>
+          <button class="sub-tab-btn" id="btnSubExtratoDespesas"
+            role="tab" aria-selected="false" aria-controls="subTabExtratoDespesas"
+            onclick="switchSubExtratoTab('despesas')">📉 Despesas</button>
+        </div>
+
+        <!-- Aba: Receitas -->
+        <div id="subTabExtratoReceitas" role="tabpanel" aria-labelledby="btnSubExtratoReceitas">
+          <div id="extratoListaReceitas" style="max-height:450px; overflow-y:auto;" aria-live="polite"></div>
+        </div>
+
+        <!-- Aba: Despesas -->
+        <div id="subTabExtratoDespesas" role="tabpanel" aria-labelledby="btnSubExtratoDespesas" style="display:none;">
+          <div id="extratoListaDespesas" style="max-height:450px; overflow-y:auto;" aria-live="polite"></div>
+        </div>
       </section>
 
     </main>
@@ -1373,6 +1421,10 @@
         <option>PIX</option>
         <option>Cartão</option>
       </select>
+    </label>
+    <label class="field-group" for="dataEntregaOs">
+      <span>Data de Entrega (Início da Garantia)</span>
+      <input type="date" id="dataEntregaOs">
     </label>
     <div class="modal-footer-btns">
       <button onclick="confirmarFinalizar()">Finalizar</button>
@@ -1449,17 +1501,29 @@
     <span class="close-modal" onclick="fecharVendaOrigemModal()" aria-label="Fechar">&times;</span>
     <h3 id="tituloVendaOrigem">📍 Local de Venda</h3>
 
-    <label class="field-group" for="origemVenda">
-      <span>Origem</span>
-      <select id="origemVenda">
-        <option value="">Selecione a Origem</option>
-        <option value="Facebook">📘 Facebook</option>
-        <option value="OLX">🛒 OLX</option>
-        <option value="WhatsApp">💬 WhatsApp</option>
-        <option value="Instagram">📸 Instagram</option>
-        <option value="Assistência">🏪 Loja Física</option>
-      </select>
-    </label>
+    <div class="small-input-group">
+      <div class="field-group">
+        <label for="origemVenda">Origem</label>
+        <select id="origemVenda">
+          <option value="">Selecione</option>
+          <option value="Facebook">📘 Facebook</option>
+          <option value="OLX">🛒 OLX</option>
+          <option value="WhatsApp">💬 WhatsApp</option>
+          <option value="Instagram">📸 Instagram</option>
+          <option value="Assistência">🏪 Loja Física</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label for="vendaTempoGarantia">🛡️ Garantia (Meses)</label>
+        <select id="vendaTempoGarantia">
+          <option value="0">Sem garantia</option>
+          <option value="1">1 mês</option>
+          <option value="2">2 meses</option>
+          <option value="3">3 meses</option>
+          <option value="6">6 meses</option>
+        </select>
+      </div>
+    </div>
 
     <div style="margin:10px 0 15px;">
       <label style="display:flex; align-items:center; gap:8px; font-size:14px; cursor:pointer;">
@@ -1617,15 +1681,21 @@
       <span>Tipo de peça</span>
       <input type="text" id="editTipoPecaOs" placeholder="Ex: Tela/LCD, Bateria, Conector, etc.">
     </label>
-    <label class="field-group" for="editTempoGarantia">
-      <span>🛡️ Tempo de Garantia</span>
-      <select id="editTempoGarantia">
-        <option value="0">Sem garantia</option>
-        <option value="1">1 mês</option>
-        <option value="2">2 meses</option>
-        <option value="3">3 meses</option>
-      </select>
-    </label>
+    <div class="small-input-group">
+      <div class="field-group">
+        <label for="editTempoGarantia">🛡️ Garantia (Meses)</label>
+        <select id="editTempoGarantia">
+          <option value="0">Sem garantia</option>
+          <option value="1">1 mês</option>
+          <option value="2">2 meses</option>
+          <option value="3">3 meses</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label for="editDataEntrega">📅 Data de Entrega</label>
+        <input type="date" id="editDataEntrega">
+      </div>
+    </div>
     <div class="small-input-group">
       <div class="field-group">
         <label for="editValorEntradaOs">Valor entrada (R$)</label>
@@ -1748,6 +1818,7 @@
   let historicoMensal      = [];
   let ultimoMesFechado     = null; // Formato "MM/YYYY"
   let mesNavegacaoAtual    = null; // Mês sendo visualizado no navegador
+  let mesSelecionadoExtrato = null; // Mês selecionado no seletor do extrato
 
   // IDs temporários para operações de edição/finalização
   let consertoFinalizandoId    = null;
@@ -1852,9 +1923,9 @@
     if (navItems[idx]) navItems[idx].classList.add('active');
 
     // Ações específicas por seção
-    if (section === 'extrato')               atualizarExtratoDetalhado();
+    if (section === 'extrato')               { mesSelecionadoExtrato = obterMesAnoAtual(); atualizarNavegadorExtrato(); switchSubExtratoTab('receitas'); }
     if (section === 'dashboard')             { switchSubDashTab('geral'); }
-    if (section === 'pendentesFinalizados')  { atualizarPendentesFinalizados(); switchSubPainelTab('andamento'); }
+    if (section === 'pendentesFinalizados')  { switchSubGarantiaTab('os'); switchSubPainelTab('andamento'); }
     if (section === 'vendaAparelhos')        switchSubVendaTab('nova');
     if (section === 'consertos')             switchSubConsertoTab('nova');
   }
@@ -1915,6 +1986,15 @@
     }, target);
   }
 
+  function switchSubExtratoTab(target) {
+    // Garantir que o navegador está atualizado antes de renderizar os itens
+    atualizarNavegadorExtrato();
+    _switchSubTab({
+      receitas:  { tab: 'subTabExtratoReceitas',  btn: 'btnSubExtratoReceitas',  onShow: atualizarExtratoReceitas },
+      despesas:  { tab: 'subTabExtratoDespesas',  btn: 'btnSubExtratoDespesas',  onShow: atualizarExtratoDespesas },
+    }, target);
+  }
+
   /* ─────────────────────────────────────────
      PERSISTÊNCIA (localStorage)
   ───────────────────────────────────────── */
@@ -1971,7 +2051,7 @@
 
   function exportarDados() {
     try {
-      const dataStr      = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas }, null, 2);
+      const dataStr      = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas, historicoMensal, ultimoMesFechado }, null, 2);
       const blob         = new Blob([dataStr], { type: 'application/json;charset=utf-8' });
       const dataAtual    = new Date().toISOString().split('T')[0];
       const nomeArquivo  = `jefferson_cell_backup_${dataAtual}.json`;
@@ -1992,7 +2072,7 @@
   }
 
   function gerarBackupCopiaCola() {
-    const dataStr   = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas });
+    const dataStr   = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas, historicoMensal, ultimoMesFechado });
     const codificado = btoa(unescape(encodeURIComponent(dataStr)));
     const txtEl      = el('txtCodigoBackup');
     const btnEl      = el('btnCopiarCodigo');
@@ -2031,6 +2111,8 @@
     lucroTotal           = data.lucroTotal           || 0;
     extrato              = data.extrato              || [];
     estoquePecas         = data.estoquePecas         || [];
+    historicoMensal      = data.historicoMensal      || [];
+    ultimoMesFechado     = data.ultimoMesFechado     || null;
     salvarDados();
     atualizarTudo();
     alert('✅ Todos os dados da Jefferson Cell foram recuperados com sucesso!');
@@ -2288,8 +2370,10 @@
       novaOS.valorRecebido   = valorConserto;
       novaOS.formaPagamento  = 'À vista';
       novaOS.dataFinalizacao = new Date().toISOString();
+      // A data de entrega à vista usa o campo de Data de Entrega já existente no formulário ou hoje como padrão
+      novaOS.dataEntrega     = el('dataVencimento').value || new Date().toISOString().split('T')[0];
       if (mesesGarantia > 0) {
-        const dtFim = new Date();
+        const dtFim = new Date(novaOS.dataEntrega);
         dtFim.setMonth(dtFim.getMonth() + mesesGarantia);
         novaOS.dataFimGarantia = dtFim.toISOString().split('T')[0];
       }
@@ -2303,7 +2387,7 @@
 
     // Limpar formulário
     ['clienteConserto','modeloConserto','defeitoConserto','valorConserto',
-     'valorPeca','valorEntrada','valorParcela','nomeFornecedor'].forEach(id => { el(id).value = ''; });
+     'valorPeca','valorEntrada','valorParcela','nomeFornecedor', 'dataEntrada', 'dataVencimento', 'dataEntradaPagamento', 'dataRestantePagamento'].forEach(id => { el(id).value = ''; });
     el('tempoGarantia').value = '0';
     el('fornecedorDiv').style.display  = 'none';
     el('avisoEntradaDiv').style.display = 'none';
@@ -2362,9 +2446,18 @@
       creditarCapital(c.valorPeca, `Reembolso peça ${c.modelo} (finalização)`);
     }
 
-    const finalizada = { ...c, valorRecebido, formaPagamento: forma, lucro: lucroRestante, dataFinalizacao: new Date().toISOString(), dataRecebimentoRestante: new Date().toISOString() };
-    if ((c.tempoGarantia || 0) > 0 && !finalizada.dataFimGarantia) {
-      const dtFim = new Date();
+    const dataEntrega = el('dataEntregaOs').value || new Date().toISOString().split('T')[0];
+    const finalizada = { 
+      ...c, 
+      valorRecebido, 
+      formaPagamento: forma, 
+      lucro: lucroRestante, 
+      dataFinalizacao: new Date().toISOString(), 
+      dataRecebimentoRestante: new Date().toISOString(),
+      dataEntrega: dataEntrega
+    };
+    if ((c.tempoGarantia || 0) > 0) {
+      const dtFim = new Date(dataEntrega);
       dtFim.setMonth(dtFim.getMonth() + c.tempoGarantia);
       finalizada.dataFimGarantia = dtFim.toISOString().split('T')[0];
     }
@@ -2453,6 +2546,8 @@
     // RECALCULAR CUSTO TOTAL DINAMICAMENTE PARA EVITAR ERROS EM DADOS ANTIGOS
     const custoTotal  = (Number(ap.valorCompra) || 0) + (Number(ap.valorPecaUtilizada) || 0);
 
+    const tempoGarantia = parseInt(el('vendaTempoGarantia').value) || 0;
+
     if (isParcelada) {
       const valorEntrada        = Number(el('vendaValorEntrada').value) || 0;
       const dataEntradaPag      = el('vendaDataEntradaPagamento').value;
@@ -2461,6 +2556,8 @@
 
       if (valorEntrada <= 0 || valorParcelaRestante <= 0) { alert('Informe os valores de parcelamento!'); return; }
       if (valorEntrada + valorParcelaRestante !== ap.valorVenda) { alert(`A soma deve dar ${brl(ap.valorVenda)}`); return; }
+      
+      ap.tempoGarantia = tempoGarantia;
 
       let lucroImediato = 0;
       // Reembolsar apenas o que foi pago com CAPITAL
@@ -2525,11 +2622,20 @@
     adicionarExtrato(lucro >= 0 ? 'credito' : 'debito', `${lucro >= 0 ? '📈 LUCRO' : '📉 PREJUÍZO'} Venda ${ap.modelo}`, Math.abs(lucro));
     atualizarDisplays();
 
+      const dataEntrega = new Date().toISOString().split('T')[0];
+      let dataFimGarantia = null;
+      if (tempoGarantia > 0) {
+        const dtFim = new Date(dataEntrega);
+        dtFim.setMonth(dtFim.getMonth() + tempoGarantia);
+        dataFimGarantia = dtFim.toISOString().split('T')[0];
+      }
+
       vendasRealizadas.unshift({
         id: Date.now(), modelo: ap.modelo, valorVenda: ap.valorVenda, custoTotal, lucro,
         data: new Date().toISOString(), condicao: ap.condicao, acessorios: ap.acessorios,
         pecaUtilizada: ap.pecaUtilizada, valorPecaUtilizada: ap.valorPecaUtilizada,
-        origem, valorEntrada: 0, valorParcelaRestante: 0
+        origem, valorEntrada: 0, valorParcelaRestante: 0,
+        tempoGarantia, dataEntrega, dataFimGarantia
       });
 
     aparelhos = aparelhos.filter(a => a.id !== vendaPendenteId);
@@ -2609,6 +2715,7 @@
     el('editValorParcelaRestante').value = os.valorParcelaRestante || 0;
     el('editDataRestantePag').value      = os.dataRestantePagamento || '';
     el('editTempoGarantia').value        = os.tempoGarantia || 0;
+    el('editDataEntrega').value          = os.dataEntrega   || '';
 
     el('editarOsModal').style.display = 'flex';
   }
@@ -2626,10 +2733,11 @@
     const valorParcelaRestante = Number(el('editValorParcelaRestante').value) || 0;
     const dataRestantePagamento = el('editDataRestantePag').value;
     const tempoGarantia        = parseInt(el('editTempoGarantia').value) || 0;
+    const dataEntrega          = el('editDataEntrega').value;
 
     if (!cliente || !modelo || !defeito || valorConsertoRaw === '') { alert('Preencha os campos obrigatórios!'); return; }
     const valorConserto = Number(valorConsertoRaw);
-    const updated = { cliente, modelo, defeito, valorConserto, valorPeca, tipoPeca, valorEntrada, dataEntradaPagamento, valorParcelaRestante, dataRestantePagamento, tempoGarantia };
+    const updated = { cliente, modelo, defeito, valorConserto, valorPeca, tipoPeca, valorEntrada, dataEntradaPagamento, valorParcelaRestante, dataRestantePagamento, tempoGarantia, dataEntrega };
 
     if (editandoFinalizada) {
       const idx = consertosFinalizados.findIndex(c => c.id === editandoOsId);
@@ -2637,10 +2745,10 @@
         const osOriginal = consertosFinalizados[idx];
         const novaOS = { ...osOriginal, ...updated };
         
-        // Se o tempo de garantia mudou ou foi adicionado, recalcula a data de fim
+        // Se o tempo de garantia ou a data de entrega mudou, recalcula a data de fim
         if (tempoGarantia > 0) {
-          // Usa a data de finalização original para o cálculo
-          const baseDate = osOriginal.dataFinalizacao ? new Date(osOriginal.dataFinalizacao) : new Date();
+          // Usa a nova data de entrega (ou a original, ou finalização como fallback)
+          const baseDate = dataEntrega ? new Date(dataEntrega) : (osOriginal.dataEntrega ? new Date(osOriginal.dataEntrega) : (osOriginal.dataFinalizacao ? new Date(osOriginal.dataFinalizacao) : new Date()));
           const dtFim = new Date(baseDate);
           dtFim.setMonth(dtFim.getMonth() + tempoGarantia);
           novaOS.dataFimGarantia = dtFim.toISOString().split('T')[0];
@@ -2768,7 +2876,7 @@
   function fecharEditarAparelhoModal()    { el('editarAparelhoModal').style.display = 'none'; editAparelhoId = null; }
   function fecharVendaOrigemModal()       { el('vendaOrigemModal').style.display    = 'none'; vendaPendenteId = null; }
   function fecharFinalizarVendaModal()    { el('finalizarVendaModal').style.display = 'none'; vendaParcelaFinalizandoId = null; el('vendaValorRecebido').value = ''; }
-  function fecharFinalizarModal()         { el('finalizarModal').style.display      = 'none'; consertoFinalizandoId = null; }
+  function fecharFinalizarModal()         { el('finalizarModal').style.display      = 'none'; consertoFinalizandoId = null; el('dataEntregaOs').value = ''; }
   function fecharDetalheModal()           { el('detalheOsModal').style.display      = 'none'; }
   function fecharReciboModal()            { el('reciboModal').style.display         = 'none'; }
 
@@ -2841,6 +2949,58 @@
   }
 
   function fecharEditarVendaFinalizadaModal() { el('editarVendaFinalizadaModal').style.display = 'none'; editVendaId = null; }
+
+  function excluirVendaRealizada(id) {
+    if (!confirm('Deseja realmente excluir esta venda? O lucro será estornado e o aparelho voltará para o estoque.')) return;
+    
+    const idx = vendasRealizadas.findIndex(v => v.id === id);
+    if (idx === -1) return;
+    
+    const v = vendasRealizadas[idx];
+    
+    // 1. Estornar Lucro Total
+    if (v.lucro && v.lucro !== 0) {
+      lucroTotal -= v.lucro;
+      adicionarExtrato(v.lucro > 0 ? 'debito' : 'credito', `🚫 Estorno Lucro: Venda cancelada ${v.modelo}`, Math.abs(v.lucro));
+    }
+    
+    // 2. Estornar Reembolso de Capital (se houve na venda à vista ou quitação)
+    // Na venda à vista, o custo total é creditado de volta ao capital. Ao cancelar, devemos debitar.
+    const custoTotal = v.custoTotal || 0;
+    if (custoTotal > 0) {
+      debitarCapital(custoTotal, `🚫 Estorno custo: Venda cancelada ${v.modelo}`);
+    }
+
+    // 3. Voltar o aparelho para a lista de disponíveis
+    aparelhos.push({
+      id: Date.now(),
+      modelo: v.modelo,
+      valorCompra: v.valorCompra || (custoTotal - (v.valorPecaUtilizada || 0)),
+      valorVenda: v.valorVenda,
+      condicao: v.condicao || 'Usado',
+      acessorios: v.acessorios || '',
+      pecaUtilizada: v.pecaUtilizada || 'Nenhuma',
+      valorPecaUtilizada: v.valorPecaUtilizada || 0,
+      dataEntrada: new Date().toISOString().split('T')[0],
+      status: 'disponivel',
+      origemCompra: 'capital', 
+      origemPeca: 'capital',
+      custoTotal: custoTotal,
+      custoJaDebitado: true
+    });
+
+    // 4. Remover da lista de vendas
+    vendasRealizadas.splice(idx, 1);
+    
+    salvarDados();
+    atualizarTudo();
+    
+    // Forçar atualização das abas que podem estar abertas
+    atualizarVendasRealizadas();
+    atualizarHistoricoVendas();
+    
+    alert('✅ Venda excluída com sucesso! O aparelho retornou ao estoque e o lucro foi estornado.');
+  }
 
   let editVendaPendenteId = null;
   function abrirEditarVendaPendente(id) {
@@ -3104,6 +3264,7 @@
         <p>Vendido por: ${brl(v.valorVenda)} | Custo: ${brl(v.custoTotal || 0)} | Lucro: ${brl(v.lucro || 0)}</p>
         <div class="item-actions">
           <button class="btn-editar" onclick="editarVendaFinalizada(${v.id})">✏️ Editar</button>
+          <button class="btn-deletar" onclick="excluirVendaRealizada(${v.id})">🗑️ Excluir</button>
         </div>
       </div>`).join('');
   }
@@ -3556,6 +3717,7 @@
           <p>Venda: <strong style="color:var(--accent-cyan);">${brl(v.valorVenda)}</strong> &nbsp;|&nbsp; Lucro: <strong style="color:var(--accent-emerald-light);">${brl(lucroVenda)}</strong></p>
           <div class="item-actions">
             <button class="btn-editar" onclick="editarVendaFinalizada(${v.id})">✏️ Editar</button>
+            <button class="btn-deletar" onclick="excluirVendaRealizada(${v.id})">🗑️ Excluir</button>
           </div>
         </div>`;
     }).join('');
@@ -3612,46 +3774,62 @@
     if (alterou) salvarDados();
   }
 
-  function atualizarPendentesFinalizados() {
-    // Remover garantias expiradas antes de renderizar
+  function switchSubGarantiaTab(target) {
+    _switchSubTab({
+      os:     { tab: 'subTabGarantiaOs',     btn: 'btnSubGarantiaOs',     onShow: atualizarGarantiaListaOs },
+      vendas: { tab: 'subTabGarantiaVendas', btn: 'btnSubGarantiaVendas', onShow: atualizarGarantiaListaVendas },
+    }, target);
+  }
+
+  function atualizarGarantiaListaOs() {
     limparGarantiasExpiradas();
+    const div = el('garantiaListaOs');
+    if (!div) return;
+    const itens = consertosFinalizados.filter(i => i.dataFimGarantia && garantiaAtiva(i.dataFimGarantia));
+    div.innerHTML = renderizarItensGarantia(itens, 'os');
+  }
 
-    const garantiaDiv = el('garantiaLista');
-    if (!garantiaDiv) return;
+  function atualizarGarantiaListaVendas() {
+    const div = el('garantiaListaVendas');
+    if (!div) return;
+    const itens = vendasRealizadas.filter(i => i.dataFimGarantia && garantiaAtiva(i.dataFimGarantia));
+    div.innerHTML = renderizarItensGarantia(itens, 'vendas');
+  }
 
-    // Filtrar apenas consertos finalizados com garantia ainda ativa
-    const comGarantia = consertosFinalizados.filter(c => c.dataFimGarantia && garantiaAtiva(c.dataFimGarantia));
-
-    if (comGarantia.length === 0) {
-      garantiaDiv.innerHTML = `
+  function renderizarItensGarantia(itens, tipo) {
+    if (itens.length === 0) {
+      return `
         <div style="text-align:center; padding:40px 20px;">
           <div style="font-size:48px; margin-bottom:16px;">🛡️</div>
-          <p style="color:var(--text-muted); font-size:14px; font-weight:600;">Nenhum conserto com garantia ativa no momento.</p>
-          <p style="color:var(--text-dim); font-size:12px; margin-top:8px;">As garantias aparecem aqui após a finalização do conserto e são removidas automaticamente ao expirar.</p>
+          <p style="color:var(--text-muted); font-size:14px; font-weight:600;">Nenhuma garantia ativa nesta categoria.</p>
         </div>`;
-      return;
     }
 
-    garantiaDiv.innerHTML = comGarantia.map(c => {
-      const dias        = diasParaFimGarantia(c.dataFimGarantia);
-      const meses       = c.tempoGarantia || 0;
-      const dataFimFmt  = formatarDataBR(c.dataFimGarantia);
+    const sorted = [...itens].sort((a, b) => new Date(a.dataFimGarantia) - new Date(b.dataFimGarantia));
+
+    return sorted.map(i => {
+      const dias        = diasParaFimGarantia(i.dataFimGarantia);
+      const meses       = i.tempoGarantia || 0;
+      const dataFimFmt  = formatarDataBR(i.dataFimGarantia);
       const urgente     = dias <= 7;
       const cor         = urgente ? 'var(--accent-orange)' : 'var(--accent-emerald)';
-      const borderColor = urgente ? 'var(--accent-orange)' : 'var(--accent-emerald)';
       const bgColor     = urgente ? 'rgba(249,115,22,0.06)' : 'rgba(16,185,129,0.06)';
       const badgeBg     = urgente ? 'rgba(249,115,22,0.15)' : 'rgba(16,185,129,0.15)';
       const diasTexto   = dias === 0 ? 'Expira hoje!' : dias === 1 ? '1 dia restante' : `${dias} dias restantes`;
-      const dataFin     = c.dataFinalizacao ? formatarDataBR(c.dataFinalizacao.split('T')[0]) : 'N/I';
+      const dataEntrega = i.dataEntrega ? formatarDataBR(i.dataEntrega) : (i.dataFinalizacao ? formatarDataBR(i.dataFinalizacao.split('T')[0]) : 'N/I');
+      
+      const titulo = tipo === 'os' ? `🔧 ${i.modelo} — ${i.cliente}` : `📱 ${i.modelo}`;
+      const infoExtra = tipo === 'os' ? `Defeito: ${i.defeito}` : `Origem: ${i.origem || 'N/I'}`;
+      const valor = tipo === 'os' ? i.valorConserto : i.valorVenda;
 
       return `
-        <div class="item" style="border-left-color:${borderColor}; background:${bgColor};">
+        <div class="item" style="border-left-color:${cor}; background:${bgColor};">
           <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:6px;">
-            <h3 style="margin-bottom:4px;">🔧 ${c.modelo} — ${c.cliente}</h3>
+            <h3 style="margin-bottom:4px;">${titulo}</h3>
             <span style="background:${badgeBg}; color:${cor}; padding:3px 10px; border-radius:var(--radius-xs); font-size:10px; font-weight:800; white-space:nowrap;">🛡️ ${meses} ${meses === 1 ? 'mês' : 'meses'}</span>
           </div>
-          <p style="margin-bottom:3px;">Defeito: ${c.defeito}</p>
-          <p style="margin-bottom:3px;">Finalizado: ${dataFin} &nbsp;|&nbsp; Valor: <strong>${brl(c.valorConserto)}</strong></p>
+          <p style="margin-bottom:3px;">${infoExtra}</p>
+          <p style="margin-bottom:3px;">Entregue em: ${dataEntrega} &nbsp;|&nbsp; Valor: <strong>${brl(valor)}</strong></p>
           <div style="margin-top:10px; padding:8px 12px; border-radius:var(--radius-sm); background:${badgeBg}; border:1px solid ${urgente ? 'rgba(249,115,22,0.3)' : 'rgba(16,185,129,0.3)'}; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
             <span style="font-size:12px; font-weight:700; color:${cor};">📅 Garantia válida até: ${dataFimFmt}</span>
             <span style="font-size:11px; font-weight:800; color:${cor};">${diasTexto}</span>
@@ -3664,14 +3842,120 @@
      EXTRATO DETALHADO
   ───────────────────────────────────────── */
 
-  function atualizarExtratoDetalhado() {
-    const div = el('extratoLista');
-    if (!div) return;
-    if (extrato.length === 0) {
-      div.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">Sem movimentações.</p>';
-      return;
+  /** Retorna todos os meses distintos que existem no extrato, ordenados do mais recente ao mais antigo. */
+  function obterMesesDoExtrato() {
+    const mesesSet = new Set();
+    const mesAtual = obterMesAnoAtual();
+    mesesSet.add(mesAtual); // garante que o mês atual sempre aparece
+    extrato.forEach(e => {
+      const m = obterMesAnoDeData(e.data);
+      if (m) mesesSet.add(m);
+    });
+    // Ordenar do mais recente ao mais antigo
+    return Array.from(mesesSet).sort((a, b) => {
+      const [mA, aA] = a.split('/').map(Number);
+      const [mB, aB] = b.split('/').map(Number);
+      return new Date(aB, mB - 1) - new Date(aA, mA - 1);
+    });
+  }
+
+  /**
+   * Navega entre os meses do extrato.
+   * direcao = -1 → botão ◀ (mês anterior, mais antigo)
+   * direcao = +1 → botão ▶ (mês seguinte, mais recente)
+   * A lista `meses` está ordenada do mais recente (index 0) ao mais antigo (index n-1).
+   * Portanto: ◀ (anterior) = idx+1, ▶ (próximo) = idx-1.
+   */
+  function navegarMesExtrato(direcao) {
+    const meses = obterMesesDoExtrato();
+    if (meses.length === 0) return;
+
+    // Se não há mês selecionado, começa pelo mais recente (index 0)
+    if (!mesSelecionadoExtrato) {
+      mesSelecionadoExtrato = meses[0];
     }
-    div.innerHTML = extrato.slice(0, 40).map(e => `
+
+    const idxAtual = meses.indexOf(mesSelecionadoExtrato);
+    // direcao -1 (◀ = mês anterior) → idx aumenta (mais antigo)
+    // direcao +1 (▶ = mês seguinte) → idx diminui (mais recente)
+    const novoIdx = idxAtual + (-direcao);
+
+    if (novoIdx < 0 || novoIdx >= meses.length) return; // limite atingido
+
+    mesSelecionadoExtrato = meses[novoIdx];
+    atualizarNavegadorExtrato();
+    atualizarExtratoDetalhado();
+  }
+
+  /** Atualiza o cabeçalho do navegador de mês do extrato (nome, status e resumo). */
+  function atualizarNavegadorExtrato() {
+    const meses   = obterMesesDoExtrato();
+    const mesAtual = obterMesAnoAtual();
+
+    // Garantir que há um mês selecionado
+    if (!mesSelecionadoExtrato || !meses.includes(mesSelecionadoExtrato)) {
+      mesSelecionadoExtrato = mesAtual;
+    }
+
+    // Atualizar nome
+    const nomeEl = el('nomeMesExtratoNav');
+    if (nomeEl) nomeEl.textContent = mesSelecionadoExtrato;
+
+    // Atualizar status (Aberto / Fechado)
+    const statusEl = el('statusMesExtrato');
+    if (statusEl) {
+      const ehAtual = mesSelecionadoExtrato === mesAtual;
+      statusEl.textContent = ehAtual ? '🟢 Mês Atual (Aberto)' : '🔴 Fechado';
+      statusEl.style.color = ehAtual ? 'var(--accent-emerald-light)' : 'var(--accent-red)';
+    }
+
+    // Calcular totais do mês selecionado
+    const receitasMes = extrato.filter(e => e.tipo === 'credito' && obterMesAnoDeData(e.data) === mesSelecionadoExtrato);
+    const despesasMes = extrato.filter(e => e.tipo === 'debito'  && obterMesAnoDeData(e.data) === mesSelecionadoExtrato);
+    const totalReceitas = receitasMes.reduce((s, e) => s + (e.valor || 0), 0);
+    const totalDespesas = despesasMes.reduce((s, e) => s + (e.valor || 0), 0);
+    const saldo         = totalReceitas - totalDespesas;
+
+    const resumoEl = el('resumoMesExtrato');
+    if (resumoEl) {
+      resumoEl.innerHTML = `
+        <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2); border-radius:var(--radius-md); padding:10px; text-align:center;">
+          <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:4px;">💰 Receitas</p>
+          <p style="font-size:16px; font-weight:800; color:var(--accent-emerald-light);">${brl(totalReceitas)}</p>
+          <p style="font-size:10px; color:var(--text-dim); margin-top:2px;">${receitasMes.length} lançamento(s)</p>
+        </div>
+        <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); border-radius:var(--radius-md); padding:10px; text-align:center;">
+          <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:4px;">📉 Despesas</p>
+          <p style="font-size:16px; font-weight:800; color:var(--accent-red);">${brl(totalDespesas)}</p>
+          <p style="font-size:10px; color:var(--text-dim); margin-top:2px;">${despesasMes.length} lançamento(s)</p>
+        </div>
+        <div style="grid-column:1/-1; background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.2); border-radius:var(--radius-md); padding:10px; text-align:center;">
+          <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:4px;">📊 Saldo do Mês</p>
+          <p style="font-size:18px; font-weight:800; color:${saldo >= 0 ? 'var(--accent-emerald-light)' : 'var(--accent-red)'};">${brl(saldo)}</p>
+        </div>`;
+    }
+  }
+
+  function renderizarExtratoFiltrado(tipoFiltro) {
+    let filtrado = extrato.filter(e => e.tipo === tipoFiltro);
+    
+    // Filtrar pelo mês selecionado no navegador
+    if (mesSelecionadoExtrato) {
+      filtrado = filtrado.filter(e => obterMesAnoDeData(e.data) === mesSelecionadoExtrato);
+    }
+    
+    // Ordenar do mais recente ao mais antigo
+    filtrado = filtrado.sort((a, b) => (b.id || 0) - (a.id || 0)).slice(0, 100);
+
+    if (filtrado.length === 0) {
+      const ehAtual = mesSelecionadoExtrato === obterMesAnoAtual();
+      return `<div style="text-align:center; padding:30px 20px;">
+        <div style="font-size:40px; margin-bottom:12px;">${tipoFiltro === 'credito' ? '💰' : '📉'}</div>
+        <p style="color:var(--text-muted); font-size:14px; font-weight:600;">Sem ${tipoFiltro === 'credito' ? 'receitas' : 'despesas'} em ${mesSelecionadoExtrato || 'este mês'}.</p>
+        ${ehAtual ? '<p style="color:var(--text-dim); font-size:12px; margin-top:6px;">Os lançamentos deste mês aparecerão aqui conforme forem registrados.</p>' : '<p style="color:var(--text-dim); font-size:12px; margin-top:6px;">Use os botões ◀ ▶ para navegar entre os meses.</p>'}
+      </div>`;
+    }
+    return filtrado.map(e => `
       <div class="extrato-item-detalhado ${e.tipo}">
         <div>
           <strong>📌 ${e.descricao}</strong><br>
@@ -3685,6 +3969,28 @@
       </div>`).join('');
   }
 
+  function atualizarExtratoReceitas() {
+    const div = el('extratoListaReceitas');
+    if (!div) return;
+    div.innerHTML = renderizarExtratoFiltrado('credito');
+  }
+
+  function atualizarExtratoDespesas() {
+    const div = el('extratoListaDespesas');
+    if (!div) return;
+    div.innerHTML = renderizarExtratoFiltrado('debito');
+  }
+
+  function atualizarExtratoDetalhado() {
+    // Atualiza o navegador de mês e depois renderiza as listas
+    atualizarNavegadorExtrato();
+    // Renderiza a aba ativa (receitas ou despesas)
+    const tabReceitas = el('subTabExtratoReceitas');
+    const tabDespesas = el('subTabExtratoDespesas');
+    if (tabReceitas && tabReceitas.style.display !== 'none') atualizarExtratoReceitas();
+    if (tabDespesas && tabDespesas.style.display !== 'none') atualizarExtratoDespesas();
+  }
+
   /* ─────────────────────────────────────────
      ATUALIZAÇÃO GERAL
   ───────────────────────────────────────── */
@@ -3693,6 +3999,10 @@
     verificarFechamentoMensal();
     atualizarDisplays();
     salvarDados();
+    
+    // Atualizar Garantias
+    if (typeof atualizarGarantiaListaOs === 'function') atualizarGarantiaListaOs();
+    if (typeof atualizarGarantiaListaVendas === 'function') atualizarGarantiaListaVendas();
   }
 
   /* ─────────────────────────────────────────
@@ -3721,29 +4031,33 @@
   }
 
   /**
-   * Arquiva os lucros do mês anterior sem apagar listas.
-   * O zeramento solicitado acontece somente nos cards, porque os cards filtram
-   * os lançamentos pelo mês atual em atualizarDisplays().
+   * Arquiva os dados do mês anterior no histórico mensal.
+   * O extrato permanece intacto; ao abrir o extrato no novo mês,
+   * o filtro automático exibe apenas os lançamentos do mês atual.
+   * Os meses anteriores ficam acessíveis pelos botões ◀ ▶.
    */
   function realizarFechamentoMensal(mesReferencia) {
-    // IMPORTANTE: Para evitar zerar o histórico se as listas forem limpas,
-    // só atualizamos o histórico se encontrarmos dados nas listas para o mês de referência.
     const consertosDoMes = consertosFinalizados
       .filter(c => dataPertenceAoMes(c.dataFinalizacao || c.dataEntrada, mesReferencia));
-
     const vendasDoMes = vendasRealizadas
       .filter(v => dataPertenceAoMes(v.data, mesReferencia));
 
-    if (consertosDoMes.length === 0 && vendasDoMes.length === 0) {
-      return; // Não há nada para fechar/atualizar neste mês nas listas
+    // Também verificar se há lançamentos no extrato para este mês
+    const extratoDoMes = extrato.filter(e => obterMesAnoDeData(e.data) === mesReferencia);
+
+    if (consertosDoMes.length === 0 && vendasDoMes.length === 0 && extratoDoMes.length === 0) {
+      return; // Nada para fechar neste mês
     }
 
     const lucroC = consertosDoMes.reduce((s, c) => s + (c.lucro || 0), 0);
     const fatC   = consertosDoMes.reduce((s, c) => s + ((c.valorEntrada || 0) + (c.valorRecebido || 0)), 0);
-    
     const lucroV = vendasDoMes.reduce((s, v) => s + (v.lucro || 0), 0);
     const fatV   = vendasDoMes.reduce((s, v) => s + (v.valorVenda || 0), 0);
-    
+
+    // Totais do extrato do mês
+    const totalReceitasExtrato = extratoDoMes.filter(e => e.tipo === 'credito').reduce((s, e) => s + (e.valor || 0), 0);
+    const totalDespesasExtrato = extratoDoMes.filter(e => e.tipo === 'debito').reduce((s, e) => s + (e.valor || 0), 0);
+
     const totalLucro = lucroC + lucroV;
     const totalFat   = fatC + fatV;
 
@@ -3756,13 +4070,16 @@
       faturamentoVendas: fatV,
       lucroTotal: totalLucro,
       faturamentoTotal: totalFat,
+      totalReceitasExtrato,
+      totalDespesasExtrato,
+      saldoExtrato: totalReceitasExtrato - totalDespesasExtrato,
       dataFechamento: new Date().toLocaleString()
     };
 
     if (fechamentoExistente >= 0) historicoMensal[fechamentoExistente] = fechamento;
     else historicoMensal.unshift(fechamento);
 
-    console.log(`✅ Histórico atualizado para: ${mesReferencia}`);
+    console.log(`✅ Fechamento mensal realizado para: ${mesReferencia}`);
   }
 
   /**
