@@ -1751,6 +1751,21 @@
         <option>Assistência</option>
       </select>
     </label>
+    <div class="small-input-group">
+      <div class="field-group">
+        <label for="editVendaTempoGarantia">🛡️ Garantia</label>
+        <select id="editVendaTempoGarantia">
+          <option value="0">Sem garantia</option>
+          <option value="1">1 mês</option>
+          <option value="2">2 meses</option>
+          <option value="3">3 meses</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label for="editVendaDataEntrega">📅 Data Entrega</label>
+        <input type="date" id="editVendaDataEntrega">
+      </div>
+    </div>
     <div class="modal-footer-btns">
       <button onclick="confirmarEditarVendaFinalizada()">💾 Salvar</button>
       <button onclick="fecharEditarVendaFinalizadaModal()" style="background:var(--accent-red);">Cancelar</button>
@@ -1790,6 +1805,21 @@
       <div class="field-group">
         <label for="editVendaPendDataParcela">Vencimento</label>
         <input type="date" id="editVendaPendDataParcela">
+      </div>
+    </div>
+    <div class="small-input-group">
+      <div class="field-group">
+        <label for="editVendaPendTempoGarantia">🛡️ Garantia</label>
+        <select id="editVendaPendTempoGarantia">
+          <option value="0">Sem garantia</option>
+          <option value="1">1 mês</option>
+          <option value="2">2 meses</option>
+          <option value="3">3 meses</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label for="editVendaPendDataEntrega">📅 Data Entrega</label>
+        <input type="date" id="editVendaPendDataEntrega">
       </div>
     </div>
     <div class="modal-footer-btns">
@@ -2663,12 +2693,23 @@
       }
       atualizarDisplays();
 
+      // Usar a data de entrega definida na edição ou a data atual
+      const dataEntrega = ap.dataEntrega || new Date().toISOString().split('T')[0];
+      let dataFimGarantia = null;
+      const tempoGarantia = ap.tempoGarantia || 0;
+      if (tempoGarantia > 0) {
+        const dtFim = new Date(dataEntrega);
+        dtFim.setMonth(dtFim.getMonth() + tempoGarantia);
+        dataFimGarantia = dtFim.toISOString().split('T')[0];
+      }
+
       vendasRealizadas.unshift({
         id: Date.now(), modelo: ap.modelo, valorVenda: ap.valorVenda, custoTotal: custoT, lucro: lucroFinal,
         data: new Date().toISOString(), condicao: ap.condicao, acessorios: ap.acessorios,
         pecaUtilizada: ap.pecaUtilizada, valorPecaUtilizada: ap.valorPecaUtilizada,
         origem: ap.origemVendaLocal, valorEntrada: ap.valorEntrada, valorParcelaRestante: 0,
-        dataRecebimentoRestante: new Date().toISOString()
+        dataRecebimentoRestante: new Date().toISOString(),
+        tempoGarantia, dataEntrega, dataFimGarantia
       });
 
       aparelhos = aparelhos.filter(a => a.id !== vendaParcelaFinalizandoId);
@@ -2923,6 +2964,8 @@
     el('editVendaValor').value   = venda.valorVenda;
     el('editVendaLucro').value   = venda.lucro;
     el('editVendaOrigem').value  = venda.origem || 'Assistência';
+    el('editVendaTempoGarantia').value = venda.tempoGarantia || 0;
+    el('editVendaDataEntrega').value = venda.dataEntrega || '';
     el('editarVendaFinalizadaModal').style.display = 'flex';
   }
 
@@ -2937,6 +2980,21 @@
     venda.valorVenda = Number(el('editVendaValor').value);
     venda.lucro     = newLucro;
     venda.origem    = el('editVendaOrigem').value;
+
+    const novoTempoGarantia = Number(el('editVendaTempoGarantia').value);
+    const novaDataEntrega   = el('editVendaDataEntrega').value;
+
+    venda.tempoGarantia = novoTempoGarantia;
+    venda.dataEntrega   = novaDataEntrega;
+
+    if (novoTempoGarantia > 0 && novaDataEntrega) {
+      const dtFim = new Date(novaDataEntrega);
+      dtFim.setMonth(dtFim.getMonth() + novoTempoGarantia);
+      venda.dataFimGarantia = dtFim.toISOString().split('T')[0];
+    } else {
+      venda.dataFimGarantia = null;
+    }
+
     if (diffLucro !== 0) {
       lucroTotal += diffLucro;
       adicionarExtrato(diffLucro > 0 ? 'credito' : 'debito', `Ajuste lucro ${venda.modelo}`, Math.abs(diffLucro));
@@ -3013,6 +3071,8 @@
     el('editVendaPendDataEntrada').value  = ap.dataEntradaPagamento || '';
     el('editVendaPendValorParcela').value = ap.valorParcelaRestante;
     el('editVendaPendDataParcela').value  = ap.dataRestantePagamento || '';
+    el('editVendaPendTempoGarantia').value = ap.tempoGarantia || 0;
+    el('editVendaPendDataEntrega').value = ap.dataEntrega || '';
     el('editarVendaPendenteModal').style.display = 'flex';
   }
 
@@ -3052,6 +3112,9 @@
     ap.valorParcelaRestante = novoParcela;
     ap.dataRestantePagamento = el('editVendaPendDataParcela').value;
     ap.lucroImediato        = novoLucroImediato;
+
+    ap.tempoGarantia = Number(el('editVendaPendTempoGarantia').value);
+    ap.dataEntrega   = el('editVendaPendDataEntrega').value;
 
     salvarDados();
     atualizarTudo();
