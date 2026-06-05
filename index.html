@@ -1175,19 +1175,7 @@
               <input type="text" id="pecaUtilizada" placeholder="🔧 Ex: Tela">
             </label>
 
-            <label class="field-group">
-              <span>Foto do Aparelho (opcional)</span>
-              <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
-                <input type="file" id="fotoAparelho" accept="image/*" style="display: none;" onchange="previewImagem(this)">
-                <button type="button" onclick="el('fotoAparelho').click()" style="background: var(--accent-indigo); color: white; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600;">
-                  📸 Selecionar Foto
-                </button>
-                <div id="previewContainer" style="width: 50px; height: 50px; border-radius: 8px; border: 1px solid var(--border-color); overflow: hidden; display: none; background: #000;">
-                  <img id="imgPreview" style="width: 100%; height: 100%; object-fit: cover;">
-                </div>
-                <button id="btnRemoverFoto" type="button" onclick="removerFoto()" style="display: none; background: var(--accent-red); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 12px;">×</button>
-              </div>
-            </label>
+
 
             <div id="fornecedorVendaDiv" style="display:none;">
               <label class="field-group" for="nomeFornecedorVenda">
@@ -2059,11 +2047,18 @@
 
   /** Serializa o estado completo e salva no localStorage. */
   function salvarDados() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      consertos, consertosFinalizados, aparelhos, vendasRealizadas,
-      comprasPecas, capital, lucroTotal, extrato, estoquePecas,
-      historicoMensal, ultimoMesFechado
-    }));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        consertos, consertosFinalizados, aparelhos, vendasRealizadas,
+        comprasPecas, capital, lucroTotal, extrato, estoquePecas,
+        historicoMensal, ultimoMesFechado
+      }));
+    } catch (e) {
+      console.error("Erro ao salvar no localStorage:", e);
+      if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+        alert("⚠️ Memória cheia! Não foi possível salvar a foto. Tente usar uma imagem menor ou remova itens antigos.");
+      }
+    }
   }
 
   /** Carrega o estado do localStorage e atualiza a UI. */
@@ -2601,34 +2596,7 @@
      VENDAS
   ───────────────────────────────────────── */
 
-  let currentBase64Image = null;
 
-  function previewImagem(input) {
-    const file = input.files[0];
-    if (file) {
-      // Validar tamanho (máximo 1MB para não estourar o localStorage)
-      if (file.size > 1024 * 1024) {
-        alert("⚠️ A imagem é muito grande! Escolha uma foto de até 1MB.");
-        input.value = "";
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        currentBase64Image = e.target.result;
-        el('imgPreview').src = currentBase64Image;
-        el('previewContainer').style.display = 'block';
-        el('btnRemoverFoto').style.display = 'block';
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
-  function removerFoto() {
-    currentBase64Image = null;
-    el('fotoAparelho').value = "";
-    el('previewContainer').style.display = 'none';
-    el('btnRemoverFoto').style.display = 'none';
-  }
 
   function salvarAparelhoDetalhado() {
     const modelo           = el('modelo').value.trim();
@@ -2678,14 +2646,13 @@
       valorEntrada: 0, dataEntradaPagamento: '',
       valorParcelaRestante: 0, dataRestantePagamento: '',
       lucroImediato: 0,
-      foto: currentBase64Image // Salvar a foto em Base64
     });
 
     salvarDados();
     atualizarTudo();
 
     ['modelo','valorCompra','valorVenda','pecaUtilizada','valorPecaUtilizada','nomeFornecedorVenda'].forEach(id => { el(id).value = ''; });
-    removerFoto(); // Limpar foto após salvar
+
     el('fornecedorVendaDiv').style.display = 'none';
 
     alert(`✅ Aparelho adicionado! Custo: ${brl(custoTotal)} | Venda: ${brl(venda)} | Lucro estimado: ${brl(venda - custoTotal)}`);
@@ -2791,8 +2758,7 @@
         data: new Date().toISOString(), condicao: ap.condicao, acessorios: ap.acessorios,
         pecaUtilizada: ap.pecaUtilizada, valorPecaUtilizada: ap.valorPecaUtilizada,
         origem, valorEntrada: 0, valorParcelaRestante: 0,
-        tempoGarantia, dataEntrega, dataFimGarantia,
-        foto: ap.foto // Passar a foto para o histórico
+        tempoGarantia, dataEntrega, dataFimGarantia
       });
 
     aparelhos = aparelhos.filter(a => a.id !== vendaPendenteId);
@@ -2836,8 +2802,7 @@
         pecaUtilizada: ap.pecaUtilizada, valorPecaUtilizada: ap.valorPecaUtilizada,
         origem: ap.origemVendaLocal, valorEntrada: ap.valorEntrada, valorParcelaRestante: 0,
         dataRecebimentoRestante: new Date().toISOString(),
-        tempoGarantia, dataEntrega, dataFimGarantia,
-        foto: ap.foto // Passar a foto para o histórico
+        tempoGarantia, dataEntrega, dataFimGarantia
       });
 
       aparelhos = aparelhos.filter(a => a.id !== vendaParcelaFinalizandoId);
@@ -3383,14 +3348,8 @@
       const tagC = oC === 'capital' ? '💰 Cap' : '🏭 Forn';
       const tagP = oP === 'capital' ? '💰 Cap' : '🏭 Forn';
 
-      const fotoHtml = a.foto ? `
-        <div style="width: 100%; height: 150px; border-radius: 12px; overflow: hidden; margin-bottom: 12px; background: #000; border: 1px solid var(--border-color);">
-          <img src="${a.foto}" style="width: 100%; height: 100%; object-fit: cover;" alt="${a.modelo}">
-        </div>` : '';
-
       return `
         <div class="item">
-          ${fotoHtml}
           <h3>📱 ${a.modelo}</h3>
           <p>Venda: ${brl(a.valorVenda)} | Custo Total: ${brl(cTotal)} | Lucro: ${brl(lucroE)}</p>
           <p><small>Compra: ${brl(vCompra)} (${tagC}) | Peça: ${brl(vPeca)} (${tagP})</small></p>
@@ -3428,14 +3387,8 @@
       const tagC = oC === 'capital' ? '💰 Cap' : '🏭 Forn';
       const tagP = oP === 'capital' ? '💰 Cap' : '🏭 Forn';
 
-      const fotoHtml = a.foto ? `
-        <div style="width: 100%; height: 150px; border-radius: 12px; overflow: hidden; margin-bottom: 12px; background: #000; border: 1px solid var(--border-color);">
-          <img src="${a.foto}" style="width: 100%; height: 100%; object-fit: cover;" alt="${a.modelo}">
-        </div>` : '';
-
       return `
         <div class="item ${atrasado ? 'item-atrasado' : ''}">
-          ${fotoHtml}
           <h3>📱 ${a.modelo}${atrasado ? ' <span class="atrasado-badge">ATRASADO</span>' : ''}</h3>
           <p>Valor Total: ${brl(a.valorVenda)} | Custo Total: ${brl(cTotal)}</p>
           <p><small>Compra: ${brl(vCompra)} (${tagC}) | Peça: ${brl(vPeca)} (${tagP})</small></p>
@@ -3459,14 +3412,8 @@
       return;
     }
     div.innerHTML = vendasRealizadas.map(v => {
-      const fotoHtml = v.foto ? `
-        <div style="width: 100%; height: 150px; border-radius: 12px; overflow: hidden; margin-bottom: 12px; background: #000; border: 1px solid var(--border-color);">
-          <img src="${v.foto}" style="width: 100%; height: 100%; object-fit: cover;" alt="${v.modelo}">
-        </div>` : '';
-
       return `
         <div class="item">
-          ${fotoHtml}
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <h3>✅ ${v.modelo} <span class="origem-badge">📍 ${v.origem || 'N/I'}</span></h3>
             <span style="font-size:10px; color:var(--text-muted);">${formatarDataHora(v.data)}</span>
