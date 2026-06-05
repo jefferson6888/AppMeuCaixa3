@@ -1457,41 +1457,54 @@
 
 <!-- Modal: Backup Completo -->
 <div id="backupCompletoModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloBackup">
-  <div class="modal-content" style="max-width:500px;">
+  <div class="modal-content" style="max-width:500px; border: 1px solid var(--accent-indigo);">
     <span class="close-modal" onclick="fecharBackupModal()" aria-label="Fechar">&times;</span>
-    <h3 id="tituloBackup">💾 Central de Backup Inviolável</h3>
-    <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">
-      Se o arquivo JSON não baixar ou falhar no celular, use a criptografia abaixo:
+    <h3 id="tituloBackup" style="color: var(--accent-indigo-light); margin-bottom: 5px;">💾 Central de Backup PRO</h3>
+    <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">
+      Proteja seus dados. Recomendamos salvar um backup semanalmente.
     </p>
 
-    <button onclick="gerarBackupCopiaCola()"
-      style="width:100%; background:var(--accent-purple); color:#fff; padding:10px; border:none; border-radius:10px; font-weight:700; cursor:pointer; margin-bottom:10px;">
-      ✨ 1. Gerar Código Texto (Copia e Cola)
-    </button>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+      <button onclick="exportarDados()" style="background: var(--accent-indigo); color: white; padding: 12px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 12px;">
+        📥 Baixar Arquivo
+      </button>
+      <button onclick="importarDados()" style="background: var(--bg-input); color: var(--text-main); border: 1px solid var(--border-color); padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 12px;">
+        📂 Abrir Arquivo
+      </button>
+    </div>
 
-    <textarea id="txtCodigoBackup" rows="5"
-      style="font-family:monospace; font-size:11px; display:none;"
-      readonly placeholder="O código aparecerá aqui..." aria-label="Código de backup gerado"></textarea>
+    <div style="background: rgba(99, 102, 241, 0.05); padding: 15px; border-radius: 16px; border: 1px dashed rgba(99, 102, 241, 0.3); margin-bottom: 20px;">
+      <h4 style="font-size: 14px; margin-bottom: 10px; color: var(--text-main);">✨ Backup por Código (Mobile/WhatsApp)</h4>
+      <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">Ideal para transferir dados rapidamente entre celulares via texto.</p>
+      
+      <button onclick="gerarBackupCopiaCola()"
+        style="width:100%; background:var(--accent-indigo-dark); color:#fff; padding:10px; border:none; border-radius:10px; font-weight:700; cursor:pointer; margin-bottom:10px; font-size: 12px;">
+        Gerar Código de Segurança
+      </button>
 
-    <button id="btnCopiarCodigo" onclick="copiarCodigoTexto()"
-      style="width:100%; background:#242f47; color:#fff; padding:8px; border:none; border-radius:10px; font-weight:700; cursor:pointer; margin-bottom:20px; display:none;">
-      📋 Copiar Código Gerado
-    </button>
+      <textarea id="txtCodigoBackup" rows="4"
+        style="font-family:monospace; font-size:10px; display:none; background: #000; color: #0f0; border-color: #333;"
+        readonly placeholder="O código aparecerá aqui..."></textarea>
 
-    <hr style="border:0; border-top:1px solid var(--border-color); margin-bottom:15px;">
+      <button id="btnCopiarCodigo" onclick="copiarCodigoTexto()"
+        style="width:100%; background:var(--accent-emerald); color:#fff; padding:10px; border:none; border-radius:10px; font-weight:700; cursor:pointer; margin-top:10px; display:none; font-size: 12px;">
+        📋 Copiar Código para Área de Transferência
+      </button>
+    </div>
 
-    <h4>📂 Restaurar por Código</h4>
-    <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">
-      Cole o código guardado para restaurar tudo instantaneamente:
-    </p>
-    <label class="field-group" for="txtRestaurarCodigo">
-      <span>Código criptografado</span>
-      <textarea id="txtRestaurarCodigo" rows="3" placeholder="Cole o código criptografado aqui..."></textarea>
-    </label>
-    <button onclick="confirmarRestaurarTexto()"
-      style="width:100%; background:var(--accent-green); color:#02040a; padding:12px; border:none; border-radius:12px; font-weight:700; cursor:pointer;">
-      ⚡ Restaurar via Código
-    </button>
+    <div style="background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 16px; border: 1px solid var(--border-color);">
+      <h4 style="font-size: 14px; margin-bottom: 10px; color: var(--text-main);">📂 Restaurar por Código</h4>
+      <textarea id="txtRestaurarCodigo" rows="3" 
+        style="font-size:12px; margin-bottom: 10px;" 
+        placeholder="Cole o código criptografado aqui..."></textarea>
+      
+      <button onclick="confirmarRestaurarTexto()"
+        style="width:100%; background:var(--accent-orange); color:#fff; padding:12px; border:none; border-radius:12px; font-weight:700; cursor:pointer; font-size: 13px;">
+        ⚡ Restaurar Agora
+      </button>
+    </div>
+    
+    <p id="statusBackup" style="font-size: 10px; text-align: center; margin-top: 15px; color: var(--text-dim);"></p>
   </div>
 </div>
 
@@ -2042,6 +2055,7 @@
 
   /** Carrega o estado do localStorage e atualiza a UI. */
   function carregarDados() {
+    atualizarStatusBackup();
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const p = JSON.parse(raw);
@@ -2081,34 +2095,68 @@
 
   function exportarDados() {
     try {
-      const dataStr      = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas, historicoMensal, ultimoMesFechado }, null, 2);
-      const blob         = new Blob([dataStr], { type: 'application/json;charset=utf-8' });
-      const dataAtual    = new Date().toISOString().split('T')[0];
-      const nomeArquivo  = `jefferson_cell_backup_${dataAtual}.json`;
-      const a            = document.createElement('a');
-      a.href             = URL.createObjectURL(blob);
-      a.download         = nomeArquivo;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(a.href);
+      const backupData = {
+        metadata: {
+          app: "Jefferson Cell - Meu Caixa PRO",
+          version: "2.0",
+          timestamp: new Date().toISOString(),
+          device: navigator.userAgent
+        },
+        data: {
+          consertos, consertosFinalizados, aparelhos, vendasRealizadas, 
+          comprasPecas, capital, lucroTotal, extrato, estoquePecas, 
+          historicoMensal, ultimoMesFechado
+        }
+      };
+      
+      const dataStr = JSON.stringify(backupData, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json;charset=utf-8' });
+      const dataAtual = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+      const nomeArquivo = `jefferson_cell_backup_${dataAtual}.json`;
+      
+      // Tentar usar a API de compartilhamento se disponível (melhor para mobile)
+      if (navigator.share && /Android|iPhone|iPad/i.test(navigator.userAgent)) {
+        const file = new File([blob], nomeArquivo, { type: 'application/json' });
+        navigator.share({
+          title: 'Backup Jefferson Cell',
+          files: [file]
+        }).catch(() => downloadFallback(blob, nomeArquivo));
+      } else {
+        downloadFallback(blob, nomeArquivo);
+      }
+      
       el('backupCompletoModal').style.display = 'flex';
-      gerarBackupCopiaCola();
-    } catch {
+      gerarBackupCopiaCola(backupData);
+    } catch (err) {
+      console.error(err);
       alert('⚠️ O download direto falhou. Abrindo central de segurança em texto...');
       el('backupCompletoModal').style.display = 'flex';
       gerarBackupCopiaCola();
     }
   }
 
-  function gerarBackupCopiaCola() {
-    const dataStr   = JSON.stringify({ consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas, historicoMensal, ultimoMesFechado });
+  function downloadFallback(blob, nomeArquivo) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = nomeArquivo;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+  }
+
+  function gerarBackupCopiaCola(backupObj) {
+    const dataToEncode = backupObj || {
+      metadata: { app: "Jefferson Cell", version: "2.0", timestamp: new Date().toISOString() },
+      data: { consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas, historicoMensal, ultimoMesFechado }
+    };
+    const dataStr = JSON.stringify(dataToEncode);
     const codificado = btoa(unescape(encodeURIComponent(dataStr)));
-    const txtEl      = el('txtCodigoBackup');
-    const btnEl      = el('btnCopiarCodigo');
-    txtEl.value          = codificado;
-    txtEl.style.display  = 'block';
-    btnEl.style.display  = 'block';
+    const txtEl = el('txtCodigoBackup');
+    const btnEl = el('btnCopiarCodigo');
+    txtEl.value = codificado;
+    txtEl.style.display = 'block';
+    btnEl.style.display = 'block';
   }
 
   function copiarCodigoTexto() {
@@ -2131,21 +2179,43 @@
     }
   }
 
-  function restaurarBancoDadosIntegro(data) {
-    consertos            = data.consertos            || [];
-    consertosFinalizados = data.consertosFinalizados || [];
-    aparelhos            = data.aparelhos            || [];
-    vendasRealizadas     = data.vendasRealizadas     || [];
-    comprasPecas         = data.comprasPecas         || [];
-    capital              = data.capital              || 0;
-    lucroTotal           = data.lucroTotal           || 0;
-    extrato              = data.extrato              || [];
-    estoquePecas         = data.estoquePecas         || [];
-    historicoMensal      = data.historicoMensal      || [];
-    ultimoMesFechado     = data.ultimoMesFechado     || null;
-    salvarDados();
-    atualizarTudo();
-    alert('✅ Todos os dados da Jefferson Cell foram recuperados com sucesso!');
+  function restaurarBancoDadosIntegro(inputData) {
+    try {
+      // Suporte para o novo formato com metadata ou o formato antigo
+      const data = inputData.data ? inputData.data : inputData;
+      
+      // Validação básica de integridade
+      if (!data || typeof data !== 'object') throw new Error("Dados inválidos");
+
+      // Confirmação extra se houver muitos dados
+      const totalItens = (data.consertos?.length || 0) + (data.extrato?.length || 0);
+      if (totalItens > 0) {
+        if (!confirm(`Deseja restaurar ${totalItens} registros? Isso substituirá os dados atuais.`)) return;
+      }
+
+      consertos            = Array.isArray(data.consertos) ? data.consertos : [];
+      consertosFinalizados = Array.isArray(data.consertosFinalizados) ? data.consertosFinalizados : [];
+      aparelhos            = Array.isArray(data.aparelhos) ? data.aparelhos : [];
+      vendasRealizadas     = Array.isArray(data.vendasRealizadas) ? data.vendasRealizadas : [];
+      comprasPecas         = Array.isArray(data.comprasPecas) ? data.comprasPecas : [];
+      estoquePecas         = Array.isArray(data.estoquePecas) ? data.estoquePecas : [];
+      extrato              = Array.isArray(data.extrato) ? data.extrato : [];
+      historicoMensal      = Array.isArray(data.historicoMensal) ? data.historicoMensal : [];
+      
+      capital              = Number(data.capital) || 0;
+      lucroTotal           = Number(data.lucroTotal) || 0;
+      ultimoMesFechado     = data.ultimoMesFechado || null;
+
+      salvarDados();
+      localStorage.setItem('lastBackupRestore', new Date().toISOString());
+      
+      // Recarregar a página para garantir que todos os estados sejam resetados corretamente
+      alert('✅ Backup restaurado com sucesso! O sistema será reiniciado.');
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      alert('❌ Erro ao restaurar: O arquivo ou código parece estar corrompido ou em formato incompatível.');
+    }
   }
 
   function fecharBackupModal() {
@@ -2153,6 +2223,19 @@
     el('txtCodigoBackup').style.display      = 'none';
     el('btnCopiarCodigo').style.display      = 'none';
     el('txtRestaurarCodigo').value           = '';
+  }
+
+  function atualizarStatusBackup() {
+    const lastRestore = localStorage.getItem('lastBackupRestore');
+    const statusEl = el('statusBackup');
+    if (statusEl) {
+      if (lastRestore) {
+        const data = new Date(lastRestore).toLocaleString('pt-BR');
+        statusEl.innerText = `Última restauração realizada em: ${data}`;
+      } else {
+        statusEl.innerText = 'Nenhuma restauração recente detectada.';
+      }
+    }
   }
 
   function importarDados() {
