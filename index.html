@@ -3262,6 +3262,7 @@
     const lucroReal = os.lucro || 0;
     el('detalheTitulo').innerHTML = `🔍 OS - ${os.modelo}`;
     el('detalheConteudo').innerHTML = `
+      <p><strong>Data de Entrada:</strong> ${formatarDataBR(os.dataEntrada)}</p>
       <p><strong>Cliente:</strong> ${os.cliente}</p>
       <p><strong>Defeito:</strong> ${os.defeito}</p>
       <p><strong>Valor serviço:</strong> ${brl(os.valorConserto)}</p>
