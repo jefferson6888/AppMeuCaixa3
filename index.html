@@ -1178,10 +1178,16 @@
           <div class="inventario-wrapper">
             <h3>➕ Adicionar novo aparelho ao inventário</h3>
 
-            <label class="field-group" for="modelo">
-              <span>Modelo *</span>
-              <input type="text" id="modelo" placeholder="Ex: iPhone 12">
-            </label>
+            <div class="small-input-group">
+              <div class="field-group">
+                <label for="modelo">Modelo *</label>
+                <input type="text" id="modelo" placeholder="Ex: iPhone 12">
+              </div>
+              <div class="field-group">
+                <label for="corAparelho">Cor do aparelho</label>
+                <input type="text" id="corAparelho" placeholder="Ex: Preto, Azul">
+              </div>
+            </div>
 
             <label class="field-group" for="valorVenda">
               <span>Valor de venda sugerido (R$) *</span>
@@ -1647,10 +1653,16 @@
     <span class="close-modal" onclick="fecharEditarAparelhoModal()" aria-label="Fechar">&times;</span>
     <h3 id="tituloEditarAparelho">✏️ Editar Aparelho</h3>
 
-    <label class="field-group" for="editModelo">
-      <span>Modelo</span>
-      <input type="text" id="editModelo">
-    </label>
+    <div class="small-input-group">
+      <div class="field-group">
+        <label for="editModelo">Modelo</label>
+        <input type="text" id="editModelo">
+      </div>
+      <div class="field-group">
+        <label for="editCorAparelho">Cor do aparelho</label>
+        <input type="text" id="editCorAparelho" placeholder="Cor">
+      </div>
+    </div>
     <div class="small-input-group">
       <div class="field-group">
         <label for="editValorCompra">Valor de compra (R$)</label>
@@ -2694,6 +2706,7 @@
 
     aparelhos.push({
       id: Date.now(), modelo, valorCompra: compra, valorVenda: venda,
+      cor: el('corAparelho').value.trim() || 'N/I',
       condicao: el('condicaoAparelho').value,
       acessorios: el('acessoriosInclusos').value,
       pecaUtilizada: pecaUtilizada || 'Nenhuma',
@@ -2712,7 +2725,7 @@
     salvarDados();
     atualizarTudo();
 
-    ['modelo','valorCompra','valorVenda','pecaUtilizada','valorPecaUtilizada','nomeFornecedorVenda'].forEach(id => { el(id).value = ''; });
+    ['modelo','corAparelho','valorCompra','valorVenda','pecaUtilizada','valorPecaUtilizada','nomeFornecedorVenda'].forEach(id => { el(id).value = ''; });
 
     el('fornecedorVendaDiv').style.display = 'none';
 
@@ -2815,7 +2828,7 @@
       }
 
       vendasRealizadas.unshift({
-        id: Date.now(), modelo: ap.modelo, valorVenda: ap.valorVenda, custoTotal, lucro,
+        id: Date.now(), modelo: ap.modelo, cor: ap.cor || 'N/I', valorVenda: ap.valorVenda, custoTotal, lucro,
         data: new Date().toISOString(), condicao: ap.condicao, acessorios: ap.acessorios,
         pecaUtilizada: ap.pecaUtilizada, valorPecaUtilizada: ap.valorPecaUtilizada,
         origem, valorEntrada: 0, valorParcelaRestante: 0,
@@ -2858,7 +2871,7 @@
       }
 
       vendasRealizadas.unshift({
-        id: Date.now(), modelo: ap.modelo, valorVenda: ap.valorVenda, custoTotal: custoT, lucro: lucroFinal,
+        id: Date.now(), modelo: ap.modelo, cor: ap.cor || 'N/I', valorVenda: ap.valorVenda, custoTotal: custoT, lucro: lucroFinal,
         data: new Date().toISOString(), condicao: ap.condicao, acessorios: ap.acessorios,
         pecaUtilizada: ap.pecaUtilizada, valorPecaUtilizada: ap.valorPecaUtilizada,
         origem: ap.origemVendaLocal, valorEntrada: ap.valorEntrada, valorParcelaRestante: 0,
@@ -2991,6 +3004,7 @@
     if (!ap) return;
     editAparelhoId = id;
     el('editModelo').value              = ap.modelo;
+    el('editCorAparelho').value         = ap.cor || '';
     el('editValorCompra').value         = ap.valorCompra;
     el('editValorVenda').value          = ap.valorVenda;
     el('editCondicao').value            = ap.condicao;
@@ -3052,6 +3066,7 @@
     }
 
     ap.modelo              = el('editModelo').value;
+    ap.cor                 = el('editCorAparelho').value.trim() || 'N/I';
     ap.valorCompra         = nCompra;
     ap.valorVenda          = Number(el('editValorVenda').value);
     ap.condicao            = el('editCondicao').value;
@@ -3412,10 +3427,10 @@
 
       return `
         <div class="item">
-          <h3>📱 ${a.modelo}</h3>
-          <p>Venda: ${brl(a.valorVenda)} | Custo Total: ${brl(cTotal)} | Lucro: ${brl(lucroE)}</p>
-          <p><small>Compra: ${brl(vCompra)} (${tagC}) | Peça: ${brl(vPeca)} (${tagP})</small></p>
-          <p>Condição: ${a.condicao}</p>
+	          <h3>📱 ${a.modelo} ${a.cor ? ` — <span style="color:var(--text-secondary); font-size:14px;">${a.cor}</span>` : ''}</h3>
+	          <p>Venda: ${brl(a.valorVenda)} | Custo Total: ${brl(cTotal)} | Lucro: ${brl(lucroE)}</p>
+	          <p><small>Compra: ${brl(vCompra)} (${tagC}) | Peça: ${brl(vPeca)} (${tagP})</small></p>
+	          <p>Condição: ${a.condicao} ${a.acessorios ? ` | Acessórios: ${a.acessorios}` : ''}</p>
           <div class="item-actions">
             <button class="btn-editar"   onclick="editarAparelho(${a.id})">✏️ Editar</button>
             <button class="btn-finalizar" onclick="iniciarVendaAparelho(${a.id})">💰 Vender</button>
@@ -3930,7 +3945,7 @@
       return `
         <div class="item" style="border-left-color: var(--accent-cyan);">
           <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:6px;">
-            <h3 style="margin-bottom:4px;">📱 ${v.modelo}</h3>
+            <h3 style="margin-bottom:4px;">📱 ${v.modelo}${v.cor ? ` (${v.cor})` : ''}</h3>
             <span style="background:rgba(6,182,212,0.15); color:var(--accent-cyan); padding:3px 10px; border-radius:var(--radius-xs); font-size:10px; font-weight:800; white-space:nowrap;">📅 ${dataVenda}</span>
           </div>
           <p style="margin-bottom:3px;">Condição: ${condicao} &nbsp;|&nbsp; Origem: ${origemVenda}</p>
@@ -4038,7 +4053,7 @@
       const diasTexto   = dias === 0 ? 'Expira hoje!' : dias === 1 ? '1 dia restante' : `${dias} dias restantes`;
       const dataEntrega = i.dataEntrega ? formatarDataBR(i.dataEntrega) : (i.dataFinalizacao ? formatarDataBR(i.dataFinalizacao.split('T')[0]) : 'N/I');
       
-      const titulo = tipo === 'os' ? `🔧 ${i.modelo} — ${i.cliente}` : `📱 ${i.modelo}`;
+      const titulo = tipo === 'os' ? `🔧 ${i.modelo} — ${i.cliente}` : `📱 ${i.modelo}${i.cor ? ` (${i.cor})` : ''}`;
       const infoExtra = tipo === 'os' ? `Defeito: ${i.defeito}` : `Origem: ${i.origem || 'N/I'}`;
       const valor = tipo === 'os' ? i.valorConserto : i.valorVenda;
 
