@@ -53,39 +53,7 @@
       --transition-slow:   all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* ===== LIGHT THEME ===== */
-    body.light-theme {
-      --bg-main:    #f8fafc;
-      --bg-secondary: #f1f5f9;
-      --bg-card:    rgba(255, 255, 255, 0.7);
-      --bg-input:   #ffffff;
-      --bg-hover:   rgba(255, 255, 255, 0.95);
 
-      --border-color: rgba(15, 23, 42, 0.08);
-      --border-focus: #4f46e5;
-      --border-subtle: rgba(15, 23, 42, 0.04);
-
-      --text-main:  #0f172a;
-      --text-secondary: #334155;
-      --text-muted: #64748b;
-      --text-dim:   #94a3b8;
-
-      --accent-indigo:  #4f46e5;
-      --accent-indigo-light: #6366f1;
-      --accent-indigo-dark:  #3730a3;
-      --accent-emerald: #059669;
-      --accent-emerald-light: #10b981;
-      --accent-cyan:    #0891b2;
-      --accent-orange:  #d97706;
-      --accent-red:     #dc2626;
-      --accent-yellow:  #ca8a04;
-
-      --shadow-sm:      0 1px 2px rgba(0, 0, 0, 0.05);
-      --shadow-md:      0 4px 6px rgba(0, 0, 0, 0.07);
-      --shadow-lg:      0 10px 15px rgba(0, 0, 0, 0.1);
-      --shadow-xl:      0 20px 25px rgba(0, 0, 0, 0.12);
-      --shadow-premium: 0 25px 50px rgba(0, 0, 0, 0.15);
-    }
 
     /* ===== RESET & BASE ===== */
     *, *::before, *::after {
@@ -116,10 +84,7 @@
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    /* Light theme background adjustment */
-    body.light-theme {
-      background-image: linear-gradient(rgba(248, 250, 252, 0.92), rgba(248, 250, 252, 0.92)), url('https://files.manuscdn.com/user_upload_by_module/session_file/310519663705439359/ayZchKVdwCdwEfJk.png');
-    }
+
 
     /* ===== LAYOUT ===== */
     .overlay {
@@ -305,10 +270,7 @@
       transition: var(--transition-normal);
     }
     
-    body.light-theme .card {
-      background: rgba(255, 255, 255, 0.8);
-      border-color: rgba(0, 0, 0, 0.05);
-    }
+
 
     .card:hover {
       border-color: rgba(139, 92, 246, 0.4);
@@ -928,60 +890,12 @@
     .profit-total     { background: rgba(249, 115, 22, 0.12); color: var(--accent-orange); }
 
     /* THEME TOGGLE */
-    .theme-toggle {
-      position: fixed;
-      top: 24px;
-      right: 24px;
-      z-index: 1050;
-      background: rgba(15, 20, 30, 0.8);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: var(--radius-xl);
-      padding: 12px 16px;
-      cursor: pointer;
-      transition: var(--transition-normal);
-      font-size: 18px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--text-main);
-      font-weight: 700;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(139, 92, 246, 0.1);
-    }
 
-    .theme-toggle:hover {
-      background: rgba(25, 35, 55, 0.8);
-      transform: translateY(-2px);
-      border-color: var(--accent-indigo);
-      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4), 0 0 30px rgba(139, 92, 246, 0.2);
-    }
-
-    body.light-theme .theme-toggle {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(241, 245, 249, 0.9));
-    }
-
-    .theme-toggle:hover {
-      box-shadow: var(--shadow-lg);
-      transform: translateY(-2px);
-    }
-
-    .theme-toggle-label {
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-    }
   </style>
 </head>
 <body>
 
-<!-- THEME TOGGLE BUTTON -->
-<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Alternar tema">
-  <span id="themeIcon">🌙</span>
-  <span class="theme-toggle-label" id="themeLabel">Light</span>
-</button>
+
 
 <div class="overlay">
   <div class="container">
@@ -4450,48 +4364,11 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
   });
 
   /* ─────────────────────────────────────────
-     ALTERNÂNCIA DE TEMA
-  ───────────────────────────────────────── */
-  function toggleTheme() {
-    const body = document.body;
-    const themeIcon = el('themeIcon');
-    const themeLabel = el('themeLabel');
-    const isLightTheme = body.classList.contains('light-theme');
-
-    if (isLightTheme) {
-      body.classList.remove('light-theme');
-      themeIcon.textContent = '🌙';
-      themeLabel.textContent = 'Light';
-      localStorage.setItem('theme', 'dark');
-    } else {
-      body.classList.add('light-theme');
-      themeIcon.textContent = '☀️';
-      themeLabel.textContent = 'Dark';
-      localStorage.setItem('theme', 'light');
-    }
-  }
-
-  function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    const body = document.body;
-    const themeIcon = el('themeIcon');
-    const themeLabel = el('themeLabel');
-
-    if (savedTheme === 'light') {
-      body.classList.add('light-theme');
-      themeIcon.textContent = '☀️';
-      themeLabel.textContent = 'Dark';
-    } else {
-      body.classList.remove('light-theme');
-      themeIcon.textContent = '🌙';
-      themeLabel.textContent = 'Light';
-    }
-  }
-
-  /* ─────────────────────────────────────────
      INICIALIZAÇÃO
   ───────────────────────────────────────── */
-  initTheme();
+  // Fixar tema escuro removendo qualquer resquício de light-theme
+  document.body.classList.remove('light-theme');
+  localStorage.setItem('theme', 'dark');
   carregarDados();
   showSection('consertos');
 </script>
