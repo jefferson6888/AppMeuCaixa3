@@ -1167,7 +1167,10 @@
           </div>
 
           <div class="field-group">
-            <label for="blocoNotasTabela">📝 Bloco de Notas (Cole sua tabela do WhatsApp aqui)</label>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <label for="blocoNotasTabela" style="margin-bottom: 0;">📝 Bloco de Notas (Cole sua tabela do WhatsApp aqui)</label>
+              <button onclick="limparTabelaPrecos()" style="background: var(--accent-red); color: white; border: none; padding: 4px 10px; border-radius: var(--radius-xs); font-size: 10px; font-weight: 800; cursor: pointer; transition: var(--transition-fast);">🗑️ LIMPAR TUDO</button>
+            </div>
             <textarea id="blocoNotasTabela" rows="15" placeholder="Ex:
 iPhone X - Tela: R$ 300
 Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
@@ -2111,12 +2114,23 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
   function salvarTabelaPrecos() {
     const texto = el('blocoNotasTabela').value;
     localStorage.setItem('jeffersonCell_tabelaPrecos', texto);
+    // Também salvar dentro do objeto principal para backup
+    salvarDados();
     filtrarTabela();
   }
 
   function carregarTabelaPrecos() {
     const texto = localStorage.getItem('jeffersonCell_tabelaPrecos') || "";
     el('blocoNotasTabela').value = texto;
+  }
+
+  function limparTabelaPrecos() {
+    if (confirm("Tem certeza que deseja limpar toda a tabela de preços?")) {
+      el('blocoNotasTabela').value = "";
+      el('searchTabela').value = "";
+      salvarTabelaPrecos();
+      filtrarTabela();
+    }
   }
 
   function filtrarTabela() {
@@ -2198,10 +2212,12 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
   function carregarDados() {
     atualizarStatusBackup();
     const raw = localStorage.getItem(STORAGE_KEY);
+    
+    // Tenta carregar a tabela de preços independente do resto
+    carregarTabelaPrecos();
+
     if (raw) {
       const p = JSON.parse(raw);
-      // Garantir que a verificação de fechamento ocorra após carregar os dados
-      // mas antes de atualizar a UI.
       consertos            = p.consertos            || [];
       consertosFinalizados = p.consertosFinalizados || [];
       aparelhos            = p.aparelhos            || [];
@@ -2213,12 +2229,18 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       estoquePecas         = p.estoquePecas         || [];
       historicoMensal      = p.historicoMensal      || [];
       ultimoMesFechado     = p.ultimoMesFechado     || null;
-      if (p.tabelaPrecos !== undefined) localStorage.setItem('jeffersonCell_tabelaPrecos', p.tabelaPrecos);
+      
+      // Se houver tabela no backup, ela tem prioridade
+      if (p.tabelaPrecos !== undefined && p.tabelaPrecos !== null) {
+        localStorage.setItem('jeffersonCell_tabelaPrecos', p.tabelaPrecos);
+        carregarTabelaPrecos();
+      }
+      
       verificarFechamentoMensal();
     } else {
       inicializarExemplo();
     }
-    carregarTabelaPrecos();
+    
     atualizarDisplays();
     atualizarTudo();
   }
