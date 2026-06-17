@@ -3132,6 +3132,14 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       // Mudança de capital para fornecedor: estorna o valor que estava no capital
       creditarCapital(ap.valorCompra, `Estorno compra ${ap.modelo} (Mudança p/ Fornecedor)`);
     }
+    
+    // Se for fornecedor, registra no extrato se houver mudança de valor ou origem
+    if (nOrigemC === 'fornecedor') {
+      const diffC = nCompra - (origemCompraAtual === 'fornecedor' ? (ap.valorCompra || 0) : 0);
+      if (diffC > 0) {
+        adicionarExtrato('debito', `Ajuste compra ${ap.modelo} (${ap.fornecedorVenda || 'Fornecedor'})`, diffC);
+      }
+    }
 
     // AJUSTE FINANCEIRO PEÇA
     if (nOrigemP === 'capital') {
@@ -3145,9 +3153,18 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
         // Mudança de fornecedor para capital: debita o valor total
         if (!debitarCapital(nPeca, `Peça ${ap.modelo} (Mudança p/ Capital)`)) return;
       }
-    } else if (origemPecaAtual === 'capital') {
-      // Mudança de capital para fornecedor: estorna o valor que estava no capital
-      creditarCapital(ap.valorPecaUtilizada, `Estorno peça ${ap.modelo} (Mudança p/ Fornecedor)`);
+    } else {
+      // Caso seja Fornecedor
+      if (origemPecaAtual === 'capital') {
+        // Mudança de capital para fornecedor: estorna o valor que estava no capital
+        creditarCapital(ap.valorPecaUtilizada, `Estorno peça ${ap.modelo} (Mudança p/ Fornecedor)`);
+      }
+      
+      // Registra no extrato se houver aumento no valor da peça ou se mudou para fornecedor agora
+      const diffP = nPeca - (origemPecaAtual === 'fornecedor' ? (ap.valorPecaUtilizada || 0) : 0);
+      if (diffP > 0) {
+        adicionarExtrato('debito', `Ajuste peça ${ap.modelo} (${ap.fornecedorVenda || 'Fornecedor'})`, diffP);
+      }
     }
 
     ap.modelo              = el('editModelo').value;
