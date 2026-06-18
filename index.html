@@ -65,26 +65,19 @@
 
     html { scroll-behavior: smooth; }
 
-    body {
-      background-color: var(--bg-main);
-      background-image: 
+        body {
+      background: 
         radial-gradient(at 20% 50%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
         radial-gradient(at 80% 80%, rgba(34, 211, 238, 0.1) 0px, transparent 50%),
         linear-gradient(rgba(5, 6, 8, 0.9), rgba(5, 6, 8, 0.9)),
-        url('https://files.manuscdn.com/user_upload_by_module/session_file/310519663705439359/ayZchKVdwCdwEfJk.png');
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      background-repeat: no-repeat;
+        url('https://files.manuscdn.com/user_upload_by_module/session_file/310519663705439359/ayZchKVdwCdwEfJk.png') center / cover fixed no-repeat;
+      background-color: var(--bg-main);
       min-height: 100vh;
       color: var(--text-main);
       padding-bottom: 120px;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      transition: background-color 0.3s ease, color 0.3s ease;
     }
-
-
 
     /* ===== LAYOUT ===== */
     .overlay {
@@ -2047,29 +2040,30 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     }
   }
 
+  let filterTimeout;
   function filtrarTabela() {
-    const termo = el('searchTabela').value.toLowerCase().trim();
-    const textoOriginal = el('blocoNotasTabela').value;
-    const displayFiltrado = el('tabelaPrecosFiltrada');
+    clearTimeout(filterTimeout);
+    filterTimeout = setTimeout(() => {
+      const termo = el('searchTabela').value.toLowerCase().trim();
+      const textoOriginal = el('blocoNotasTabela').value;
+      const displayFiltrado = el('tabelaPrecosFiltrada');
 
-    if (!termo) {
-      displayFiltrado.style.display = 'none';
-      el('blocoNotasTabela').style.display = 'block';
-      return;
-    }
+      if (!termo) {
+        displayFiltrado.style.display = 'none';
+        el('blocoNotasTabela').style.display = 'block';
+        return;
+      }
 
-    const linhas = textoOriginal.split('\n');
-    const linhasFiltradas = linhas.filter(linha => linha.toLowerCase().includes(termo));
+      const linhasFiltradas = textoOriginal.split('\n')
+        .filter(linha => linha.toLowerCase().includes(termo));
 
-    if (linhasFiltradas.length > 0) {
-      displayFiltrado.textContent = linhasFiltradas.join('\n');
+      displayFiltrado.textContent = linhasFiltradas.length > 0 
+        ? linhasFiltradas.join('\n') 
+        : "Nenhum resultado encontrado.";
+      
       displayFiltrado.style.display = 'block';
       el('blocoNotasTabela').style.display = 'none';
-    } else {
-      displayFiltrado.textContent = "Nenhum resultado encontrado.";
-      displayFiltrado.style.display = 'block';
-      el('blocoNotasTabela').style.display = 'none';
-    }
+    }, 150); // Debounce de 150ms para busca mais suave
   }
 
   function switchSubVendaTab(target) {
