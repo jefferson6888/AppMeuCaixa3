@@ -3401,11 +3401,18 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
   function atualizarConsertosFinalizados() {
     const div = el('consertosFinalizadosLista');
     if (!div) return;
-    if (consertosFinalizados.length === 0) {
-      div.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">Nenhum conserto finalizado.</p>';
+
+    const mesAtual = obterMesAnoAtual();
+    const finalizadosMes = consertosFinalizados.filter(f => 
+      dataPertenceAoMes(f.dataFinalizacao || f.dataEntrada, mesAtual)
+    );
+
+    if (finalizadosMes.length === 0) {
+      div.innerHTML = `<p style="color:var(--text-muted);font-size:14px;">Nenhum conserto finalizado em ${mesAtual}.</p>`;
       return;
     }
-    div.innerHTML = consertosFinalizados.slice(0, 10).map(f => `
+
+    div.innerHTML = finalizadosMes.slice(0, 20).map(f => `
       <div class="item">
         <h3>✅ ${f.modelo} - ${f.cliente}</h3>
         <p>Total: ${brl(f.valorConserto)} | Peça: ${brl(f.valorPeca || 0)} | Lucro: ${brl(f.lucro || 0)}</p>
@@ -3498,8 +3505,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       div.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">Nenhuma venda finalizada.</p>';
       return;
     }
-    div.innerHTML = vendasRealizadas.map(v => {
-      return `
+    div.innerHTML = vendasRealizadas.slice(0, 20).map(v => `
         <div class="item">
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <h3>✅ ${v.modelo} <span class="origem-badge">📍 ${v.origem || 'N/I'}</span></h3>
@@ -3510,8 +3516,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
             <button class="btn-editar" onclick="editarVendaFinalizada(${v.id})">✏️ Editar</button>
             <button class="btn-deletar" onclick="excluirVendaRealizada(${v.id})">🗑️ Excluir</button>
           </div>
-        </div>`;
-    }).join('');
+        </div>`).join('');
   }
 
   /* ─────────────────────────────────────────
