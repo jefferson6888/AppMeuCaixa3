@@ -3501,11 +3501,18 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
   function atualizarVendasRealizadas() {
     const div = el('vendasRealizadasLista');
     if (!div) return;
-    if (vendasRealizadas.length === 0) {
-      div.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">Nenhuma venda finalizada.</p>';
+
+    const mesAtual = obterMesAnoAtual();
+    const vendasMes = vendasRealizadas.filter(v => 
+      dataPertenceAoMes(v.data, mesAtual)
+    );
+
+    if (vendasMes.length === 0) {
+      div.innerHTML = `<p style="color:var(--text-muted);font-size:14px;">Nenhuma venda finalizada em ${mesAtual}.</p>`;
       return;
     }
-    div.innerHTML = vendasRealizadas.slice(0, 20).map(v => `
+
+    div.innerHTML = vendasMes.slice(0, 20).map(v => `
         <div class="item">
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <h3>✅ ${v.modelo} <span class="origem-badge">📍 ${v.origem || 'N/I'}</span></h3>
