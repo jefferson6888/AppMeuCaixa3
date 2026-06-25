@@ -1251,10 +1251,23 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
         <div id="subTabDashHistoricoOs" style="display:none;" role="tabpanel" aria-labelledby="btnSubDashHistoricoOs">
           <div class="sub-section-title" style="margin-top:0;">🗂️ Histórico de OS Finalizadas</div>
           <div class="card" style="padding: 20px; background: rgba(26, 31, 46, 0.4); border: 1px solid var(--border-color);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <button class="kpi-btn" style="max-width: 50px;" onclick="navegarMesHistoricoOs(-1)">◀</button>
               <h3 id="nomeHistoricoOsMes" style="margin: 0; font-size: 18px; color: var(--accent-indigo-light);">Mês/Ano</h3>
               <button class="kpi-btn" style="max-width: 50px;" onclick="navegarMesHistoricoOs(1)">▶</button>
+            </div>
+
+            <!-- Filtro de Data -->
+            <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
+              <div style="flex: 1; min-width: 120px;">
+                <label style="font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 4px;">Início</label>
+                <input type="date" id="filtroDataInicioOs" style="margin-bottom: 0; padding: 8px; font-size: 12px;" onchange="atualizarHistoricoOs()">
+              </div>
+              <div style="flex: 1; min-width: 120px;">
+                <label style="font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 4px;">Fim</label>
+                <input type="date" id="filtroDataFimOs" style="margin-bottom: 0; padding: 8px; font-size: 12px;" onchange="atualizarHistoricoOs()">
+              </div>
+              <button class="kpi-btn" style="align-self: flex-end; padding: 8px 12px;" onclick="limparFiltroDataOs()">Limpar</button>
             </div>
             <div id="historicoOsResumo" style="margin-bottom: 16px;" aria-live="polite"></div>
             <div id="historicoOsLista" aria-live="polite"></div>
@@ -3782,9 +3795,20 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     const [m, a] = mesHistoricoOsAtual.split('/').map(Number);
     let novoM = m + direcao;
     let novoA = a;
-    if (novoM > 12) { novoM = 1; novoA++; }
+    if (novoM > 12) { novoM = 1;  novoA++; }
     if (novoM < 1)  { novoM = 12; novoA--; }
     mesHistoricoOsAtual = `${novoM.toString().padStart(2, '0')}/${novoA}`;
+    
+    // Ao navegar pelo mês, limpamos o filtro de data específica para evitar confusão
+    el('filtroDataInicioOs').value = '';
+    el('filtroDataFimOs').value = '';
+    
+    atualizarHistoricoOs();
+  }
+
+  function limparFiltroDataOs() {
+    el('filtroDataInicioOs').value = '';
+    el('filtroDataFimOs').value = '';
     atualizarHistoricoOs();
   }
 
@@ -3797,11 +3821,24 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     el('nomeHistoricoOsMes').textContent = mesHistoricoOsAtual;
     const [mesAtual, anoAtual] = mesHistoricoOsAtual.split('/').map(Number);
 
-    // Filtrar OS finalizadas do mês selecionado
+    const dataInicio = el('filtroDataInicioOs').value;
+    const dataFim = el('filtroDataFimOs').value;
+
+    // Filtrar OS finalizadas
     const osMes = consertosFinalizados.filter(os => {
       if (!os.dataFinalizacao) return false;
       const d = new Date(os.dataFinalizacao);
       if (isNaN(d.getTime())) return false;
+
+      // Se houver filtro de data, usa o intervalo
+      if (dataInicio || dataFim) {
+        const dataOs = os.dataFinalizacao.split('T')[0];
+        if (dataInicio && dataOs < dataInicio) return false;
+        if (dataFim && dataOs > dataFim) return false;
+        return true;
+      }
+
+      // Caso contrário, usa o mês selecionado
       return (d.getMonth() + 1) === mesAtual && d.getFullYear() === anoAtual;
     });
 
@@ -3858,6 +3895,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
           <p>Total: <strong style="color:var(--accent-cyan);">${brl(os.valorConserto)}</strong> &nbsp;|&nbsp; Lucro: <strong style="color:var(--accent-emerald-light);">${brl(lucroOS)}</strong></p>
           <div class="item-actions">
             <button class="ver-detalhes" onclick='verDetalhesOS(${JSON.stringify(os).replace(/"/g, '&quot;')})'>🔍 Detalhes</button>
+            <button class="btn-editar"   onclick="abrirEditarOs(${os.id}, true)">✏️ Editar</button>
           </div>
         </div>`;
     }).join('');
