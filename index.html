@@ -4131,7 +4131,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       const diasTexto   = dias === 0 ? 'Expira hoje!' : dias === 1 ? '1 dia restante' : `${dias} dias restantes`;
       const dataEntrega = i.dataEntrega ? formatarDataBR(i.dataEntrega) : (i.dataFinalizacao ? formatarDataBR(i.dataFinalizacao.split('T')[0]) : 'N/I');
       
-      const titulo = tipo === 'os' ? `🔧 ${i.modelo} — ${i.cliente}` : `📱 ${i.modelo}${i.cor ? ` (${i.cor})` : ''}`;
+      const titulo = tipo === 'os' ? `🔧 ${i.modelo} — ${i.cliente}` : `📱 ${i.modelo}${i.cor ? ` (${i.cor})` : ''} — ${i.clienteNome || 'Não informado'}`;
       const infoExtra = tipo === 'os' ? `Defeito: ${i.defeito}` : `Origem: ${i.origem || 'N/I'}`;
       const valor = tipo === 'os' ? i.valorConserto : i.valorVenda;
 
