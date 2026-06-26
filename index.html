@@ -1771,6 +1771,10 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       <span>Modelo</span>
       <input type="text" id="editVendaModelo" placeholder="Modelo">
     </label>
+    <label class="field-group" for="editVendaCliente">
+      <span>👤 Nome do Cliente</span>
+      <input type="text" id="editVendaCliente" placeholder="Nome do Cliente">
+    </label>
     <label class="field-group" for="editVendaValor">
       <span>Valor da venda (R$)</span>
       <input type="number" id="editVendaValor" placeholder="0,00" min="0" step="0.01">
@@ -3177,6 +3181,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     const newLucro  = Number(el('editVendaLucro').value);
     const diffLucro = newLucro - oldLucro;
     venda.modelo    = el('editVendaModelo').value;
+    venda.clienteNome = el('editVendaCliente').value;
     venda.valorVenda = Number(el('editVendaValor').value);
     venda.lucro     = newLucro;
     venda.origem    = el('editVendaOrigem').value;
