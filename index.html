@@ -1287,6 +1287,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
             <div id="historicoVendasLista" aria-live="polite"></div>
           </div>
         </div>
+
       </section>
 
       <!-- GARANTIA -->
@@ -1526,6 +1527,11 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
   <div class="modal-content">
     <span class="close-modal" onclick="fecharVendaOrigemModal()" aria-label="Fechar">&times;</span>
     <h3 id="tituloVendaOrigem">📍 Local de Venda</h3>
+
+    <div class="field-group">
+      <label for="vendaClienteNome">👤 Nome do Cliente</label>
+      <input type="text" id="vendaClienteNome" placeholder="Nome do Cliente">
+    </div>
 
     <div class="small-input-group">
       <div class="field-group">
@@ -2741,6 +2747,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
 
   function confirmarVendaComOrigem() {
     const origem = el('origemVenda').value;
+    const clienteNome = el('vendaClienteNome').value || 'Não informado';
     if (!origem) { alert('Selecione a origem!'); return; }
     const ap = aparelhos.find(a => a.id === vendaPendenteId);
     if (!ap) { fecharVendaOrigemModal(); return; }
@@ -2794,6 +2801,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       ap.dataRestantePagamento = dataRestantePag;
       ap.status                = 'parcelado';
       ap.origemVendaLocal      = origem;
+      ap.clienteNome           = clienteNome;
       ap.lucroImediato         = lucroImediato;
       salvarDados();
 
@@ -2837,7 +2845,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
         id: Date.now(), modelo: ap.modelo, cor: ap.cor || 'N/I', valorVenda: ap.valorVenda, custoTotal, lucro,
         data: new Date().toISOString(), condicao: ap.condicao, acessorios: ap.acessorios,
         pecaUtilizada: ap.pecaUtilizada, valorPecaUtilizada: ap.valorPecaUtilizada,
-        origem, valorEntrada: 0, valorParcelaRestante: 0,
+        origem, clienteNome, valorEntrada: 0, valorParcelaRestante: 0,
         tempoGarantia, dataEntrega, dataFimGarantia
       });
 
@@ -2880,7 +2888,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
         id: Date.now(), modelo: ap.modelo, cor: ap.cor || 'N/I', valorVenda: ap.valorVenda, custoTotal: custoT, lucro: lucroFinal,
         data: new Date().toISOString(), condicao: ap.condicao, acessorios: ap.acessorios,
         pecaUtilizada: ap.pecaUtilizada, valorPecaUtilizada: ap.valorPecaUtilizada,
-        origem: ap.origemVendaLocal, valorEntrada: ap.valorEntrada, valorParcelaRestante: 0,
+        origem: ap.origemVendaLocal, clienteNome: ap.clienteNome || 'Não informado', valorEntrada: ap.valorEntrada, valorParcelaRestante: 0,
         dataRecebimentoRestante: new Date().toISOString(),
         tempoGarantia, dataEntrega, dataFimGarantia
       });
@@ -3497,6 +3505,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       return `
         <div class="item ${atrasado ? 'item-atrasado' : ''}">
           <h3>📱 ${a.modelo}${atrasado ? ' <span class="atrasado-badge">ATRASADO</span>' : ''}</h3>
+          <p>Cliente: <strong>${a.clienteNome || 'Não informado'}</strong></p>
           <p>Valor Total: ${brl(a.valorVenda)} | Custo Total: ${brl(cTotal)}</p>
           <p><small>Compra: ${brl(vCompra)} (${tagC}) | Peça: ${brl(vPeca)} (${tagP})</small></p>
           <p>💰 Entrada: ${brl(a.valorEntrada)} | Resta: ${brl(a.valorParcelaRestante)}</p>
@@ -3531,6 +3540,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
             <h3>✅ ${v.modelo} <span class="origem-badge">📍 ${v.origem || 'N/I'}</span></h3>
             <span style="font-size:10px; color:var(--text-muted);">${formatarDataHora(v.data)}</span>
           </div>
+          <p>Cliente: <strong>${v.clienteNome || 'Não informado'}</strong></p>
           <p>Vendido por: ${brl(v.valorVenda)} | Custo: ${brl(v.custoTotal || 0)} | Lucro: ${brl(v.lucro || 0)}</p>
           <div class="item-actions">
             <button class="btn-editar" onclick="editarVendaFinalizada(${v.id})">✏️ Editar</button>
@@ -3560,6 +3570,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     } else {
       el('vendaParceladaCheckbox').checked          = false;
       el('camposParcelamentoVenda').style.display   = 'none';
+      el('vendaClienteNome').value                  = '';
       el('vendaValorEntrada').value                 = '';
       el('vendaValorParcela').value                 = '';
       el('vendaOrigemModal').style.display          = 'flex';
@@ -4002,12 +4013,14 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       const lucroVenda = v.lucro || 0;
       const origemVenda = v.origem || 'Não informada';
       const condicao = v.condicao || 'N/I';
+      const clienteNome = v.clienteNome || 'Não informado';
       return `
         <div class="item" style="border-left-color: var(--accent-cyan);">
           <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:6px;">
             <h3 style="margin-bottom:4px;">📱 ${v.modelo}${v.cor ? ` (${v.cor})` : ''}</h3>
             <span style="background:rgba(6,182,212,0.15); color:var(--accent-cyan); padding:3px 10px; border-radius:var(--radius-xs); font-size:10px; font-weight:800; white-space:nowrap;">📅 ${dataVenda}</span>
           </div>
+          <p style="margin-bottom:3px;">Cliente: <strong>${v.clienteNome || 'Não informado'}</strong></p>
           <p style="margin-bottom:3px;">Condição: ${condicao} &nbsp;|&nbsp; Origem: ${origemVenda}</p>
           <p>Venda: <strong style="color:var(--accent-cyan);">${brl(v.valorVenda)}</strong> &nbsp;|&nbsp; Lucro: <strong style="color:var(--accent-emerald-light);">${brl(lucroVenda)}</strong></p>
           <div class="item-actions">
