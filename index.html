@@ -190,8 +190,8 @@
     }
 
     .kpi-card:hover {
-      transform: translateY(-8px) scale(1.02);
-      background: rgba(255, 255, 255, 0.05);
+      transform: translateY(-8px);
+      background: rgba(255, 255, 255, 0.08);
       border-color: var(--accent-color);
       box-shadow: var(--shadow-xl), 0 0 30px rgba(139, 92, 246, 0.3);
     }
@@ -397,10 +397,10 @@
     }
 
     .item:hover {
-      transform: translateX(6px) scale(1.01);
+      transform: translateX(4px);
       background: rgba(255, 255, 255, 0.08);
       border-color: var(--accent-indigo);
-      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.2);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     }
 
     .item-atrasado {
@@ -2125,17 +2125,18 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
   /** Serializa o estado completo e salva no localStorage. */
   function salvarDados() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      const data = {
         consertos, consertosFinalizados, aparelhos, vendasRealizadas,
         comprasPecas, capital, lucroTotal, extrato, estoquePecas,
         historicoMensal, ultimoMesFechado,
         tabelaPrecos: localStorage.getItem('jeffersonCell_tabelaPrecos') || ""
-      }));
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      window._sessionBackup = data; // Backup em memória
     } catch (e) {
       console.error("Erro ao salvar no localStorage:", e);
-      if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
-        alert("⚠️ Memória cheia! Não foi possível salvar a foto. Tente usar uma imagem menor ou remova itens antigos.");
-      }
+      const isQuotaError = e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED';
+      alert(isQuotaError ? "⚠️ Memória cheia! O sistema não consegue salvar mais dados." : "⚠️ Erro ao salvar dados!");
     }
   }
 
