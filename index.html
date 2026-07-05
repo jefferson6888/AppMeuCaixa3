@@ -1533,6 +1533,11 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       <input type="text" id="vendaClienteNome" placeholder="Nome do Cliente">
     </div>
 
+    <div class="field-group">
+      <label for="vendaValorFinal">💰 Valor da Venda (R$)</label>
+      <input type="number" id="vendaValorFinal" placeholder="0,00" step="0.01" min="0">
+    </div>
+
     <div class="small-input-group">
       <div class="field-group">
         <label for="origemVenda">Origem</label>
@@ -2525,6 +2530,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
         lucroImediato = valorConserto;
       } else if (valorPeca > 0 && origenCusto === 'entrada') {
         lucroImediato = valorConserto - valorPeca;
+        adicionarExtrato('debito', `🔧 Peça p/ ${modelo} (pago c/ entrada)`, valorPeca);
       } else {
         lucroImediato = valorConserto;
       }
@@ -2539,6 +2545,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
         lucroImediato = valorEntrada;
       } else if (valorPeca > 0 && origenCusto === 'entrada') {
         lucroImediato = valorEntrada - valorPeca;
+        adicionarExtrato('debito', `🔧 Peça p/ ${modelo} (pago c/ entrada)`, valorPeca);
       } else {
         lucroImediato = valorEntrada;
       }
@@ -2561,11 +2568,14 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     atualizarDisplays();
 
     const mesesGarantia = parseInt(el('tempoGarantia').value) || 0;
+    const dataEntregaEstimada = el('dataVencimento').value || new Date().toISOString().split('T')[0];
+    
     const novaOS = {
       id: Date.now(), cliente, modelo, defeito, valorConserto, valorPeca,
       tipoPeca: el('tipoPeca').value,
       dataEntrada: el('dataEntrada').value || new Date().toISOString().split('T')[0],
       dataVencimento: el('dataVencimento').value,
+      dataEntrega: dataEntregaEstimada, // Garantia começa na entrega estimada
       status: isAVista ? 'finalizado' : 'em_andamento',
       tempoGarantia: mesesGarantia,
       valorEntrada, dataEntradaPagamento: dataEntradaPag,
@@ -2576,18 +2586,18 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       lucroImediato, pecaPaga
     };
 
+    // Calcular data fim de garantia para todos os casos (andamento ou finalizado)
+    if (mesesGarantia > 0) {
+      const dtFim = new Date(dataEntregaEstimada);
+      dtFim.setMonth(dtFim.getMonth() + mesesGarantia);
+      novaOS.dataFimGarantia = dtFim.toISOString().split('T')[0];
+    }
+
     if (isAVista) {
       novaOS.lucro           = lucroImediato;
       novaOS.valorRecebido   = valorConserto;
       novaOS.formaPagamento  = 'À vista';
       novaOS.dataFinalizacao = new Date().toISOString();
-      // A data de entrega à vista usa o campo de Data de Entrega já existente no formulário ou hoje como padrão
-      novaOS.dataEntrega     = el('dataVencimento').value || new Date().toISOString().split('T')[0];
-      if (mesesGarantia > 0) {
-        const dtFim = new Date(novaOS.dataEntrega);
-        dtFim.setMonth(dtFim.getMonth() + mesesGarantia);
-        novaOS.dataFimGarantia = dtFim.toISOString().split('T')[0];
-      }
       consertosFinalizados.unshift(novaOS);
     } else {
       consertos.push(novaOS);
@@ -2757,6 +2767,12 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     const ap = aparelhos.find(a => a.id === vendaPendenteId);
     if (!ap) { fecharVendaOrigemModal(); return; }
 
+    const valorVendaFinal = Number(el('vendaValorFinal').value);
+    if (isNaN(valorVendaFinal) || valorVendaFinal <= 0) { alert('Informe um valor de venda válido!'); return; }
+    
+    // Atualiza o valor de venda do aparelho para o valor informado no momento da venda
+    ap.valorVenda = valorVendaFinal;
+
     const isParcelada = el('vendaParceladaCheckbox').checked;
     // RECALCULAR CUSTO TOTAL DINAMICAMENTE PARA EVITAR ERROS EM DADOS ANTIGOS
     const custoTotal  = (Number(ap.valorCompra) || 0) + (Number(ap.valorPecaUtilizada) || 0);
@@ -2770,7 +2786,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       const dataRestantePag     = el('vendaDataRestantePagamento').value;
 
       if (valorEntrada <= 0 || valorParcelaRestante <= 0) { alert('Informe os valores de parcelamento!'); return; }
-      if (valorEntrada + valorParcelaRestante !== ap.valorVenda) { alert(`A soma deve dar ${brl(ap.valorVenda)}`); return; }
+      if (valorEntrada + valorParcelaRestante !== valorVendaFinal) { alert(`A soma (${brl(valorEntrada + valorParcelaRestante)}) deve ser igual ao valor da venda (${brl(valorVendaFinal)})`); return; }
       
       ap.tempoGarantia = tempoGarantia;
 
@@ -3120,7 +3136,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
   }
 
   function fecharEditarAparelhoModal()    { el('editarAparelhoModal').style.display = 'none'; editAparelhoId = null; }
-  function fecharVendaOrigemModal()       { el('vendaOrigemModal').style.display    = 'none'; vendaPendenteId = null; }
+  function fecharVendaOrigemModal()       { el('vendaOrigemModal').style.display    = 'none'; vendaPendenteId = null; el('vendaValorFinal').value = ''; }
   function fecharFinalizarVendaModal()    { el('finalizarVendaModal').style.display = 'none'; vendaParcelaFinalizandoId = null; el('vendaValorRecebido').value = ''; }
   function fecharFinalizarModal()         { el('finalizarModal').style.display      = 'none'; consertoFinalizandoId = null; el('dataEntregaOs').value = ''; }
   function fecharDetalheModal()           { el('detalheOsModal').style.display      = 'none'; }
@@ -3577,6 +3593,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       el('vendaParceladaCheckbox').checked          = false;
       el('camposParcelamentoVenda').style.display   = 'none';
       el('vendaClienteNome').value                  = '';
+      el('vendaValorFinal').value                   = ap.valorVenda || '';
       el('vendaValorEntrada').value                 = '';
       el('vendaValorParcela').value                 = '';
       el('vendaOrigemModal').style.display          = 'flex';
@@ -4099,7 +4116,10 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     limparGarantiasExpiradas();
     const div = el('garantiaListaOs');
     if (!div) return;
-    const itens = consertosFinalizados.filter(i => i.dataFimGarantia && garantiaAtiva(i.dataFimGarantia));
+    // Agora mescla consertos em andamento e finalizados que tenham garantia ativa
+    const emAndamento = consertos.filter(i => i.dataFimGarantia && garantiaAtiva(i.dataFimGarantia));
+    const finalizados = consertosFinalizados.filter(i => i.dataFimGarantia && garantiaAtiva(i.dataFimGarantia));
+    const itens = [...emAndamento, ...finalizados];
     div.innerHTML = renderizarItensGarantia(itens, 'os');
   }
 
