@@ -1535,7 +1535,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
 
     <div class="field-group">
       <label for="vendaValorFinal">💰 Valor da Venda (R$)</label>
-      <input type="number" id="vendaValorFinal" placeholder="0,00" step="0.01" min="0">
+          <input type="text" inputmode="decimal" id="vendaValorFinal" placeholder="0,00" autocomplete="off">
     </div>
 
     <div class="small-input-group">
@@ -1572,8 +1572,8 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     <div id="camposParcelamentoVenda" style="display:none; border-top:1px solid var(--border-color); padding-top:15px;">
       <div class="small-input-group">
         <div class="field-group">
-          <label for="vendaValorEntrada">Entrada (R$)</label>
-          <input type="number" id="vendaValorEntrada" placeholder="0,00" step="0.01" min="0">
+          <label for="vendaValorEntrada">Entrada (R$) — opcional</label>
+          <input type="text" inputmode="decimal" id="vendaValorEntrada" placeholder="0,00 (opcional)" autocomplete="off">
         </div>
         <div class="field-group">
           <label for="vendaDataEntradaPagamento">Data Pagamento Entrada</label>
@@ -1582,17 +1582,47 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       </div>
       <div class="small-input-group">
         <div class="field-group">
-          <label for="vendaValorParcela">Restante (R$)</label>
-          <input type="number" id="vendaValorParcela" placeholder="0,00" step="0.01" min="0">
+          <label for="vendaQuantidadeParcelas">Quantidade de parcelas</label>
+          <input type="number" id="vendaQuantidadeParcelas" placeholder="Ex: 3" min="1" step="1">
         </div>
         <div class="field-group">
-          <label for="vendaDataRestantePagamento">Vencimento do Restante</label>
+          <label for="vendaValorParcela">Valor de cada parcela (R$)</label>
+          <input type="text" id="vendaValorParcela" placeholder="Calculado automaticamente" readonly aria-readonly="true">
+        </div>
+      </div>
+      <div class="small-input-group">
+        <div class="field-group">
+          <label for="vendaDataRestantePagamento">Primeiro vencimento</label>
           <input type="date" id="vendaDataRestantePagamento">
+        </div>
+        <div id="vendaResumoParcelas" class="field-group" style="display:flex;align-items:center;color:var(--text-secondary);font-size:12px;min-height:44px;"></div>
+      </div>
+
+      <div class="small-input-group">
+        <div class="field-group">
+          <label for="vendaPeriodicidade">Recebimento das parcelas</label>
+          <select id="vendaPeriodicidade">
+            <option value="mensal">📅 Mensal</option>
+            <option value="semanal">🗓️ Semanal</option>
+          </select>
+        </div>
+        <div class="field-group" id="vendaDiaSemanaGroup" style="display:none;">
+          <label for="vendaDiaSemana">Dia da semana</label>
+          <select id="vendaDiaSemana">
+            <option value="">Selecione o dia</option>
+            <option value="0">Domingo</option>
+            <option value="1">Segunda-feira</option>
+            <option value="2">Terça-feira</option>
+            <option value="3">Quarta-feira</option>
+            <option value="4">Quinta-feira</option>
+            <option value="5">Sexta-feira</option>
+            <option value="6">Sábado</option>
+          </select>
         </div>
       </div>
 
       <div class="aviso-entrada" style="margin-top:12px;">
-        <p>💡 O aparelho será pago COM O VALOR DA ENTRADA. O custo será reembolsado e o lucro calculado automaticamente.</p>
+        <p>💡 A entrada é opcional. Deixe R$ 0,00 para parcelar o valor total. Informe apenas a quantidade de parcelas e o aplicativo calculará tudo automaticamente.</p>
       </div>
     </div>
 
@@ -1685,7 +1715,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     <p id="vendaParcelaInfo" style="font-size:14px; color:var(--text-muted); margin-bottom:12px; line-height:1.5;"></p>
     <label class="field-group" for="vendaValorRecebido">
       <span>Valor recebido agora (R$)</span>
-      <input type="number" id="vendaValorRecebido" placeholder="0,00" min="0" step="0.01">
+      <input type="text" inputmode="decimal" id="vendaValorRecebido" placeholder="0,00" autocomplete="off">
     </label>
     <div class="modal-footer-btns">
       <button onclick="confirmarFinalizarVendaParcela()">Registrar Pagamento</button>
@@ -1832,12 +1862,12 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     </label>
     <label class="field-group" for="editVendaPendValorTotal">
       <span>Valor Total (R$)</span>
-      <input type="number" id="editVendaPendValorTotal" min="0" step="0.01">
+      <input type="text" inputmode="decimal" id="editVendaPendValorTotal" autocomplete="off">
     </label>
     <div class="small-input-group">
       <div class="field-group">
-        <label for="editVendaPendValorEntrada">Valor Entrada (R$)</label>
-        <input type="number" id="editVendaPendValorEntrada" min="0" step="0.01">
+        <label for="editVendaPendValorEntrada">Valor Entrada (R$) — opcional</label>
+        <input type="text" inputmode="decimal" id="editVendaPendValorEntrada" placeholder="0,00 (opcional)" autocomplete="off">
       </div>
       <div class="field-group">
         <label for="editVendaPendDataEntrada">Data Entrada</label>
@@ -1846,12 +1876,41 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     </div>
     <div class="small-input-group">
       <div class="field-group">
-        <label for="editVendaPendValorParcela">Restante (R$)</label>
-        <input type="number" id="editVendaPendValorParcela" min="0" step="0.01">
+        <label for="editVendaPendQuantidadeParcelas">Quantidade de parcelas</label>
+        <input type="number" id="editVendaPendQuantidadeParcelas" min="1" step="1">
       </div>
       <div class="field-group">
-        <label for="editVendaPendDataParcela">Vencimento</label>
+        <label for="editVendaPendValorParcela">Valor de cada parcela (R$)</label>
+        <input type="text" id="editVendaPendValorParcela" placeholder="Calculado automaticamente" readonly aria-readonly="true">
+      </div>
+    </div>
+    <div class="small-input-group">
+      <div class="field-group">
+        <label for="editVendaPendDataParcela">Primeiro vencimento</label>
         <input type="date" id="editVendaPendDataParcela">
+      </div>
+      <div id="editVendaPendResumoParcelas" class="field-group" style="display:flex;align-items:center;color:var(--text-secondary);font-size:12px;min-height:44px;"></div>
+    </div>
+    <div class="small-input-group">
+      <div class="field-group">
+        <label for="editVendaPendPeriodicidade">Recebimento das parcelas</label>
+        <select id="editVendaPendPeriodicidade">
+          <option value="mensal">📅 Mensal</option>
+          <option value="semanal">🗓️ Semanal</option>
+        </select>
+      </div>
+      <div class="field-group" id="editVendaPendDiaSemanaGroup" style="display:none;">
+        <label for="editVendaPendDiaSemana">Dia da semana</label>
+        <select id="editVendaPendDiaSemana">
+          <option value="">Selecione o dia</option>
+          <option value="0">Domingo</option>
+          <option value="1">Segunda-feira</option>
+          <option value="2">Terça-feira</option>
+          <option value="3">Quarta-feira</option>
+          <option value="4">Quinta-feira</option>
+          <option value="5">Sexta-feira</option>
+          <option value="6">Sábado</option>
+        </select>
       </div>
     </div>
     <div class="small-input-group">
@@ -1916,6 +1975,17 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
   /** Formata um número como moeda BRL. */
   const brl = v => `R$ ${Number(v).toFixed(2)}`;
 
+  /** Converte valores digitados com ponto ou vírgula para número. */
+  function lerValorNumerico(id) {
+    const bruto = String(el(id)?.value ?? '').trim();
+    if (!bruto) return 0;
+    const normalizado = bruto.includes(',')
+      ? bruto.replace(/\./g, '').replace(',', '.')
+      : bruto;
+    const valor = Number(normalizado);
+    return Number.isFinite(valor) ? valor : 0;
+  }
+
   /** Formata data para o padrão brasileiro. */
   function formatarDataHora(dataStr) {
     if (!dataStr) return 'N/I';
@@ -1939,6 +2009,160 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     const hoje      = new Date(); hoje.setHours(0, 0, 0, 0);
     const vencimento = new Date(dataVencimento); vencimento.setHours(0, 0, 0, 0);
     return vencimento < hoje;
+  }
+
+  /** Exibe o seletor de dia da semana somente quando o recebimento é semanal. */
+  function atualizarCamposPeriodicidadeVenda(prefixo = 'venda') {
+    const periodicidade = el(`${prefixo}Periodicidade`);
+    const diaGroup      = el(`${prefixo}DiaSemanaGroup`);
+    const diaSelect     = el(`${prefixo}DiaSemana`);
+    if (!periodicidade || !diaGroup || !diaSelect) return;
+
+    const semanal = periodicidade.value === 'semanal';
+    diaGroup.style.display = semanal ? 'block' : 'none';
+    diaSelect.required = semanal;
+    if (!semanal) diaSelect.value = '';
+  }
+
+  /** Texto padronizado para exibir a periodicidade nas vendas pendentes. */
+  function descricaoPeriodicidadeVenda(venda) {
+    if ((venda.periodicidadeParcelas || 'mensal') === 'semanal') {
+      const dias = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+      const dia = dias[Number(venda.diaSemanaParcelas)];
+      return `Semanal${dia ? ` — toda ${dia}` : ''}`;
+    }
+    return 'Mensal';
+  }
+
+  /** Formata apenas o número para os campos de moeda do formulário. */
+  function valorParaCampoMoeda(valor) {
+    return Number(valor) > 0 ? Number(valor).toFixed(2).replace('.', ',') : '';
+  }
+
+  /** Adiciona meses sem pular para o mês seguinte quando o dia não existe. */
+  function adicionarMesSeguro(dataISO, diaPreferido = null) {
+    if (!dataISO) return '';
+    const data = new Date(`${dataISO}T00:00:00`);
+    if (isNaN(data.getTime())) return '';
+    const diaOriginal = Number.isInteger(diaPreferido) ? diaPreferido : data.getDate();
+    data.setDate(1);
+    data.setMonth(data.getMonth() + 1);
+    const ultimoDia = new Date(data.getFullYear(), data.getMonth() + 1, 0).getDate();
+    data.setDate(Math.min(diaOriginal, ultimoDia));
+    return data.toISOString().split('T')[0];
+  }
+
+  /** Gera todas as parcelas, com ajuste de centavos na última para fechar o total. */
+  function calcularParcelasVenda(valorTotal, entrada, quantidade, periodicidade, dataPrimeiroVencimento, diaSemana) {
+    const total = Number(valorTotal) || 0;
+    const valorEntrada = Number(entrada) || 0;
+    const qtd = Math.floor(Number(quantidade) || 0);
+    const saldo = Math.round((total - valorEntrada) * 100) / 100;
+    if (total <= 0 || valorEntrada < 0 || saldo <= 0 || qtd < 1 || !dataPrimeiroVencimento) return null;
+    if (periodicidade === 'semanal' && (diaSemana === '' || diaSemana === null || diaSemana === undefined)) return null;
+
+    const saldoCentavos = Math.round(saldo * 100);
+    const valorBaseCentavos = Math.floor(saldoCentavos / qtd);
+    const ajusteUltima = saldoCentavos - (valorBaseCentavos * qtd);
+    const parcelas = [];
+    let dataVencimento = dataPrimeiroVencimento;
+    const diaMensalPreferido = periodicidade === 'mensal'
+      ? new Date(`${dataPrimeiroVencimento}T00:00:00`).getDate()
+      : null;
+    if (periodicidade === 'semanal') {
+      const dataInicial = new Date(`${dataPrimeiroVencimento}T00:00:00`);
+      const diferencaDias = (Number(diaSemana) - dataInicial.getDay() + 7) % 7;
+      dataInicial.setDate(dataInicial.getDate() + diferencaDias);
+      dataVencimento = dataInicial.toISOString().split('T')[0];
+    }
+
+    for (let i = 0; i < qtd; i++) {
+      parcelas.push({
+        numero: i + 1,
+        valor: (valorBaseCentavos + (i === qtd - 1 ? ajusteUltima : 0)) / 100,
+        dataVencimento,
+        status: 'pendente'
+      });
+      if (periodicidade === 'semanal') {
+        const data = new Date(`${dataVencimento}T00:00:00`);
+        data.setDate(data.getDate() + 7);
+        dataVencimento = data.toISOString().split('T')[0];
+      } else {
+        dataVencimento = adicionarMesSeguro(dataVencimento, diaMensalPreferido);
+      }
+    }
+
+    return {
+      saldo,
+      quantidade: qtd,
+      valorParcela: parcelas[0].valor,
+      parcelas
+    };
+  }
+
+  /** Atualiza o valor calculado e o resumo do formulário de venda. */
+  function atualizarCalculoParcelasVenda(prefixo = 'venda') {
+    const ids = prefixo === 'venda'
+      ? { total: 'vendaValorFinal', entrada: 'vendaValorEntrada', quantidade: 'vendaQuantidadeParcelas', valor: 'vendaValorParcela', resumo: 'vendaResumoParcelas', data: 'vendaDataRestantePagamento', periodicidade: 'vendaPeriodicidade', dia: 'vendaDiaSemana' }
+      : { total: 'editVendaPendValorTotal', entrada: 'editVendaPendValorEntrada', quantidade: 'editVendaPendQuantidadeParcelas', valor: 'editVendaPendValorParcela', resumo: 'editVendaPendResumoParcelas', data: 'editVendaPendDataParcela', periodicidade: 'editVendaPendPeriodicidade', dia: 'editVendaPendDiaSemana' };
+    const campoValor = el(ids.valor);
+    const resumo = el(ids.resumo);
+    if (!campoValor || !resumo) return null;
+
+    const total = lerValorNumerico(ids.total);
+    const entrada = lerValorNumerico(ids.entrada);
+    const quantidade = Math.floor(Number(el(ids.quantidade)?.value) || 0);
+    const periodicidade = el(ids.periodicidade)?.value || 'mensal';
+    const diaSemana = el(ids.dia)?.value || '';
+    const calculo = calcularParcelasVenda(total, entrada, quantidade, periodicidade, el(ids.data)?.value || '', diaSemana);
+
+    campoValor.value = calculo ? valorParaCampoMoeda(calculo.valorParcela) : '';
+    if (!calculo) {
+      resumo.textContent = 'A entrada é opcional. Informe a quantidade de parcelas e o primeiro vencimento.';
+      resumo.style.color = 'var(--text-muted)';
+      return null;
+    }
+
+    const ultima = calculo.parcelas[calculo.parcelas.length - 1].valor;
+    const ajuste = Math.abs(ultima - calculo.valorParcela) > 0.001
+      ? ` (última: ${brl(ultima)})`
+      : '';
+    resumo.innerHTML = `Saldo: <strong style="color:var(--accent-cyan);margin-left:4px;">${brl(calculo.saldo)}</strong> · ${calculo.quantidade}x de <strong style="color:var(--accent-cyan);margin-left:4px;">${brl(calculo.valorParcela)}</strong>${ajuste}`;
+    resumo.style.color = 'var(--text-secondary)';
+    return calculo;
+  }
+
+  /** Retorna a próxima parcela pendente, com compatibilidade para vendas antigas. */
+  function obterParcelaAtualVenda(venda) {
+    if (Array.isArray(venda.parcelasVenda) && venda.parcelasVenda.length) return venda.parcelasVenda[0];
+    if ((Number(venda.valorParcelaRestante) || 0) > 0) {
+      return { numero: 1, valor: Number(venda.valorParcelaUnitario || venda.valorParcelaRestante), dataVencimento: venda.dataRestantePagamento || '' };
+    }
+    return null;
+  }
+
+  /** Atualiza as parcelas pendentes após receber um valor parcial. */
+  function aplicarRecebimentoNasParcelas(venda, valorRecebido) {
+    if (!Array.isArray(venda.parcelasVenda)) {
+      venda.valorParcelaRestante = Math.max(0, (Number(venda.valorParcelaRestante) || 0) - valorRecebido);
+      return;
+    }
+
+    let restanteRecebido = Math.max(0, Number(valorRecebido) || 0);
+    while (restanteRecebido > 0.005 && venda.parcelasVenda.length) {
+      const parcela = venda.parcelasVenda[0];
+      if (restanteRecebido + 0.005 >= parcela.valor) {
+        restanteRecebido -= parcela.valor;
+        venda.parcelasVenda.shift();
+      } else {
+        parcela.valor = Math.round((parcela.valor - restanteRecebido) * 100) / 100;
+        restanteRecebido = 0;
+      }
+    }
+    venda.valorParcelaRestante = Math.round(venda.parcelasVenda.reduce((soma, parcela) => soma + parcela.valor, 0) * 100) / 100;
+    venda.parcelasRestantes = venda.parcelasVenda.length;
+    venda.dataRestantePagamento = venda.parcelasVenda[0]?.dataVencimento || '';
+    venda.valorParcelaUnitario = venda.parcelasVenda[0]?.valor || 0;
   }
 
   /* ─────────────────────────────────────────
@@ -1973,6 +2197,35 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
         camposParcelamento.style.display = this.checked ? 'block' : 'none';
       });
     }
+
+    // Escolha entre recebimento mensal e semanal na nova venda e na edição
+    const periodicidadeVenda = el('vendaPeriodicidade');
+    const periodicidadeVendaPendente = el('editVendaPendPeriodicidade');
+    if (periodicidadeVenda) {
+      periodicidadeVenda.addEventListener('change', () => atualizarCamposPeriodicidadeVenda());
+      atualizarCamposPeriodicidadeVenda();
+    }
+    if (periodicidadeVendaPendente) {
+      periodicidadeVendaPendente.addEventListener('change', () => {
+        atualizarCamposPeriodicidadeVenda('editVendaPend');
+        atualizarCalculoParcelasVenda('editVendaPend');
+      });
+      atualizarCamposPeriodicidadeVenda('editVendaPend');
+    }
+
+    // Recalcular automaticamente o valor das parcelas conforme os campos mudam
+    ['vendaValorFinal', 'vendaValorEntrada', 'vendaQuantidadeParcelas', 'vendaDataRestantePagamento', 'vendaDiaSemana'].forEach(id => {
+      const campo = el(id);
+      if (campo) campo.addEventListener('input', () => atualizarCalculoParcelasVenda());
+      if (campo) campo.addEventListener('change', () => atualizarCalculoParcelasVenda());
+    });
+    ['editVendaPendValorTotal', 'editVendaPendValorEntrada', 'editVendaPendQuantidadeParcelas', 'editVendaPendDataParcela', 'editVendaPendDiaSemana'].forEach(id => {
+      const campo = el(id);
+      if (campo) campo.addEventListener('input', () => atualizarCalculoParcelasVenda('editVendaPend'));
+      if (campo) campo.addEventListener('change', () => atualizarCalculoParcelasVenda('editVendaPend'));
+    });
+    if (periodicidadeVenda) periodicidadeVenda.addEventListener('change', () => atualizarCalculoParcelasVenda());
+    atualizarCalculoParcelasVenda();
   });
 
   /* ─────────────────────────────────────────
@@ -2767,7 +3020,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     const ap = aparelhos.find(a => a.id === vendaPendenteId);
     if (!ap) { fecharVendaOrigemModal(); return; }
 
-    const valorVendaFinal = Number(el('vendaValorFinal').value);
+    const valorVendaFinal = lerValorNumerico('vendaValorFinal');
     if (isNaN(valorVendaFinal) || valorVendaFinal <= 0) { alert('Informe um valor de venda válido!'); return; }
     
     // Atualiza o valor de venda do aparelho para o valor informado no momento da venda
@@ -2780,14 +3033,21 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     const tempoGarantia = parseInt(el('vendaTempoGarantia').value) || 0;
 
     if (isParcelada) {
-      const valorEntrada        = Number(el('vendaValorEntrada').value) || 0;
-      const dataEntradaPag      = el('vendaDataEntradaPagamento').value;
-      const valorParcelaRestante = Number(el('vendaValorParcela').value) || 0;
-      const dataRestantePag     = el('vendaDataRestantePagamento').value;
+      const valorEntrada         = lerValorNumerico('vendaValorEntrada');
+      const dataEntradaPag       = el('vendaDataEntradaPagamento').value;
+      const quantidadeParcelas   = Math.floor(Number(el('vendaQuantidadeParcelas').value) || 0);
+      const dataRestantePag      = el('vendaDataRestantePagamento').value;
+      const periodicidadeParcelas = el('vendaPeriodicidade').value || 'mensal';
+      const diaSemanaParcelas    = el('vendaDiaSemana').value;
+      const calculoParcelas      = calcularParcelasVenda(valorVendaFinal, valorEntrada, quantidadeParcelas, periodicidadeParcelas, dataRestantePag, diaSemanaParcelas);
 
-      if (valorEntrada <= 0 || valorParcelaRestante <= 0) { alert('Informe os valores de parcelamento!'); return; }
-      if (valorEntrada + valorParcelaRestante !== valorVendaFinal) { alert(`A soma (${brl(valorEntrada + valorParcelaRestante)}) deve ser igual ao valor da venda (${brl(valorVendaFinal)})`); return; }
+      if (!calculoParcelas) {
+        alert('Informe a quantidade de parcelas e o primeiro vencimento. A entrada é opcional e deve ser menor ou igual ao valor da venda.');
+        return;
+      }
+      if (periodicidadeParcelas === 'semanal' && diaSemanaParcelas === '') { alert('Selecione o dia da semana para o recebimento semanal!'); return; }
       
+      const valorParcelaRestante = calculoParcelas.saldo;
       ap.tempoGarantia = tempoGarantia;
 
       let lucroImediato = 0;
@@ -2819,14 +3079,21 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       ap.valorEntrada          = valorEntrada;
       ap.dataEntradaPagamento  = dataEntradaPag;
       ap.valorParcelaRestante  = valorParcelaRestante;
+      ap.valorParcelaUnitario   = calculoParcelas.valorParcela;
+      ap.quantidadeParcelas     = calculoParcelas.quantidade;
+      ap.parcelasRestantes      = calculoParcelas.quantidade;
+      ap.parcelasVenda          = calculoParcelas.parcelas;
+      ap.dataPrimeiroVencimento = dataRestantePag;
       ap.dataRestantePagamento = dataRestantePag;
+      ap.periodicidadeParcelas = periodicidadeParcelas;
+      ap.diaSemanaParcelas     = periodicidadeParcelas === 'semanal' ? Number(diaSemanaParcelas) : null;
       ap.status                = 'parcelado';
       ap.origemVendaLocal      = origem;
       ap.clienteNome           = clienteNome;
       ap.lucroImediato         = lucroImediato;
       salvarDados();
 
-      let msg = `✅ Venda parcelada!\n📱 ${ap.modelo}\n💰 Entrada: ${brl(valorEntrada)} | Restante: ${brl(valorParcelaRestante)}`;
+      let msg = `✅ Venda parcelada!\n📱 ${ap.modelo}\n💰 Entrada: ${brl(valorEntrada)} | ${calculoParcelas.quantidade}x de ${brl(calculoParcelas.valorParcela)}\n📌 Total parcelado: ${brl(valorParcelaRestante)}`;
       if (lucroImediato > 0) msg += `\n🎉 LUCRO IMEDIATO: ${brl(lucroImediato)}`;
       alert(msg);
 
@@ -2879,7 +3146,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
   }
 
   function confirmarFinalizarVendaParcela() {
-    const valorRecebido = Number(el('vendaValorRecebido').value);
+    const valorRecebido = lerValorNumerico('vendaValorRecebido');
     if (!valorRecebido && valorRecebido !== 0) { alert('Digite o valor recebido'); return; }
     const ap = aparelhos.find(a => a.id === vendaParcelaFinalizandoId);
     if (!ap) return;
@@ -2910,6 +3177,8 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
         data: new Date().toISOString(), condicao: ap.condicao, acessorios: ap.acessorios,
         pecaUtilizada: ap.pecaUtilizada, valorPecaUtilizada: ap.valorPecaUtilizada,
         origem: ap.origemVendaLocal, clienteNome: ap.clienteNome || 'Não informado', valorEntrada: ap.valorEntrada, valorParcelaRestante: 0,
+        quantidadeParcelas: ap.quantidadeParcelas || null, parcelasRestantes: 0, parcelasVenda: [], valorParcelaUnitario: 0,
+        periodicidadeParcelas: ap.periodicidadeParcelas || 'mensal', diaSemanaParcelas: ap.diaSemanaParcelas ?? null,
         dataRecebimentoRestante: new Date().toISOString(),
         tempoGarantia, dataEntrega, dataFimGarantia
       });
@@ -2921,12 +3190,13 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       fecharFinalizarVendaModal();
       switchSubVendaTab('finalizados');
     } else {
-      ap.valorParcelaRestante -= valorRecebido;
+      aplicarRecebimentoNasParcelas(ap, valorRecebido);
       ap.dataRecebimentoRestante = new Date().toISOString();
       lucroTotal += valorRecebido;
       adicionarExtrato('credito', `💰 PARCELA - Venda ${ap.modelo}`, valorRecebido);
       atualizarDisplays();
-      alert(`✅ Parcela registrada! Faltam: ${brl(ap.valorParcelaRestante)}`);
+      const proximaParcela = obterParcelaAtualVenda(ap);
+      alert(`✅ Parcela registrada! Faltam: ${brl(ap.valorParcelaRestante)}${proximaParcela ? `\nPróxima parcela: ${brl(proximaParcela.valor)}` : ''}`);
       fecharFinalizarVendaModal();
       switchSubVendaTab('vendas_andamento');
     }
@@ -3288,11 +3558,16 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     if (!ap) return;
     editVendaPendenteId = id;
     el('editVendaPendModelo').value       = ap.modelo;
-    el('editVendaPendValorTotal').value   = ap.valorVenda;
-    el('editVendaPendValorEntrada').value = ap.valorEntrada;
+    el('editVendaPendValorTotal').value   = valorParaCampoMoeda(ap.valorVenda);
+    el('editVendaPendValorEntrada').value = valorParaCampoMoeda(ap.valorEntrada);
     el('editVendaPendDataEntrada').value  = ap.dataEntradaPagamento || '';
-    el('editVendaPendValorParcela').value = ap.valorParcelaRestante;
-    el('editVendaPendDataParcela').value  = ap.dataRestantePagamento || '';
+    el('editVendaPendQuantidadeParcelas').value = ap.quantidadeParcelas || ap.parcelasRestantes || 1;
+    el('editVendaPendValorParcela').value = valorParaCampoMoeda(ap.valorParcelaUnitario || ap.valorParcelaRestante);
+    el('editVendaPendDataParcela').value  = ap.dataPrimeiroVencimento || ap.dataRestantePagamento || '';
+    el('editVendaPendPeriodicidade').value = ap.periodicidadeParcelas || 'mensal';
+    el('editVendaPendDiaSemana').value = ap.diaSemanaParcelas ?? '';
+    atualizarCamposPeriodicidadeVenda('editVendaPend');
+    atualizarCalculoParcelasVenda('editVendaPend');
     el('editVendaPendTempoGarantia').value = ap.tempoGarantia || 0;
     el('editVendaPendDataEntrega').value = ap.dataEntrega || '';
     el('editarVendaPendenteModal').style.display = 'flex';
@@ -3302,14 +3577,27 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     const ap = aparelhos.find(a => a.id === editVendaPendenteId);
     if (!ap) return;
     
-    const novoValorVenda = Number(el('editVendaPendValorTotal').value);
-    const novoEntrada    = Number(el('editVendaPendValorEntrada').value);
-    const novoParcela    = Number(el('editVendaPendValorParcela').value);
+    const novoValorVenda = lerValorNumerico('editVendaPendValorTotal');
+    const novoEntrada    = lerValorNumerico('editVendaPendValorEntrada');
+    const saldoAnterior  = Number(ap.valorParcelaRestante) || 0;
+    const saldoPlanejadoAnterior = Math.max(0, (Number(ap.valorVenda) || 0) - (Number(ap.valorEntrada) || 0));
+    const valorJaRecebidoParcelas = Math.max(0, saldoPlanejadoAnterior - saldoAnterior);
+    const novaQuantidade = Math.floor(Number(el('editVendaPendQuantidadeParcelas').value) || 0);
+    const novaDataParcela = el('editVendaPendDataParcela').value;
+    const novaPeriodicidade = el('editVendaPendPeriodicidade').value || 'mensal';
+    const novoDiaSemana = el('editVendaPendDiaSemana').value;
+    const novoCalculoParcelas = calcularParcelasVenda(novoValorVenda, novoEntrada, novaQuantidade, novaPeriodicidade, novaDataParcela, novoDiaSemana);
 
-    if (novoEntrada + novoParcela !== novoValorVenda) {
-      alert(`A soma da entrada + restante deve ser igual ao valor total (${brl(novoValorVenda)})`);
+    if (!novoCalculoParcelas) {
+      alert('Informe a quantidade de parcelas e o primeiro vencimento. A entrada é opcional e deve ser menor ou igual ao valor da venda.');
       return;
     }
+    if (novaPeriodicidade === 'semanal' && novoDiaSemana === '') {
+      alert('Selecione o dia da semana para o recebimento semanal!');
+      return;
+    }
+
+    const novoParcela = novoCalculoParcelas.saldo;
 
     // Recalcular lucro imediato se a entrada mudou
     // Lucro Imediato = entrada - custo (se origem for capital)
@@ -3332,7 +3620,15 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     ap.valorEntrada         = novoEntrada;
     ap.dataEntradaPagamento = el('editVendaPendDataEntrada').value;
     ap.valorParcelaRestante = novoParcela;
-    ap.dataRestantePagamento = el('editVendaPendDataParcela').value;
+    ap.valorParcelaUnitario  = novoCalculoParcelas.valorParcela;
+    ap.quantidadeParcelas    = novoCalculoParcelas.quantidade;
+    ap.parcelasRestantes     = novoCalculoParcelas.quantidade;
+    ap.parcelasVenda         = novoCalculoParcelas.parcelas;
+    if (valorJaRecebidoParcelas > 0) aplicarRecebimentoNasParcelas(ap, valorJaRecebidoParcelas);
+    ap.dataPrimeiroVencimento = novaDataParcela;
+    ap.dataRestantePagamento = novaDataParcela;
+    ap.periodicidadeParcelas = novaPeriodicidade;
+    ap.diaSemanaParcelas     = novaPeriodicidade === 'semanal' ? Number(novoDiaSemana) : null;
     ap.lucroImediato        = novoLucroImediato;
 
     ap.tempoGarantia = Number(el('editVendaPendTempoGarantia').value);
@@ -3487,10 +3783,10 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
 
       return `
         <div class="item">
-	          <h3>📱 ${a.modelo} ${a.cor ? ` — <span style="color:var(--text-secondary); font-size:14px;">${a.cor}</span>` : ''}</h3>
-	          <p>Venda: ${brl(a.valorVenda)} | Custo Total: ${brl(cTotal)} | Lucro: ${brl(lucroE)}</p>
-	          <p><small>Compra: ${brl(vCompra)} (${tagC}) | Peça: ${brl(vPeca)} (${tagP})</small></p>
-	          <p>Condição: ${a.condicao} ${a.acessorios ? ` | Acessórios: ${a.acessorios}` : ''}</p>
+              <h3>📱 ${a.modelo} ${a.cor ? ` — <span style="color:var(--text-secondary); font-size:14px;">${a.cor}</span>` : ''}</h3>
+              <p>Venda: ${brl(a.valorVenda)} | Custo Total: ${brl(cTotal)} | Lucro: ${brl(lucroE)}</p>
+              <p><small>Compra: ${brl(vCompra)} (${tagC}) | Peça: ${brl(vPeca)} (${tagP})</small></p>
+              <p>Condição: ${a.condicao} ${a.acessorios ? ` | Acessórios: ${a.acessorios}` : ''}</p>
           <div class="item-actions">
             <button class="btn-editar"   onclick="editarAparelho(${a.id})">✏️ Editar</button>
             <button class="btn-finalizar" onclick="iniciarVendaAparelho(${a.id})">💰 Vender</button>
@@ -3523,6 +3819,10 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       const oP = a.origemPeca   || 'capital';
       const tagC = oC === 'capital' ? '💰 Cap' : '🏭 Forn';
       const tagP = oP === 'capital' ? '💰 Cap' : '🏭 Forn';
+      const parcelaAtual = obterParcelaAtualVenda(a);
+      const quantidadeTotal = a.quantidadeParcelas || null;
+      const parcelasRestantes = a.parcelasRestantes ?? (quantidadeTotal || null);
+      const parcelasTexto = quantidadeTotal ? `${parcelasRestantes}/${quantidadeTotal}` : 'N/I';
 
       return `
         <div class="item ${atrasado ? 'item-atrasado' : ''}">
@@ -3531,8 +3831,9 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
           <p>Valor Total: ${brl(a.valorVenda)} | Custo Total: ${brl(cTotal)}</p>
           <p><small>Compra: ${brl(vCompra)} (${tagC}) | Peça: ${brl(vPeca)} (${tagP})</small></p>
           <p>💰 Entrada: ${brl(a.valorEntrada)} | Resta: ${brl(a.valorParcelaRestante)}</p>
+          <p>📊 Parcelas: ${parcelasTexto} | Parcela atual: <strong>${brl(parcelaAtual?.valor || a.valorParcelaUnitario || a.valorParcelaRestante)}</strong></p>
           <p><span class="lucro-parcial-badge">💰 Lucro já contabilizado: ${brl(lucroParcial)}</span></p>
-          <p><small style="color:var(--text-muted);">Vencimento: ${a.dataRestantePagamento || 'N/I'}</small></p>
+          <p><small style="color:var(--text-muted);">Recebimento: ${descricaoPeriodicidadeVenda(a)} | Vencimento: ${a.dataRestantePagamento || 'N/I'}</small></p>
           <div class="item-actions">
             <button class="btn-editar"    onclick="abrirEditarVendaPendente(${a.id})">✏️ Editar</button>
             <button class="btn-finalizar" onclick="iniciarVendaAparelho(${a.id})">💵 Receber Parcela</button>
@@ -3581,12 +3882,17 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     if (ap && ap.valorParcelaRestante > 0) {
       vendaParcelaFinalizandoId = id;
       const custoTotal = ap.custoTotal || (ap.valorCompra + ap.valorPecaUtilizada);
+      const parcelaAtual = obterParcelaAtualVenda(ap);
+      el('vendaValorRecebido').value = parcelaAtual?.valor || '';
       el('vendaParcelaInfo').innerHTML = `
         Aparelho: <strong>${ap.modelo}</strong><br>
         Valor total: ${brl(ap.valorVenda)}<br>
         Custo total: ${brl(custoTotal)}<br>
         Entrada já paga: ${brl(ap.valorEntrada)}<br>
+        Parcela atual: <strong>${brl(parcelaAtual?.valor || 0)}</strong><br>
         Saldo devedor: <strong>${brl(ap.valorParcelaRestante)}</strong><br>
+        ${ap.quantidadeParcelas ? `Parcelas restantes: <strong>${ap.parcelasRestantes}/${ap.quantidadeParcelas}</strong><br>` : ''}
+        Recebimento: ${descricaoPeriodicidadeVenda(ap)}<br>
         Lucro já contabilizado: <strong>${brl(ap.lucroImediato || 0)}</strong>`;
       el('finalizarVendaModal').style.display = 'flex';
     } else {
@@ -3595,7 +3901,13 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       el('vendaClienteNome').value                  = '';
       el('vendaValorFinal').value                   = ap.valorVenda || '';
       el('vendaValorEntrada').value                 = '';
+      el('vendaQuantidadeParcelas').value            = '';
       el('vendaValorParcela').value                 = '';
+      el('vendaDataRestantePagamento').value         = '';
+      el('vendaResumoParcelas').textContent          = 'A entrada é opcional. Informe a quantidade de parcelas e o primeiro vencimento.';
+      el('vendaPeriodicidade').value                 = 'mensal';
+      el('vendaDiaSemana').value                     = '';
+      atualizarCamposPeriodicidadeVenda();
       el('vendaOrigemModal').style.display          = 'flex';
     }
   }
@@ -4456,4 +4768,4 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
   showSection('consertos');
 </script>
 </body>
-</html>
+	</html>
