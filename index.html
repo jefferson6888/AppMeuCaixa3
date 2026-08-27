@@ -1121,6 +1121,17 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
               </div>
             </div>
 
+            <label class="field-group" for="memoriaAparelho">
+              <span>Memória *</span>
+              <select id="memoriaAparelho" required>
+                <option value="">Selecione a memória</option>
+                <option value="32GB">32 GB</option>
+                <option value="64GB">64 GB</option>
+                <option value="128GB">128 GB</option>
+                <option value="256GB">256 GB</option>
+              </select>
+            </label>
+
             <label class="field-group" for="valorVenda">
               <span>Valor de venda sugerido (R$) *</span>
               <input type="number" id="valorVenda" placeholder="0,00" min="0" step="0.01">
@@ -1649,6 +1660,17 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
         <input type="text" id="editCorAparelho" placeholder="Cor">
       </div>
     </div>
+
+    <label class="field-group" for="editMemoriaAparelho">
+      <span>Memória</span>
+      <select id="editMemoriaAparelho">
+        <option value="">Não informada</option>
+        <option value="32GB">32 GB</option>
+        <option value="64GB">64 GB</option>
+        <option value="128GB">128 GB</option>
+        <option value="256GB">256 GB</option>
+      </select>
+    </label>
     <div class="small-input-group">
       <div class="field-group">
         <label for="editValorCompra">Valor de compra (R$)</label>
@@ -2953,9 +2975,10 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
 
   function salvarAparelhoDetalhado() {
     const modelo           = el('modelo').value.trim();
+    const memoria          = el('memoriaAparelho').value;
     const compraRaw        = el('valorCompra').value;
     const vendaRaw         = el('valorVenda').value;
-    if (!modelo || compraRaw === '' || vendaRaw === '') { alert('Preencha modelo, compra e venda'); return; }
+    if (!modelo || !memoria || compraRaw === '' || vendaRaw === '') { alert('Preencha modelo, memória, compra e venda'); return; }
     const compra           = Number(compraRaw);
     const venda            = Number(vendaRaw);
     const pecaUtilizada    = el('pecaUtilizada').value.trim();
@@ -2985,7 +3008,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     }
 
     aparelhos.push({
-      id: Date.now(), modelo, valorCompra: compra, valorVenda: venda,
+      id: Date.now(), modelo, memoria, valorCompra: compra, valorVenda: venda,
       cor: el('corAparelho').value.trim() || 'N/I',
       condicao: el('condicaoAparelho').value,
       acessorios: el('acessoriosInclusos').value,
@@ -3006,6 +3029,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     atualizarTudo();
 
     ['modelo','corAparelho','valorCompra','valorVenda','pecaUtilizada','valorPecaUtilizada','nomeFornecedorVenda'].forEach(id => { el(id).value = ''; });
+    el('memoriaAparelho').value = '';
 
     el('fornecedorVendaDiv').style.display = 'none';
 
@@ -3130,7 +3154,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       }
 
       vendasRealizadas.unshift({
-        id: Date.now(), modelo: ap.modelo, cor: ap.cor || 'N/I', valorVenda: ap.valorVenda, custoTotal, lucro,
+        id: Date.now(), modelo: ap.modelo, memoria: ap.memoria || '', cor: ap.cor || 'N/I', valorVenda: ap.valorVenda, custoTotal, lucro,
         data: new Date().toISOString(), condicao: ap.condicao, acessorios: ap.acessorios,
         pecaUtilizada: ap.pecaUtilizada, valorPecaUtilizada: ap.valorPecaUtilizada,
         origem, clienteNome, valorEntrada: 0, valorParcelaRestante: 0,
@@ -3173,7 +3197,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       }
 
       vendasRealizadas.unshift({
-        id: Date.now(), modelo: ap.modelo, cor: ap.cor || 'N/I', valorVenda: ap.valorVenda, custoTotal: custoT, lucro: lucroFinal,
+        id: Date.now(), modelo: ap.modelo, memoria: ap.memoria || '', cor: ap.cor || 'N/I', valorVenda: ap.valorVenda, custoTotal: custoT, lucro: lucroFinal,
         data: new Date().toISOString(), condicao: ap.condicao, acessorios: ap.acessorios,
         pecaUtilizada: ap.pecaUtilizada, valorPecaUtilizada: ap.valorPecaUtilizada,
         origem: ap.origemVendaLocal, clienteNome: ap.clienteNome || 'Não informado', valorEntrada: ap.valorEntrada, valorParcelaRestante: 0,
@@ -3309,6 +3333,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     if (!ap) return;
     editAparelhoId = id;
     el('editModelo').value              = ap.modelo;
+    el('editMemoriaAparelho').value     = ap.memoria || '';
     el('editCorAparelho').value         = ap.cor || '';
     el('editValorCompra').value         = ap.valorCompra;
     el('editValorVenda').value          = ap.valorVenda;
@@ -3388,6 +3413,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     }
 
     ap.modelo              = el('editModelo').value;
+    ap.memoria             = el('editMemoriaAparelho').value || '';
     ap.cor                 = el('editCorAparelho').value.trim() || 'N/I';
     ap.valorCompra         = nCompra;
     ap.valorVenda          = Number(el('editValorVenda').value);
@@ -3524,8 +3550,9 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     // 3. Voltar o aparelho para a lista de disponíveis
     aparelhos.push({
       id: Date.now(),
-      modelo: v.modelo,
-      valorCompra: v.valorCompra || (custoTotal - (v.valorPecaUtilizada || 0)),
+       modelo: v.modelo,
+       memoria: v.memoria || '',
+       valorCompra: v.valorCompra || (custoTotal - (v.valorPecaUtilizada || 0)),
       valorVenda: v.valorVenda,
       condicao: v.condicao || 'Usado',
       acessorios: v.acessorios || '',
@@ -3784,6 +3811,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       return `
         <div class="item">
               <h3>📱 ${a.modelo} ${a.cor ? ` — <span style="color:var(--text-secondary); font-size:14px;">${a.cor}</span>` : ''}</h3>
+              <p>💾 Memória: <strong>${a.memoria || 'Não informada'}</strong></p>
               <p>Venda: ${brl(a.valorVenda)} | Custo Total: ${brl(cTotal)} | Lucro: ${brl(lucroE)}</p>
               <p><small>Compra: ${brl(vCompra)} (${tagC}) | Peça: ${brl(vPeca)} (${tagP})</small></p>
               <p>Condição: ${a.condicao} ${a.acessorios ? ` | Acessórios: ${a.acessorios}` : ''}</p>
@@ -4768,4 +4796,4 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
   showSection('consertos');
 </script>
 </body>
-	</html>
+					</html>
