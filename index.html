@@ -1847,7 +1847,13 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       </button>
     </div>
     
-    <p id="statusBackup" style="font-size: 10px; text-align: center; margin-top: 15px; color: var(--text-dim);"></p>
+    <div style="margin-top:14px; padding:10px 12px; border-radius:12px; background:rgba(16,185,129,.08); border:1px solid rgba(16,185,129,.2);">
+      <p id="statusBackup" style="font-size: 11px; line-height:1.55; color:var(--text-secondary); margin:0;"></p>
+      <button id="btnRestaurarSeguranca" onclick="restaurarBackupSeguranca()"
+        style="width:100%; margin-top:9px; background:transparent; color:var(--accent-orange); padding:8px; border:1px solid rgba(245,158,11,.35); border-radius:9px; font-weight:700; cursor:pointer; font-size:11px; display:none;">
+        ↩️ Desfazer última restauração
+      </button>
+    </div>
   </div>
 </div>
 
@@ -2729,16 +2735,44 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
   ───────────────────────────────────────── */
 
   const STORAGE_KEY = 'meuCaixaPRO';
+  const BACKUP_FORMAT_VERSION = 3;
+  const SAFETY_BACKUP_KEY = 'meuCaixaPRO_backup_seguranca';
+
+  /** Monta uma fotografia única do estado atual do aplicativo. */
+  function obterDadosAtuais() {
+    return {
+      consertos, consertosFinalizados, aparelhos, vendasRealizadas,
+      comprasPecas, capital, lucroTotal, extrato, estoquePecas,
+      historicoMensal, ultimoMesFechado,
+      tabelaPrecos: localStorage.getItem('jeffersonCell_tabelaPrecos') || ""
+    };
+  }
+
+  function criarPacoteBackup(data = obterDadosAtuais()) {
+    return {
+      metadata: {
+        app: 'Jefferson Cell - Meu Caixa PRO',
+        version: BACKUP_FORMAT_VERSION,
+        timestamp: new Date().toISOString(),
+        registros: Object.values(data).filter(v => Array.isArray(v)).reduce((n, v) => n + v.length, 0)
+      },
+      data
+    };
+  }
+
+  /** Guarda uma cópia local antes de qualquer restauração. */
+  function salvarBackupSeguranca() {
+    try {
+      localStorage.setItem(SAFETY_BACKUP_KEY, JSON.stringify(criarPacoteBackup()));
+    } catch (e) {
+      console.warn('Não foi possível criar o backup de segurança:', e);
+    }
+  }
 
   /** Serializa o estado completo e salva no localStorage. */
   function salvarDados() {
     try {
-      const data = {
-        consertos, consertosFinalizados, aparelhos, vendasRealizadas,
-        comprasPecas, capital, lucroTotal, extrato, estoquePecas,
-        historicoMensal, ultimoMesFechado,
-        tabelaPrecos: localStorage.getItem('jeffersonCell_tabelaPrecos') || ""
-      };
+      const data = obterDadosAtuais();
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
       window._sessionBackup = data; // Backup em memória
     } catch (e) {
@@ -2757,17 +2791,23 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     carregarTabelaPrecos();
 
     if (raw) {
-      const p = JSON.parse(raw);
-      consertos            = p.consertos            || [];
-      consertosFinalizados = p.consertosFinalizados || [];
-      aparelhos            = p.aparelhos            || [];
-      vendasRealizadas     = p.vendasRealizadas     || [];
-      comprasPecas         = p.comprasPecas         || [];
-      capital              = p.capital              || 0;
-      lucroTotal           = p.lucroTotal           || 0;
-      extrato              = p.extrato              || [];
-      estoquePecas         = p.estoquePecas         || [];
-      historicoMensal      = p.historicoMensal      || [];
+      let p;
+      try { p = JSON.parse(raw); }
+      catch (e) {
+        console.error('Dados locais corrompidos:', e);
+        alert('⚠️ Os dados locais parecem corrompidos. Use um arquivo de backup para restaurar.');
+        p = {};
+      }
+      consertos            = Array.isArray(p.consertos) ? p.consertos : [];
+      consertosFinalizados = Array.isArray(p.consertosFinalizados) ? p.consertosFinalizados : [];
+      aparelhos            = Array.isArray(p.aparelhos) ? p.aparelhos : [];
+      vendasRealizadas     = Array.isArray(p.vendasRealizadas) ? p.vendasRealizadas : [];
+      comprasPecas         = Array.isArray(p.comprasPecas) ? p.comprasPecas : [];
+      capital              = Number(p.capital) || 0;
+      lucroTotal           = Number(p.lucroTotal) || 0;
+      extrato              = Array.isArray(p.extrato) ? p.extrato : [];
+      estoquePecas         = Array.isArray(p.estoquePecas) ? p.estoquePecas : [];
+      historicoMensal      = Array.isArray(p.historicoMensal) ? p.historicoMensal : [];
       ultimoMesFechado     = p.ultimoMesFechado     || null;
       
       // Se houver tabela no backup, ela tem prioridade
@@ -2800,24 +2840,13 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
 
   function exportarDados() {
     try {
-      const backupData = {
-        metadata: {
-          app: "Jefferson Cell - Meu Caixa PRO",
-          version: "2.0",
-          timestamp: new Date().toISOString(),
-          device: navigator.userAgent
-        },
-        data: {
-          consertos, consertosFinalizados, aparelhos, vendasRealizadas, 
-          comprasPecas, capital, lucroTotal, extrato, estoquePecas, 
-          historicoMensal, ultimoMesFechado,
-          tabelaPrecos: localStorage.getItem('jeffersonCell_tabelaPrecos') || ""
-        }
-      };
+      const backupData = criarPacoteBackup();
+      backupData.metadata.device = navigator.userAgent;
       
       const dataStr = JSON.stringify(backupData, null, 2);
       const blob = new Blob([dataStr], { type: 'application/json;charset=utf-8' });
-      const dataAtual = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+      const dataAtual = new Date().toISOString().slice(0, 10);
+      localStorage.setItem('lastBackupExport', new Date().toISOString());
       const nomeArquivo = `jefferson_cell_backup_${dataAtual}.json`;
       
       // Tentar usar a API de compartilhamento se disponível (melhor para mobile)
@@ -2852,10 +2881,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
   }
 
   function gerarBackupCopiaCola(backupObj) {
-    const dataToEncode = backupObj || {
-      metadata: { app: "Jefferson Cell", version: "2.0", timestamp: new Date().toISOString() },
-      data: { consertos, consertosFinalizados, aparelhos, vendasRealizadas, comprasPecas, capital, lucroTotal, extrato, estoquePecas, historicoMensal, ultimoMesFechado, tabelaPrecos: localStorage.getItem('jeffersonCell_tabelaPrecos') || "" }
-    };
+    const dataToEncode = backupObj || criarPacoteBackup();
     const dataStr = JSON.stringify(dataToEncode);
     const codificado = btoa(unescape(encodeURIComponent(dataStr)));
     const txtEl = el('txtCodigoBackup');
@@ -2865,11 +2891,15 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     btnEl.style.display = 'block';
   }
 
-  function copiarCodigoTexto() {
+  async function copiarCodigoTexto() {
     const copyText = el('txtCodigoBackup');
-    copyText.select();
-    copyText.setSelectionRange(0, 99999);
-    navigator.clipboard.writeText(copyText.value);
+    try {
+      await navigator.clipboard.writeText(copyText.value);
+    } catch (e) {
+      copyText.focus();
+      copyText.select();
+      document.execCommand('copy');
+    }
     alert('📋 Código de segurança copiado! Guarde-o em seu WhatsApp ou Bloco de Notas.');
   }
 
@@ -2885,19 +2915,19 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     }
   }
 
-  function restaurarBancoDadosIntegro(inputData) {
+  function restaurarBancoDadosIntegro(inputData, opcoes = {}) {
     try {
-      // Suporte para o novo formato com metadata ou o formato antigo
-      const data = inputData.data ? inputData.data : inputData;
-      
-      // Validação básica de integridade
-      if (!data || typeof data !== 'object') throw new Error("Dados inválidos");
-
+      // Aceita o formato atual e os backups antigos sem metadata.
+      const data = inputData && inputData.data ? inputData.data : inputData;
+      if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Dados inválidos');
+      const campos = ['consertos','consertosFinalizados','aparelhos','vendasRealizadas','comprasPecas','extrato','estoquePecas','historicoMensal','capital','lucroTotal'];
+      if (!campos.some(c => Object.prototype.hasOwnProperty.call(data, c))) throw new Error('Formato incompatível');
       // Confirmação extra se houver muitos dados
       const totalItens = (data.consertos?.length || 0) + (data.extrato?.length || 0);
       if (totalItens > 0) {
         if (!confirm(`Deseja restaurar ${totalItens} registros? Isso substituirá os dados atuais.`)) return;
       }
+      if (!opcoes.skipSafety) salvarBackupSeguranca();
 
       consertos            = Array.isArray(data.consertos) ? data.consertos : [];
       consertosFinalizados = Array.isArray(data.consertosFinalizados) ? data.consertosFinalizados : [];
@@ -2911,6 +2941,10 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       capital              = Number(data.capital) || 0;
       lucroTotal           = Number(data.lucroTotal) || 0;
       ultimoMesFechado     = data.ultimoMesFechado || null;
+      if (typeof data.tabelaPrecos === 'string') {
+        localStorage.setItem('jeffersonCell_tabelaPrecos', data.tabelaPrecos);
+        carregarTabelaPrecos();
+      }
 
       salvarDados();
       localStorage.setItem('lastBackupRestore', new Date().toISOString());
@@ -2932,16 +2966,26 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
   }
 
   function atualizarStatusBackup() {
-    const lastRestore = localStorage.getItem('lastBackupRestore');
     const statusEl = el('statusBackup');
-    if (statusEl) {
-      if (lastRestore) {
-        const data = new Date(lastRestore).toLocaleString('pt-BR');
-        statusEl.innerText = `Última restauração realizada em: ${data}`;
-      } else {
-        statusEl.innerText = 'Nenhuma restauração recente detectada.';
-      }
-    }
+    if (!statusEl) return;
+    const exportado = localStorage.getItem('lastBackupExport');
+    const restaurado = localStorage.getItem('lastBackupRestore');
+    const seguranca = localStorage.getItem(SAFETY_BACKUP_KEY);
+    const linhas = [];
+    linhas.push(exportado ? `✅ Último arquivo: ${new Date(exportado).toLocaleString('pt-BR')}` : '⚠️ Nenhum arquivo de backup baixado ainda.');
+    if (restaurado) linhas.push(`↩️ Última restauração: ${new Date(restaurado).toLocaleString('pt-BR')}`);
+    statusEl.innerText = linhas.join('\n');
+    const btn = el('btnRestaurarSeguranca');
+    if (btn) btn.style.display = seguranca ? 'block' : 'none';
+  }
+
+  function restaurarBackupSeguranca() {
+    const raw = localStorage.getItem(SAFETY_BACKUP_KEY);
+    if (!raw) return alert('Não existe uma cópia de segurança local.');
+    if (!confirm('Voltar para os dados anteriores à última restauração?')) return;
+    try {
+      restaurarBancoDadosIntegro(JSON.parse(raw), { skipSafety: true });
+    } catch (e) { alert('Não foi possível desfazer a restauração.'); }
   }
 
   function importarDados() {
