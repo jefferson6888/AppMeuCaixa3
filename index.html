@@ -2769,18 +2769,33 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     }
   }
 
-  /** Serializa o estado completo e salva no localStorage. */
-  function salvarDados() {
-    try {
-      const data = obterDadosAtuais();
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      window._sessionBackup = data; // Backup em memória
-    } catch (e) {
-      console.error("Erro ao salvar no localStorage:", e);
-      const isQuotaError = e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED';
-      alert(isQuotaError ? "⚠️ Memória cheia! O sistema não consegue salvar mais dados." : "⚠️ Erro ao salvar dados!");
+  // As operações de localStorage são síncronas. Agrupar gravações evita travadas
+  // quando uma ação altera vários registros de uma vez.
+  let _saveTimer = null;
+  function salvarDados(imediato = false) {
+    const data = obterDadosAtuais();
+    window._sessionBackup = data; // Backup em memória instantâneo
+    const gravar = () => {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        _saveTimer = null;
+      } catch (e) {
+        console.error("Erro ao salvar no localStorage:", e);
+        const isQuotaError = e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED';
+        alert(isQuotaError ? "⚠️ Memória cheia! O sistema não consegue salvar mais dados." : "⚠️ Erro ao salvar dados!");
+      }
+    };
+    if (imediato) {
+      if (_saveTimer) clearTimeout(_saveTimer);
+      gravar();
+    } else {
+      if (_saveTimer) clearTimeout(_saveTimer);
+      _saveTimer = setTimeout(gravar, 250);
     }
   }
+
+  // Não perder a última alteração se o usuário fechar ou trocar de aba rapidamente.
+  window.addEventListener('pagehide', () => salvarDados(true));
 
   /** Carrega o estado do localStorage e atualiza a UI. */
   function carregarDados() {
@@ -2946,7 +2961,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
         carregarTabelaPrecos();
       }
 
-      salvarDados();
+      salvarDados(true);
       localStorage.setItem('lastBackupRestore', new Date().toISOString());
       
       // Recarregar a página para garantir que todos os estados sejam resetados corretamente
@@ -3353,50 +3368,47 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     if (preview) { preview.hidden = true; preview.innerHTML = ''; }
   }
 
-  function prepararFotoAparelho(event) {
-    const file = event.target.files?.[0];
-    if (!file || !file.type.startsWith('image/')) { limparFotoAparelho(); return; }
+  // Reduz fotos antes de guardá-las: localStorage fica menor e as listas carregam mais rápido.
+  function processarFotoAparelho(file, aoConcluir) {
+    if (!file || !file.type.startsWith('image/')) return;
     const reader = new FileReader();
     reader.onload = () => {
       const img = new Image();
       img.onload = () => {
-        const limite = 1000;
+        const limite = 800;
         const escala = Math.min(1, limite / Math.max(img.width, img.height));
         const canvas = document.createElement('canvas');
         canvas.width = Math.max(1, Math.round(img.width * escala));
         canvas.height = Math.max(1, Math.round(img.height * escala));
-        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-        fotoAparelhoCadastro = canvas.toDataURL('image/jpeg', 0.78);
-        const preview = el('fotoAparelhoPreview');
-        preview.innerHTML = `<img src="${fotoAparelhoCadastro}" alt="Prévia do aparelho"><button type="button" onclick="limparFotoAparelho()" aria-label="Remover foto">×</button>`;
-        preview.hidden = false;
+        const ctx = canvas.getContext('2d', { alpha: false });
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        aoConcluir(canvas.toDataURL('image/jpeg', 0.68));
       };
       img.src = reader.result;
     };
     reader.readAsDataURL(file);
   }
 
+  function prepararFotoAparelho(event) {
+    const file = event.target.files?.[0];
+    if (!file || !file.type.startsWith('image/')) { limparFotoAparelho(); return; }
+    processarFotoAparelho(file, foto => {
+      fotoAparelhoCadastro = foto;
+      const preview = el('fotoAparelhoPreview');
+      preview.innerHTML = `<img loading="lazy" src="${foto}" alt="Prévia do aparelho"><button type="button" onclick="limparFotoAparelho()" aria-label="Remover foto">×</button>`;
+      preview.hidden = false;
+    });
+  }
+
   function prepararFotoAparelhoEdicao(event) {
     const file = event.target.files?.[0];
     if (!file || !file.type.startsWith('image/')) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const img = new Image();
-      img.onload = () => {
-        const limite = 1000;
-        const escala = Math.min(1, limite / Math.max(img.width, img.height));
-        const canvas = document.createElement('canvas');
-        canvas.width = Math.max(1, Math.round(img.width * escala));
-        canvas.height = Math.max(1, Math.round(img.height * escala));
-        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-        fotoAparelhoEdicao = canvas.toDataURL('image/jpeg', 0.78);
-        const preview = el('fotoAparelhoEdicaoPreview');
-        preview.innerHTML = `<img src="${fotoAparelhoEdicao}" alt="Prévia do aparelho"><button type="button" onclick="limparFotoAparelhoEdicao()" aria-label="Remover foto">×</button>`;
-        preview.hidden = false;
-      };
-      img.src = reader.result;
-    };
-    reader.readAsDataURL(file);
+    processarFotoAparelho(file, foto => {
+      fotoAparelhoEdicao = foto;
+      const preview = el('fotoAparelhoEdicaoPreview');
+      preview.innerHTML = `<img loading="lazy" src="${foto}" alt="Prévia do aparelho"><button type="button" onclick="limparFotoAparelhoEdicao()" aria-label="Remover foto">×</button>`;
+      preview.hidden = false;
+    });
   }
 
   function limparFotoAparelhoEdicao() {
@@ -3412,14 +3424,14 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     const preview = el('fotoAparelhoEdicaoPreview');
     if (!preview) return;
     preview.innerHTML = fotoAparelhoEdicao
-      ? `<img src="${fotoAparelhoEdicao}" alt="Foto atual do aparelho"><button type="button" onclick="limparFotoAparelhoEdicao()" aria-label="Remover foto">×</button>`
+      ? `<img loading="lazy" src="${fotoAparelhoEdicao}" alt="Foto atual do aparelho"><button type="button" onclick="limparFotoAparelhoEdicao()" aria-label="Remover foto">×</button>`
       : '';
     preview.hidden = !fotoAparelhoEdicao;
   }
 
   function fotoAparelhoMarkup(foto, alt = 'Foto do aparelho') {
     return typeof foto === 'string' && foto.startsWith('data:image/')
-      ? `<img class="device-photo" src="${foto}" alt="${alt}">`
+      ? `<img class="device-photo" loading="lazy" decoding="async" src="${foto}" alt="${alt}">`
       : '';
   }
 
