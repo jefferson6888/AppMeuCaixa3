@@ -1434,7 +1434,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
 
             <div class="photo-upload field-group">
               <label for="fotoAparelho">📸 Foto do aparelho</label>
-              <input type="file" id="fotoAparelho" accept="image/*" onchange="prepararFotoAparelho(event)">
+              <input type="file" id="fotoAparelho" accept="image/*,.heic,.heif" onchange="prepararFotoAparelho(event)">
               <small>Opcional • escolha uma imagem da galeria ou tire uma foto</small>
               <div id="fotoAparelhoPreview" class="photo-preview" hidden></div>
             </div>
@@ -1998,7 +1998,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
 
     <div class="photo-upload field-group">
       <label for="fotoAparelhoEdicao">📸 Foto do aparelho</label>
-      <input type="file" id="fotoAparelhoEdicao" accept="image/*" onchange="prepararFotoAparelhoEdicao(event)">
+      <input type="file" id="fotoAparelhoEdicao" accept="image/*,.heic,.heif" onchange="prepararFotoAparelhoEdicao(event)">
       <small>Escolha uma imagem da galeria ou tire uma foto para adicionar/substituir</small>
       <div id="fotoAparelhoEdicaoPreview" class="photo-preview" hidden></div>
     </div>
@@ -3368,9 +3368,44 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
     if (preview) { preview.hidden = true; preview.innerHTML = ''; }
   }
 
+  // Conversor HEIC carregado somente quando necessário, sem deixar o app mais pesado.
+  let _heicLoader = null;
+  function carregarConversorHEIC() {
+    if (window.heic2any) return Promise.resolve(window.heic2any);
+    if (_heicLoader) return _heicLoader;
+    _heicLoader = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js';
+      script.onload = () => window.heic2any ? resolve(window.heic2any) : reject(new Error('Conversor indisponível'));
+      script.onerror = () => reject(new Error('Não foi possível carregar o conversor HEIC'));
+      document.head.appendChild(script);
+    });
+    return _heicLoader;
+  }
+
+  async function normalizarArquivoImagem(file) {
+    const nome = (file?.name || '').toLowerCase();
+    const ehHeic = /image\/(hei[cf])/.test(file?.type || '') || /\.hei[cf]$/.test(nome);
+    if (!ehHeic) return file;
+    const conversor = await carregarConversorHEIC();
+    const resultado = await conversor({ blob: file, toType: 'image/jpeg', quality: 0.82 });
+    return Array.isArray(resultado) ? resultado[0] : resultado;
+  }
+
   // Reduz fotos antes de guardá-las: localStorage fica menor e as listas carregam mais rápido.
-  function processarFotoAparelho(file, aoConcluir) {
-    if (!file || !file.type.startsWith('image/')) return;
+  async function processarFotoAparelho(file, aoConcluir) {
+    if (!file) return;
+    let arquivo;
+    try {
+      arquivo = await normalizarArquivoImagem(file);
+    } catch (e) {
+      alert('⚠️ Não foi possível abrir esta foto HEIC. Verifique a conexão e tente novamente, ou envie JPG/PNG.');
+      return;
+    }
+    if (!arquivo || !((arquivo.type || '').startsWith('image/'))) {
+      alert('⚠️ Formato de imagem não suportado. Use JPG, PNG ou HEIC.');
+      return;
+    }
     const reader = new FileReader();
     reader.onload = () => {
       const img = new Image();
@@ -3386,12 +3421,12 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
       };
       img.src = reader.result;
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(arquivo);
   }
 
   function prepararFotoAparelho(event) {
     const file = event.target.files?.[0];
-    if (!file || !file.type.startsWith('image/')) { limparFotoAparelho(); return; }
+    if (!file) { limparFotoAparelho(); return; }
     processarFotoAparelho(file, foto => {
       fotoAparelhoCadastro = foto;
       const preview = el('fotoAparelhoPreview');
@@ -3402,7 +3437,7 @@ Samsung S20 - Conector: R$ 150" oninput="salvarTabelaPrecos()"></textarea>
 
   function prepararFotoAparelhoEdicao(event) {
     const file = event.target.files?.[0];
-    if (!file || !file.type.startsWith('image/')) return;
+    if (!file) return;
     processarFotoAparelho(file, foto => {
       fotoAparelhoEdicao = foto;
       const preview = el('fotoAparelhoEdicaoPreview');
